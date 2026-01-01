@@ -1,0 +1,161 @@
+# Item Weights Configuration
+# Tier 2 fallback: Specific item weights
+
+version: 1
+
+# Specific item weights (exact name match, case-insensitive)
+specificWeights:
+  # Weapons - Common
+  "dagger": 1
+  "shortsword": 2
+  "longsword": 3
+  "greatsword": 6
+  "handaxe": 2
+  "battleaxe": 4
+  "greataxe": 7
+  "mace": 4
+  "maul": 10
+  "spear": 3
+  "pike": 18
+  "rapier": 2
+  "scimitar": 3
+
+  # Ranged Weapons
+  "shortbow": 2
+  "longbow": 2
+  "light crossbow": 5
+  "heavy crossbow": 18
+  "hand crossbow": 3
+
+  # Ammunition
+  "arrow": 0.05
+  "crossbow bolt": 0.075
+  "sling bullet": 0.075
+
+  # Armor
+  "padded armor": 8
+  "leather armor": 10
+  "studded leather armor": 13
+  "hide armor": 12
+  "chain shirt": 20
+  "scale mail": 45
+  "breastplate": 20
+  "half plate": 40
+  "ring mail": 40
+  "chain mail": 55
+  "splint armor": 60
+  "plate armor": 65
+  "shield": 6
+
+  # Potions (common)
+  "potion of healing": 0.5
+  "potion of greater healing": 0.5
+  "potion of superior healing": 0.5
+  "potion of supreme healing": 0.5
+  "potion of invisibility": 0.5
+  "potion of climbing": 0.5
+  "potion of water breathing": 0.5
+
+  # Scrolls
+  "spell scroll": 0.1
+
+  # Adventuring Gear
+  "backpack": 5
+  "bedroll": 7
+  "blanket": 3
+  "rope, hempen (50 feet)": 10
+  "rope, silk (50 feet)": 5
+  "torch": 1
+  "lantern, hooded": 2
+  "lantern, bullseye": 3
+  "oil flask": 1
+  "waterskin": 5
+  "rations (1 day)": 2
+  "tinderbox": 1
+  "crowbar": 5
+  "hammer": 3
+  "piton": 0.25
+  "grappling hook": 4
+
+  # Containers
+  "bag of holding": 15  # Empty weight (contents are weightless when inside)
+  "chest": 25
+  "barrel": 70
+  "basket": 2
+  "pouch": 1
+  "sack": 0.5
+
+  # Tools
+  "thieves' tools": 1
+  "disguise kit": 3
+  "herbalism kit": 3
+  "poisoner's kit": 2
+  "alchemist's supplies": 8
+  "brewer's supplies": 9
+  "calligrapher's supplies": 5
+  "carpenter's tools": 6
+  "cartographer's tools": 6
+  "cobbler's tools": 5
+  "cook's utensils": 8
+  "glassblower's tools": 5
+  "jeweler's tools": 2
+  "mason's tools": 8
+  "smith's tools": 8
+
+  # Books
+  "spellbook": 3
+  "book": 5
+  "scroll case": 1
+
+# Type-based default weights (Tier 4 fallback, case-insensitive)
+typeDefaults:
+  # Weapons
+  "simple melee weapons": 2
+  "simple ranged weapons": 2
+  "martial melee weapons": 3
+  "martial ranged weapons": 2
+
+  # Armor
+  "light armor": 10
+  "medium armor": 20
+  "heavy armor": 40
+  "shield": 6
+
+  # Gear
+  "ammunition": 0.05
+  "potion": 0.5
+  "scroll": 0.1
+  "wand": 1
+  "rod": 2
+  "staff": 4
+  "ring": 0.1
+  "amulet": 0.5
+  "cloak": 1
+  "boots": 1
+  "gloves": 0.5
+  "belt": 0.5
+  "hat": 0.5
+
+  # Tools
+  "tool": 5
+  "artisan's tools": 5
+  "gaming set": 1
+  "musical instrument": 3
+
+  # Containers
+  "backpack": 5
+  "bag": 0.5
+  "barrel": 70
+  "basket": 2
+  "chest": 25
+  "pouch": 1
+
+  # Food & Drink
+  "rations": 2
+  "waterskin": 5
+  "ale": 1
+  "wine": 1
+
+  # Generic fallback
+  "weapon": 3
+  "armor": 20

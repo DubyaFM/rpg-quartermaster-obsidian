@@ -1,0 +1,255 @@
+# Crafting Times Configuration
+# Based on D&D 5e crafting rules and Xanathar's Guide to Everything
+# Times are specified in dice notation or fixed values
+
+# Default crafting times by rarity (in days)
+# Used when specific item type is not found
+defaultTimes:
+  common:
+    min: 1
+    max: 4
+    dice: "1d4"
+  uncommon:
+    min: 7
+    max: 28
+    dice: "1d4"
+    multiplier: 7  # 1d4 weeks
+  rare:
+    min: 30
+    max: 180
+    dice: "1d6"
+    multiplier: 30  # 1d6 months
+  very-rare:
+    min: 60
+    max: 240
+    dice: "1d8"
+    multiplier: 30  # 1d8 months
+  legendary:
+    min: 90
+    max: 360
+    dice: "1d12"
+    multiplier: 30  # 1d12 months
+
+# Specific crafting times by item type and rarity
+craftingTimes:
+  weapon:
+    common:
+      min: 1
+      max: 4
+      dice: "1d4"
+    uncommon:
+      min: 2
+      max: 8
+      dice: "2d4"
+    rare:
+      min: 7
+      max: 42
+      dice: "1d6"
+      multiplier: 7
+    very-rare:
+      min: 14
+      max: 84
+      dice: "2d6"
+      multiplier: 7
+    legendary:
+      min: 30
+      max: 180
+      dice: "1d6"
+      multiplier: 30
+
+  armor:
+    common:
+      min: 1
+      max: 6
+      dice: "1d6"
+    uncommon:
+      min: 7
+      max: 28
+      dice: "1d4"
+      multiplier: 7
+    rare:
+      min: 14
+      max: 84
+      dice: "2d6"
+      multiplier: 7
+    very-rare:
+      min: 30
+      max: 180
+      dice: "1d6"
+      multiplier: 30
+    legendary:
+      min: 60
+      max: 360
+      dice: "1d6"
+      multiplier: 60
+
+  potion:
+    common:
+      min: 1
+      max: 1
+      dice: "1"
+    uncommon:
+      min: 1
+      max: 4
+      dice: "1d4"
+    rare:
+      min: 1
+      max: 6
+      dice: "1d6"
+    very-rare:
+      min: 7
+      max: 21
+      dice: "1d3"
+      multiplier: 7
+    legendary:
+      min: 14
+      max: 56
+      dice: "2d4"
+      multiplier: 7
+
+  scroll:
+    common:
+      min: 1
+      max: 1
+      dice: "1"
+    uncommon:
+      min: 1
+      max: 3
+      dice: "1d3"
+    rare:
+      min: 1
+      max: 4
+      dice: "1d4"
+    very-rare:
+      min: 1
+      max: 6
+      dice: "1d6"
+    legendary:
+      min: 7
+      max: 28
+      dice: "1d4"
+      multiplier: 7
+
+  wondrous:
+    common:
+      min: 1
+      max: 4
+      dice: "1d4"
+    uncommon:
+      min: 7
+      max: 28
+      dice: "1d4"
+      multiplier: 7
+    rare:
+      min: 14
+      max: 84
+      dice: "2d6"
+      multiplier: 7
+    very-rare:
+      min: 30
+      max: 180
+      dice: "1d6"
+      multiplier: 30
+    legendary:
+      min: 90
+      max: 360
+      dice: "1d4"
+      multiplier: 90
+
+  ring:
+    common:
+      min: 1
+      max: 4
+      dice: "1d4"
+    uncommon:
+      min: 7
+      max: 28
+      dice: "1d4"
+      multiplier: 7
+    rare:
+      min: 30
+      max: 180
+      dice: "1d6"
+      multiplier: 30
+    very-rare:
+      min: 60
+      max: 360
+      dice: "1d6"
+      multiplier: 60
+    legendary:
+      min: 120
+      max: 360
+      dice: "1d3"
+      multiplier: 120
+
+  rod:
+    uncommon:
+      min: 14
+      max: 56
+      dice: "2d4"
+      multiplier: 7
+    rare:
+      min: 30
+      max: 180
+      dice: "1d6"
+      multiplier: 30
+    very-rare:
+      min: 60
+      max: 360
+      dice: "1d6"
+      multiplier: 60
+    legendary:
+      min: 120
+      max: 360
+      dice: "1d3"
+      multiplier: 120
+
+  staff:
+    uncommon:
+      min: 14
+      max: 56
+      dice: "2d4"
+      multiplier: 7
+    rare:
+      min: 30
+      max: 180
+      dice: "1d6"
+      multiplier: 30
+    very-rare:
+      min: 60
+      max: 360
+      dice: "1d6"
+      multiplier: 60
+    legendary:
+      min: 120
+      max: 360
+      dice: "1d3"
+      multiplier: 120
+
+  wand:
+    uncommon:
+      min: 7
+      max: 28
+      dice: "1d4"
+      multiplier: 7
+    rare:
+      min: 14
+      max: 84
+      dice: "2d6"
+      multiplier: 7
+    very-rare:
+      min: 30
+      max: 180
+      dice: "1d6"
+      multiplier: 30
+    legendary:
+      min: 60
+      max: 360
+      dice: "1d6"
+      multiplier: 60
+
+# Order markup percentage (50% more expensive to order)
+orderMarkup: 0.50
+
+# Markup description
+orderMarkupDescription: "Special orders include a 50% markup to cover procurement and crafting costs"

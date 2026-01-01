@@ -1,0 +1,267 @@
+# Event Tables for Stronghold System
+# Random event tables for order results and stronghold events
+# Compatible with standard dice notation
+
+tables:
+  # ========================================
+  # Elite Defender Recruitment
+  # ========================================
+
+  - id: elite_defender_table
+    name: Elite Defender Recruitment
+    description: Results from recruiting an elite defender for the stronghold
+    diceType: d6
+    events:
+      - id: veteran_soldier
+        rollRange:
+          min: 1
+          max: 2
+        eventName: Veteran Soldier
+        description: A seasoned warrior with battle scars and tactical experience joins your ranks. Provides +2 to defense rolls.
+        resultType: narrative
+
+      - id: skilled_archer
+        rollRange:
+          min: 3
+          max: 4
+        eventName: Skilled Archer
+        description: An expert marksman capable of hitting targets at extreme range. Provides +2 to ranged defense.
+        resultType: narrative
+
+      - id: battle_mage
+        rollRange:
+          min: 5
+          max: 6
+        eventName: Battle Mage
+        description: A spellcaster trained in combat magic. Can cast defensive spells and provides +3 to magical defense.
+        resultType: narrative
+
+  # ========================================
+  # Lore Discovery
+  # ========================================
+
+  - id: lore_discovery_table
+    name: Lore Discovery
+    description: Results from researching topics in the library
+    diceType: d6
+    events:
+      - id: common_knowledge
+        rollRange:
+          min: 1
+          max: 2
+        eventName: Common Knowledge
+        description: You find basic information about the topic, confirming what you already suspected.
+        resultType: narrative
+
+      - id: useful_insight
+        rollRange:
+          min: 3
+          max: 4
+        eventName: Useful Insight
+        description: You discover helpful details that provide advantage on related checks for the next 7 days.
+        resultType: narrative
+
+      - id: rare_discovery
+        rollRange:
+          min: 5
+          max: 6
+        eventName: Rare Discovery
+        description: You uncover forgotten lore or a lost secret that could prove invaluable. The DM provides a significant clue or advantage.
+        resultType: narrative
+
+  # ========================================
+  # Advanced Lore Research
+  # ========================================
+
+  - id: advanced_lore_table
+    name: Advanced Lore Research
+    description: Results from researching complex or obscure topics
+    diceType: d8
+    events:
+      - id: dead_end
+        rollRange:
+          min: 1
+          max: 2
+        eventName: Dead End
+        description: The sources prove unreliable or contradictory. You learn nothing new.
+        resultType: narrative
+
+      - id: partial_success
+        rollRange:
+          min: 3
+          max: 5
+        eventName: Partial Success
+        description: You piece together fragments of information that point toward the truth.
+        resultType: narrative
+
+      - id: breakthrough
+        rollRange:
+          min: 6
+          max: 7
+        eventName: Breakthrough
+        description: You discover critical information that answers your question and reveals new connections.
+        resultType: narrative
+
+      - id: legendary_find
+        rollRange:
+          min: 8
+          max: 8
+        eventName: Legendary Find
+        description: You uncover a legendary text or artifact hidden in the archives. The DM provides a major revelation or rare item.
+        resultType: narrative
+
+  # ========================================
+  # Rare Plant Cultivation
+  # ========================================
+
+  - id: rare_plant_table
+    name: Rare Plant Cultivation
+    description: Results from attempting to grow exotic plants
+    diceType: d6
+    events:
+      - id: plant_withers
+        rollRange:
+          min: 1
+          max: 2
+        eventName: Plant Withers
+        description: Despite your efforts, the plant fails to thrive and dies.
+        resultType: narrative
+
+      - id: slow_growth
+        rollRange:
+          min: 3
+          max: 4
+        eventName: Slow Growth
+        description: The plant survives but grows slowly. It will be ready to harvest in another 28 days.
+        resultType: narrative
+
+      - id: successful_growth
+        rollRange:
+          min: 5
+          max: 6
+        eventName: Successful Growth
+        description: The plant flourishes! Harvest valuable herbs worth 200 gp or gain advantage on Nature checks for brewing related potions.
+        resultType: narrative
+
+  # ========================================
+  # Spell Research
+  # ========================================
+
+  - id: spell_research_table
+    name: Spell Research
+    description: Results from researching new spells or magical theory
+    diceType: d6
+    events:
+      - id: no_progress
+        rollRange:
+          min: 1
+          max: 2
+        eventName: No Progress
+        description: The magical theory proves more complex than anticipated. No spell is learned.
+        resultType: narrative
+
+      - id: partial_understanding
+        rollRange:
+          min: 3
+          max: 4
+        eventName: Partial Understanding
+        description: You grasp the fundamentals but need more time. Repeat this order with half the cost to complete the research.
+        resultType: narrative
+
+      - id: spell_learned
+        rollRange:
+          min: 5
+          max: 6
+        eventName: Spell Learned
+        description: You successfully research the spell! A spellcaster may add one spell of their choice (up to their max spell level) to their spellbook or known spells.
+        resultType: narrative
+
+  # ========================================
+  # Divine Guidance
+  # ========================================
+
+  - id: divine_guidance_table
+    name: Divine Guidance
+    description: Results from seeking communion with divine forces
+    diceType: d6
+    events:
+      - id: silence
+        rollRange:
+          min: 1
+          max: 1
+        eventName: Divine Silence
+        description: Your prayers go unanswered. Perhaps the timing is not right, or the question displeases your deity.
+        resultType: narrative
+
+      - id: cryptic_vision
+        rollRange:
+          min: 2
+          max: 3
+        eventName: Cryptic Vision
+        description: You receive vague symbols or dreams that hint at future events. The DM provides a mysterious clue.
+        resultType: narrative
+
+      - id: clear_guidance
+        rollRange:
+          min: 4
+          max: 5
+        eventName: Clear Guidance
+        description: Your deity sends a clear message or warning. The DM reveals important information about an upcoming threat or opportunity.
+        resultType: narrative
+
+      - id: divine_blessing
+        rollRange:
+          min: 6
+          max: 6
+        eventName: Divine Blessing
+        description: Your deity is pleased! You receive both guidance and a blessing. Gain advantage on one type of check for 7 days, and the DM provides critical information.
+        resultType: narrative
+
+  # ========================================
+  # Expedition Results
+  # ========================================
+
+  - id: expedition_table
+    name: Expedition Results
+    description: Outcomes from sending an expedition from the stronghold
+    diceType: d8
+    events:
+      - id: disaster
+        rollRange:
+          min: 1
+          max: 1
+        eventName: Disaster
+        description: The expedition encounters catastrophe. Lose 1d4 defenders and all supplies invested.
+        resultType: narrative
+
+      - id: failure
+        rollRange:
+          min: 2
+          max: 3
+        eventName: Failure
+        description: The expedition returns empty-handed and demoralized. Lose supplies but no defenders.
+        resultType: narrative
+
+      - id: minor_success
+        rollRange:
+          min: 4
+          max: 5
+        eventName: Minor Success
+        description: The expedition achieves its goal but with difficulty. Gain resources worth 200 gp.
+        resultType: narrative
+
+      - id: success
+        rollRange:
+          min: 6
+          max: 7
+        eventName: Success
+        description: The expedition succeeds admirably. Gain resources worth 500 gp and valuable information.
+        resultType: narrative
+
+      - id: windfall
+        rollRange:
+          min: 8
+          max: 8
+        eventName: Windfall
+        description: The expedition discovers unexpected treasure! Gain 1000 gp and roll once on a treasure hoard table.
+        resultType: narrative

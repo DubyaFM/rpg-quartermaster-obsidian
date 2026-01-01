@@ -1,0 +1,126 @@
+# Loot Table Configuration for D&D 5e
+# Based on DMG treasure tables with rarity weights per CR tier
+
+# Individual treasure (quick loot from single creatures)
+individual:
+  # CR 0-4: Mostly common items, some coins
+  cr_0_4:
+    currency:
+      copper: { min: 5, max: 20 }
+      silver: { min: 0, max: 10 }
+      gold: { min: 0, max: 3 }
+      platinum: { min: 0, max: 0 }
+    itemCount: { min: 0, max: 2 }
+    rarityWeights:
+      common: 90
+      uncommon: 10
+      rare: 0
+      veryRare: 0
+      legendary: 0
+
+  # CR 5-10: Mix of common and uncommon
+  cr_5_10:
+    currency:
+      copper: { min: 10, max: 50 }
+      silver: { min: 10, max: 50 }
+      gold: { min: 5, max: 25 }
+      platinum: { min: 0, max: 2 }
+    itemCount: { min: 1, max: 3 }
+    rarityWeights:
+      common: 60
+      uncommon: 35
+      rare: 5
+      veryRare: 0
+      legendary: 0
+
+  # CR 11-16: Uncommon and rare items
+  cr_11_16:
+    currency:
+      copper: { min: 20, max: 100 }
+      silver: { min: 50, max: 200 }
+      gold: { min: 25, max: 100 }
+      platinum: { min: 2, max: 10 }
+    itemCount: { min: 2, max: 4 }
+    rarityWeights:
+      common: 30
+      uncommon: 50
+      rare: 18
+      veryRare: 2
+      legendary: 0
+
+  # CR 17+: Rare and very rare items
+  cr_17_plus:
+    currency:
+      copper: { min: 50, max: 200 }
+      silver: { min: 100, max: 500 }
+      gold: { min: 100, max: 500 }
+      platinum: { min: 10, max: 50 }
+    itemCount: { min: 2, max: 5 }
+    rarityWeights:
+      common: 10
+      uncommon: 30
+      rare: 40
+      veryRare: 18
+      legendary: 2
+
+# Hoard treasure (accumulated treasure from lairs or major encounters)
+hoard:
+  # CR 0-4: Modest hoard
+  cr_0_4:
+    currency:
+      copper: { min: 600, max: 1200 }
+      silver: { min: 100, max: 300 }
+      gold: { min: 10, max: 50 }
+      platinum: { min: 0, max: 5 }
+    itemCount: { min: 1, max: 4 }
+    rarityWeights:
+      common: 80
+      uncommon: 18
+      rare: 2
+      veryRare: 0
+      legendary: 0
+
+  # CR 5-10: Substantial hoard
+  cr_5_10:
+    currency:
+      copper: { min: 2000, max: 5000 }
+      silver: { min: 500, max: 2000 }
+      gold: { min: 100, max: 500 }
+      platinum: { min: 10, max: 50 }
+    itemCount: { min: 3, max: 6 }
+    rarityWeights:
+      common: 50
+      uncommon: 40
+      rare: 9
+      veryRare: 1
+      legendary: 0
+
+  # CR 11-16: Rich hoard
+  cr_11_16:
+    currency:
+      copper: { min: 5000, max: 10000 }
+      silver: { min: 2000, max: 8000 }
+      gold: { min: 500, max: 2000 }
+      platinum: { min: 50, max: 200 }
+    itemCount: { min: 4, max: 8 }
+    rarityWeights:
+      common: 20
+      uncommon: 40
+      rare: 30
+      veryRare: 9
+      legendary: 1
+
+  # CR 17+: Legendary hoard
+  cr_17_plus:
+    currency:
+      copper: { min: 10000, max: 50000 }
+      silver: { min: 5000, max: 20000 }
+      gold: { min: 2000, max: 10000 }
+      platinum: { min: 200, max: 1000 }
+    itemCount: { min: 5, max: 12 }
+    rarityWeights:
+      common: 10
+      uncommon: 25
+      rare: 35
+      veryRare: 25
+      legendary: 5

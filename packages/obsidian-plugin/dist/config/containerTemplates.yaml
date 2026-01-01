@@ -1,0 +1,125 @@
+# Container Templates Configuration
+# Pre-configured container templates for quick creation
+
+version: 1
+
+templates:
+  - id: "backpack-standard"
+    name: "Backpack"
+    type: "item"
+    maxCapacity: 30
+    weightMultiplier: 1.0
+    description: "A standard leather backpack with multiple pockets and straps."
+    icon: "backpack"
+
+  - id: "bag-of-holding"
+    name: "Bag of Holding"
+    type: "item"
+    maxCapacity: 500
+    weightMultiplier: 0.0  # Contents are weightless
+    description: "A magical bag that holds far more than it should and weighs nothing. Opening the bag in an extradimensional space causes it to be destroyed."
+    icon: "magic-bag"
+
+  - id: "pouch-small"
+    name: "Belt Pouch"
+    type: "item"
+    maxCapacity: 6
+    weightMultiplier: 1.0
+    description: "A small leather pouch for coins and small items."
+    icon: "pouch"
+
+  - id: "chest-large"
+    name: "Large Chest"
+    type: "custom"
+    maxCapacity: 300
+    weightMultiplier: 1.0
+    description: "A sturdy wooden chest with iron reinforcements."
+    icon: "chest"
+
+  - id: "wagon"
+    name: "Wagon"
+    type: "vehicle"
+    maxCapacity: 2000
+    weightMultiplier: 0.0  # Wagon carries weight, players don't
+    description: "A four-wheeled wagon pulled by draft animals."
+    icon: "wagon"
+
+  - id: "cart"
+    name: "Cart"
+    type: "vehicle"
+    maxCapacity: 500
+    weightMultiplier: 0.0
+    description: "A two-wheeled cart pulled by a single animal."
+    icon: "cart"
+
+  - id: "sled"
+    name: "Sled"
+    type: "vehicle"
+    maxCapacity: 300
+    weightMultiplier: 0.0
+    description: "A simple sled for transporting goods over snow or ice."
+    icon: "sled"
+
+  - id: "barrel"
+    name: "Barrel"
+    type: "custom"
+    maxCapacity: 120
+    weightMultiplier: 1.0
+    description: "A large wooden barrel for storing liquids or dry goods."
+    icon: "barrel"
+
+  - id: "sack"
+    name: "Sack"
+    type: "item"
+    maxCapacity: 30
+    weightMultiplier: 1.0
+    description: "A simple cloth sack for carrying loose items."
+    icon: "sack"
+
+  - id: "quiver"
+    name: "Quiver"
+    type: "item"
+    maxCapacity: 1.5  # ~20 arrows at 0.05 lb each
+    weightMultiplier: 1.0
+    description: "A container for holding arrows or bolts."
+    icon: "quiver"
+
+  - id: "case-map"
+    name: "Map Case"
+    type: "item"
+    maxCapacity: 10
+    weightMultiplier: 1.0
+    description: "A leather tube for storing maps and scrolls."
+    icon: "scroll-case"
+
+  - id: "strongbox"
+    name: "Strongbox"
+    type: "custom"
+    maxCapacity: 50
+    weightMultiplier: 1.0
+    description: "A small iron box with a lock for valuables."
+    icon: "strongbox"
+
+  - id: "boat-rowboat"
+    name: "Rowboat"
+    type: "vehicle"
+    maxCapacity: 600
+    weightMultiplier: 0.0
+    description: "A small wooden rowboat for river or coastal travel."
+    icon: "boat"
+
+  - id: "portable-hole"
+    name: "Portable Hole"
+    type: "item"
+    maxCapacity: 0  # Unlimited (magical extradimensional space)
+    weightMultiplier: 0.0  # Contents weightless
+    description: "A magical cloth that unfolds into an extradimensional hole 10 feet deep. Very dangerous if combined with a Bag of Holding!"
+    icon: "magic-hole"
+
+  - id: "handy-haversack"
+    name: "Heward's Handy Haversack"
+    type: "item"
+    maxCapacity: 120  # Large capacity
+    weightMultiplier: 0.0  # Always weighs 5 lbs regardless of contents
+    description: "A magical backpack with multiple compartments that are bigger on the inside. Always weighs 5 pounds, regardless of its contents."
+    icon: "magic-backpack"

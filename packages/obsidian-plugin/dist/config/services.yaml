@@ -1,0 +1,302 @@
+# RPG Shopkeep Services Configuration
+# Service provider settings for inns, travel, spellcasting, and other services
+# Based on D&D 5e Player's Handbook 2024, Chapter 6: Equipment
+
+# =============================================================================
+# INN SERVICES
+# Lodging, food, and drink offerings with pricing tiers
+# =============================================================================
+innServices:
+  lodging:
+    - name: "Squalid Lodging"
+      cost: "7 cp"
+      quality: poor
+      description: "Per night - Bare minimum shelter, often shared quarters"
+
+    - name: "Poor Lodging"
+      cost: "1 sp"
+      quality: poor
+      description: "Per night - Simple accommodations, basic amenities"
+
+    - name: "Modest Lodging"
+      cost: "5 sp"
+      quality: modest
+      description: "Per night - Decent room with clean linens"
+
+    - name: "Comfortable Lodging"
+      cost: "8 sp"
+      quality: comfortable
+      description: "Per night - Private room with good amenities"
+
+    - name: "Wealthy Lodging"
+      cost: "2 gp"
+      quality: wealthy
+      description: "Per night - Luxurious room with excellent service"
+
+    - name: "Aristocratic Suite"
+      cost: "4 gp"
+      quality: aristocratic
+      description: "Per night - Premium suite with personal attendant"
+
+  meals:
+    - name: "Squalid Meal"
+      cost: "3 cp"
+      quality: poor
+      description: "Stale bread and watered-down ale"
+
+    - name: "Poor Meal"
+      cost: "6 cp"
+      quality: poor
+      description: "Simple fare - bread, cheese, thin stew"
+
+    - name: "Modest Meal"
+      cost: "3 sp"
+      quality: modest
+      description: "Hearty meal with ale or wine"
+
+    - name: "Comfortable Meal"
+      cost: "5 sp"
+      quality: comfortable
+      description: "Well-prepared meal with quality drink"
+
+    - name: "Wealthy Meal"
+      cost: "8 sp"
+      quality: wealthy
+      description: "Fine dining with multiple courses"
+
+    - name: "Aristocratic Banquet"
+      cost: "2 gp"
+      quality: aristocratic
+      description: "Extravagant feast with rare delicacies"
+
+  drinks:
+    - name: "Ale (Mug)"
+      cost: "4 cp"
+      quality: common
+      description: "Standard tavern ale"
+
+    - name: "Ale (Gallon)"
+      cost: "2 sp"
+      quality: common
+      description: "Full gallon of ale"
+
+    - name: "Wine (Common, Pitcher)"
+      cost: "2 sp"
+      quality: common
+      description: "House wine by the pitcher"
+
+    - name: "Wine (Fine, Bottle)"
+      cost: "10 gp"
+      quality: wealthy
+      description: "Premium vintage wine"
+
+  stabling:
+    - name: "Horse Stabling"
+      cost: "5 sp"
+      quality: common
+      description: "Per day - Feed and care for one mount"
+
+# =============================================================================
+# TRAVEL SERVICES
+# Transportation and guide services
+# =============================================================================
+travelServices:
+  land:
+    - name: "Coach Ride (Between Towns)"
+      cost: "3 cp per mile"
+      quality: modest
+      description: "Shared coach transportation"
+
+    - name: "Coach Ride (Within City)"
+      cost: "1 cp"
+      quality: modest
+      description: "Local city transportation"
+
+    - name: "Road/Gate Toll"
+      cost: "1 cp"
+      quality: common
+      description: "Standard passage fee"
+
+    - name: "Ship Passage"
+      cost: "1 sp per mile"
+      quality: modest
+      description: "Deck passage on merchant vessel"
+
+  guides:
+    - name: "Guide (Wilderness)"
+      cost: "2 gp per day"
+      quality: skilled
+      description: "Experienced wilderness guide and pathfinder"
+
+    - name: "Guide (City)"
+      cost: "1 gp per day"
+      quality: skilled
+      description: "Local expert familiar with city layout"
+
+    - name: "Guide (Dungeon)"
+      cost: "5 gp per day"
+      quality: skilled
+      description: "Veteran dungeon explorer (if you can find one)"
+
+# =============================================================================
+# SPELLCASTING SERVICES
+# Professional spellcasters for hire
+# Pricing based on spell level and availability
+# =============================================================================
+spellcastingServices:
+  cantrips:
+    - name: "Cantrip Casting"
+      cost: "30 gp"
+      quality: common
+      description: "Any cantrip - prestidigitation, mending, etc."
+      availability: "Common in most settlements"
+
+  level1:
+    - name: "1st-Level Spell"
+      cost: "50 gp"
+      quality: common
+      description: "Cure wounds, identify, detect magic, etc."
+      availability: "Common in most settlements"
+
+  level2:
+    - name: "2nd-Level Spell"
+      cost: "200 gp"
+      quality: uncommon
+      description: "Lesser restoration, augury, locate object, etc."
+      availability: "Available in towns and cities"
+
+  level3:
+    - name: "3rd-Level Spell"
+      cost: "300 gp"
+      quality: uncommon
+      description: "Remove curse, dispel magic, revivify, etc."
+      availability: "Available in larger settlements"
+
+  level4:
+    - name: "4th-Level Spell"
+      cost: "500 gp"
+      quality: rare
+      description: "Divination, greater invisibility, etc."
+      availability: "Rare - major cities only"
+
+  level5:
+    - name: "5th-Level Spell"
+      cost: "1000 gp"
+      quality: rare
+      description: "Raise dead, scrying, greater restoration, etc."
+      availability: "Rare - major cities only"
+
+  level6:
+    - name: "6th-Level Spell"
+      cost: "1500 gp"
+      quality: "very-rare"
+      description: "True seeing, heal, heroes' feast, etc."
+      availability: "Very rare - capitals and major temples"
+
+  level7:
+    - name: "7th-Level Spell"
+      cost: "5000 gp"
+      quality: "very-rare"
+      description: "Resurrection, plane shift, etc."
+      availability: "Very rare - only in major centers of power"
+
+  level8:
+    - name: "8th-Level Spell"
+      cost: "10000 gp"
+      quality: legendary
+      description: "Antimagic field, mind blank, etc."
+      availability: "Legendary - extremely difficult to find"
+
+  level9:
+    - name: "9th-Level Spell"
+      cost: "50000 gp"
+      quality: legendary
+      description: "True resurrection, wish, gate, etc."
+      availability: "Legendary - nearly impossible to find"
+
+  notes:
+    - "Prices assume base casting only"
+    - "Add cost of expensive material components if spell requires them"
+    - "Higher level spells increasingly rare - DM determines availability"
+    - "Some settlements may have no spellcasters available"
+
+# =============================================================================
+# HIRELING SERVICES
+# Professional services and skilled labor
+# =============================================================================
+hirelingServices:
+  skilled:
+    - name: "Skilled Hireling"
+      cost: "2 gp per day"
+      quality: skilled
+      description: "Artisan, scribe, mercenary, or anyone with proficiency"
+
+    - name: "Untrained Hireling"
+      cost: "2 sp per day"
+      quality: common
+      description: "Laborer, porter, or general worker"
+
+    - name: "Messenger"
+      cost: "2 cp per mile"
+      quality: common
+      description: "Delivers message or small package"
+
+# =============================================================================
+# MISCELLANEOUS SERVICES
+# Other common services adventurers might need
+# =============================================================================
+miscServices:
+  - name: "Bath"
+    cost: "2 cp"
+    quality: common
+    description: "Hot bath at bathhouse or inn"
+
+  - name: "Healer's Services"
+    cost: "1 gp"
+    quality: skilled
+    description: "Non-magical medical treatment and care"
+
+  - name: "Lawyer/Advocate"
+    cost: "5 gp per day"
+    quality: skilled
+    description: "Legal representation and counsel"
+
+  - name: "Sage Consultation"
+    cost: "50 gp per day"
+    quality: skilled
+    description: "Expert knowledge on obscure topics"
+
+# =============================================================================
+# SERVICE GENERATION BY WEALTH LEVEL
+# Controls which services appear in shops of different wealth tiers
+# =============================================================================
+serviceAvailability:
+  poor:
+    inn: ["Squalid Lodging", "Poor Lodging", "Squalid Meal", "Poor Meal", "Ale (Mug)", "Wine (Common, Pitcher)"]
+    travel: ["Coach Ride (Within City)", "Road/Gate Toll"]
+    spellcasting: ["Cantrip Casting", "1st-Level Spell"]
+    hireling: ["Untrained Hireling", "Messenger"]
+
+  modest:
+    inn: ["Poor Lodging", "Modest Lodging", "Poor Meal", "Modest Meal", "Ale (Mug)", "Ale (Gallon)", "Wine (Common, Pitcher)", "Horse Stabling"]
+    travel: ["Coach Ride (Between Towns)", "Coach Ride (Within City)", "Road/Gate Toll", "Ship Passage", "Guide (City)"]
+    spellcasting: ["Cantrip Casting", "1st-Level Spell", "2nd-Level Spell"]
+    hireling: ["Skilled Hireling", "Untrained Hireling", "Messenger"]
+
+  comfortable:
+    inn: ["Modest Lodging", "Comfortable Lodging", "Modest Meal", "Comfortable Meal", "Ale (Gallon)", "Wine (Common, Pitcher)", "Wine (Fine, Bottle)", "Horse Stabling"]
+    travel: ["Coach Ride (Between Towns)", "Coach Ride (Within City)", "Ship Passage", "Guide (Wilderness)", "Guide (City)"]
+    spellcasting: ["Cantrip Casting", "1st-Level Spell", "2nd-Level Spell", "3rd-Level Spell"]
+    hireling: ["Skilled Hireling", "Untrained Hireling", "Messenger", "Healer's Services"]
+
+  wealthy:
+    inn: ["Comfortable Lodging", "Wealthy Lodging", "Comfortable Meal", "Wealthy Meal", "Wine (Fine, Bottle)", "Horse Stabling"]
+    travel: ["Coach Ride (Between Towns)", "Ship Passage", "Guide (Wilderness)", "Guide (City)", "Guide (Dungeon)"]
+    spellcasting: ["1st-Level Spell", "2nd-Level Spell", "3rd-Level Spell", "4th-Level Spell", "5th-Level Spell"]
+    hireling: ["Skilled Hireling", "Messenger", "Healer's Services", "Lawyer/Advocate", "Sage Consultation"]
+
+  aristocratic:
+    inn: ["Wealthy Lodging", "Aristocratic Suite", "Wealthy Meal", "Aristocratic Banquet", "Wine (Fine, Bottle)", "Horse Stabling"]
+    travel: ["Ship Passage", "Guide (Wilderness)", "Guide (City)", "Guide (Dungeon)"]
+    spellcasting: ["2nd-Level Spell", "3rd-Level Spell", "4th-Level Spell", "5th-Level Spell", "6th-Level Spell", "7th-Level Spell"]
+    hireling: ["Skilled Hireling", "Healer's Services", "Lawyer/Advocate", "Sage Consultation"]

@@ -1,0 +1,66 @@
+# Currency System Configuration
+# Defines different currency systems that can be used across the Quartermaster plugin
+# Each system specifies denominations, weight, formatting, and conversion rules
+
+defaultSystem: dnd5e
+
+systems:
+  dnd5e:
+    name: "D&D 5e Standard"
+    description: "Standard D&D 5e currency with platinum, gold, silver, and copper pieces"
+    formatting:
+      separator: ", "
+      showZero: false
+      symbolPosition: "suffix"
+    weightSettings:
+      strategy: "constant"
+      constantValue: 0.02
+      unit: "lbs"
+      description: "50 coins per pound (standard D&D 5e encumbrance rule)"
+    denominations:
+      - id: platinum
+        name: "Platinum"
+        abbreviation: pp
+        conversionRate: 1000
+        order: 0
+        symbol: "pp"
+      - id: gold
+        name: "Gold"
+        abbreviation: gp
+        conversionRate: 100
+        order: 1
+        symbol: "gp"
+      - id: silver
+        name: "Silver"
+        abbreviation: sp
+        conversionRate: 10
+        order: 2
+        symbol: "sp"
+      - id: copper
+        name: "Copper"
+        abbreviation: cp
+        conversionRate: 1
+        order: 3
+        symbol: "cp"
+    baseUnit: "cp"
+
+  star_wars:
+    name: "Star Wars Credits"
+    description: "Single digital currency system for sci-fi campaigns. Credits are weightless digital currency."
+    formatting:
+      separator: " "
+      showZero: true
+      symbolPosition: "prefix"
+    weightSettings:
+      strategy: "constant"
+      constantValue: 0
+      unit: "lbs"
+      description: "Digital currency has no physical weight"
+    denominations:
+      - id: credit
+        name: "Credit"
+        abbreviation: cr
+        conversionRate: 1
+        order: 0
+        symbol: "cr"
+    baseUnit: "cr"

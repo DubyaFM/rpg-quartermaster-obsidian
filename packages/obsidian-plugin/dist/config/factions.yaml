@@ -1,0 +1,56 @@
+# Faction Affiliation Configuration
+# Preset factions for D&D 5e campaigns
+# Can be customized to match your campaign setting
+
+factions:
+  - name: "Harpers"
+    description: "Secret network of spellcasters and spies working for good"
+    alignment: "Good"
+
+  - name: "Zhentarim"
+    description: "Mercenary network seeking power and influence"
+    alignment: "Neutral Evil"
+
+  - name: "Emerald Enclave"
+    description: "Wilderness protectors preserving natural order"
+    alignment: "Neutral"
+
+  - name: "Lords' Alliance"
+    description: "Coalition of rulers from cities across Faerûn"
+    alignment: "Lawful Neutral"
+
+  - name: "Order of the Gauntlet"
+    description: "Faith-based organization dedicated to smiting evil"
+    alignment: "Lawful Good"
+
+  - name: "The Cult of the Dragon"
+    description: "Evil organization seeking to free Tiamat"
+    alignment: "Evil"
+
+  - name: "The Red Wizards of Thay"
+    description: "Powerful necromancers and wizards from Thay"
+    alignment: "Lawful Evil"
+
+  - name: "The Bregan D'aerthe"
+    description: "Drow mercenary company"
+    alignment: "Neutral"
+
+  - name: "City Watch"
+    description: "Local law enforcement organization"
+    alignment: "Lawful Neutral"
+
+  - name: "Thieves' Guild"
+    description: "Underground criminal organization"
+    alignment: "Neutral Evil"
+
+  - name: "Merchant's Guild"
+    description: "Organization of traders and merchants"
+    alignment: "Neutral"
+
+  - name: "Adventurer's Guild"
+    description: "Organization supporting adventurers and quests"
+    alignment: "Neutral Good"
+
+  - name: "None"
+    description: "Independent, no faction affiliation"
+    alignment: "Any"

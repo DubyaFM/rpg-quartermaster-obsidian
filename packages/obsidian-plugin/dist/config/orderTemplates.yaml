@@ -1,0 +1,519 @@
+# Order Templates for Stronghold System
+# Generic fantasy stronghold orders
+# Orders can be executed at facilities or at the stronghold level
+
+orders:
+  # ========================================
+  # Workshop Orders
+  # ========================================
+
+  - id: craft_mundane_item
+    name: Craft Mundane Item
+    description: Commission the crafting of a mundane item such as armor, weapons, or tools.
+    orderType: facility
+    associatedFacilityIds:
+      - workshop
+      - master_workshop
+    timeRequired: 7
+    goldCost:
+      type: variable
+      prompt: Enter the cost of materials (typically 50% of item value)
+    results:
+      - id: item_result
+        type: item
+        config:
+          itemPrompt: Enter the name of the crafted item to add to inventory
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: repair_equipment
+    name: Repair Equipment
+    description: Restore damaged armor, weapons, or other equipment to working condition.
+    orderType: facility
+    associatedFacilityIds:
+      - workshop
+      - master_workshop
+    timeRequired: 3
+    goldCost:
+      type: variable
+      prompt: Enter repair cost (typically 25% of item value)
+    results:
+      - id: repair_complete
+        type: item
+        config:
+          itemPrompt: Enter the name of the repaired item
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: craft_masterwork_item
+    name: Craft Masterwork Item
+    description: Create a masterwork quality mundane item with superior craftsmanship.
+    orderType: facility
+    associatedFacilityIds:
+      - master_workshop
+    timeRequired: 14
+    goldCost:
+      type: variable
+      prompt: Enter the cost of materials (typically 75% of item value)
+    results:
+      - id: masterwork_item
+        type: item
+        config:
+          itemPrompt: Enter the name of the masterwork item to add to inventory
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Barracks Orders
+  # ========================================
+
+  - id: recruit_defenders
+    name: Recruit Defenders
+    description: Hire and train new guards to protect the stronghold.
+    orderType: facility
+    associatedFacilityIds:
+      - barracks
+      - fortress_barracks
+    timeRequired: 7
+    goldCost:
+      type: constant
+      amount: 100
+    results:
+      - id: new_defenders
+        type: defender
+        config:
+          defenderCount: 5
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: train_defenders
+    name: Train Defenders
+    description: Provide advanced combat training to existing defenders.
+    orderType: facility
+    associatedFacilityIds:
+      - barracks
+      - fortress_barracks
+    timeRequired: 14
+    goldCost:
+      type: constant
+      amount: 50
+    results:
+      - id: training_buff
+        type: buff
+        config:
+          buffId: defender_training
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: recruit_elite_defender
+    name: Recruit Elite Defender
+    description: Hire a skilled warrior or specialist to serve as a named defender.
+    orderType: facility
+    associatedFacilityIds:
+      - fortress_barracks
+    timeRequired: 21
+    goldCost:
+      type: constant
+      amount: 500
+    results:
+      - id: elite_defender_event
+        type: event
+        config:
+          eventTableId: elite_defender_table
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Library Orders
+  # ========================================
+
+  - id: research_lore
+    name: Research Lore
+    description: Investigate a specific topic using the library's resources.
+    orderType: facility
+    associatedFacilityIds:
+      - library
+      - grand_library
+    timeRequired: 7
+    goldCost:
+      type: none
+    results:
+      - id: lore_discovered
+        type: event
+        config:
+          eventTableId: lore_discovery_table
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: copy_scroll
+    name: Copy Scroll
+    description: Create a duplicate of a spell scroll from the library's collection.
+    orderType: facility
+    associatedFacilityIds:
+      - library
+      - grand_library
+    timeRequired: 3
+    goldCost:
+      type: variable
+      prompt: Enter scroll materials cost (varies by spell level)
+    results:
+      - id: copied_scroll
+        type: item
+        config:
+          itemPrompt: Enter the name of the spell scroll to copy
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: research_advanced_topic
+    name: Research Advanced Topic
+    description: Investigate complex or obscure topics requiring rare sources.
+    orderType: facility
+    associatedFacilityIds:
+      - grand_library
+    timeRequired: 21
+    goldCost:
+      type: constant
+      amount: 200
+    results:
+      - id: advanced_lore
+        type: event
+        config:
+          eventTableId: advanced_lore_table
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Storehouse Orders
+  # ========================================
+
+  - id: organize_inventory
+    name: Organize Inventory
+    description: Catalog and organize the stronghold's stored items for easier access.
+    orderType: facility
+    associatedFacilityIds:
+      - storehouse
+    timeRequired: 7
+    goldCost:
+      type: none
+    results:
+      - id: organization_buff
+        type: buff
+        config:
+          buffId: organized_storage
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Garden Orders
+  # ========================================
+
+  - id: harvest_herbs
+    name: Harvest Herbs
+    description: Collect medicinal and culinary herbs from the garden.
+    orderType: facility
+    associatedFacilityIds:
+      - garden
+    timeRequired: 7
+    goldCost:
+      type: none
+    results:
+      - id: herb_collection
+        type: gold
+        config:
+          goldAmount: 50
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: cultivate_rare_plant
+    name: Cultivate Rare Plant
+    description: Attempt to grow an exotic or magical plant in the garden.
+    orderType: facility
+    associatedFacilityIds:
+      - garden
+    timeRequired: 28
+    goldCost:
+      type: variable
+      prompt: Enter cost of seeds or cuttings
+    results:
+      - id: rare_plant_event
+        type: event
+        config:
+          eventTableId: rare_plant_table
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Arcane Study Orders
+  # ========================================
+
+  - id: scribe_spell_scroll
+    name: Scribe Spell Scroll
+    description: Create a spell scroll using arcane methods.
+    orderType: facility
+    associatedFacilityIds:
+      - arcane_study
+      - archmage_tower
+    timeRequired: 7
+    goldCost:
+      type: variable
+      prompt: Enter materials cost (varies by spell level - see DMG)
+    results:
+      - id: spell_scroll
+        type: item
+        config:
+          itemPrompt: Enter the spell scroll name (e.g., "Scroll of Fireball")
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: research_spell
+    name: Research Spell
+    description: Study magical theory to potentially learn a new spell.
+    orderType: facility
+    associatedFacilityIds:
+      - arcane_study
+      - archmage_tower
+    timeRequired: 14
+    goldCost:
+      type: constant
+      amount: 100
+    results:
+      - id: spell_research
+        type: event
+        config:
+          eventTableId: spell_research_table
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: enchant_minor_item
+    name: Enchant Minor Item
+    description: Imbue a mundane item with minor magical properties.
+    orderType: facility
+    associatedFacilityIds:
+      - arcane_study
+      - archmage_tower
+    timeRequired: 21
+    goldCost:
+      type: variable
+      prompt: Enter enchanting materials cost (typically 500-2000 gp)
+    results:
+      - id: enchanted_item
+        type: item
+        config:
+          itemPrompt: Enter the name of the enchanted item
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: enchant_major_item
+    name: Enchant Major Item
+    description: Create a powerful magical item through extended rituals.
+    orderType: facility
+    associatedFacilityIds:
+      - archmage_tower
+    timeRequired: 56
+    goldCost:
+      type: variable
+      prompt: Enter enchanting materials cost (typically 5000+ gp)
+    results:
+      - id: major_enchanted_item
+        type: item
+        config:
+          itemPrompt: Enter the name of the major magical item
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: create_teleportation_circle
+    name: Create Teleportation Circle
+    description: Establish a permanent teleportation circle linked to another location.
+    orderType: facility
+    associatedFacilityIds:
+      - archmage_tower
+    timeRequired: 365
+    goldCost:
+      type: constant
+      amount: 18250
+    results:
+      - id: teleportation_circle_created
+        type: buff
+        config:
+          buffId: teleportation_circle
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Sanctum Orders
+  # ========================================
+
+  - id: bless_defenders
+    name: Bless Defenders
+    description: Perform sacred rites to grant divine protection to the stronghold's defenders.
+    orderType: facility
+    associatedFacilityIds:
+      - sanctum
+    timeRequired: 3
+    goldCost:
+      type: constant
+      amount: 50
+    results:
+      - id: blessing_buff
+        type: buff
+        config:
+          buffId: divine_blessing
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: brew_holy_water
+    name: Brew Holy Water
+    description: Create vials of blessed water for use against undead and fiends.
+    orderType: facility
+    associatedFacilityIds:
+      - sanctum
+    timeRequired: 7
+    goldCost:
+      type: constant
+      amount: 100
+    results:
+      - id: holy_water_batch
+        type: item
+        config:
+          itemPrompt: Holy Water (5 vials)
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: seek_divine_guidance
+    name: Seek Divine Guidance
+    description: Commune with divine forces to receive prophetic visions or warnings.
+    orderType: facility
+    associatedFacilityIds:
+      - sanctum
+    timeRequired: 7
+    goldCost:
+      type: constant
+      amount: 250
+    results:
+      - id: divine_guidance_event
+        type: event
+        config:
+          eventTableId: divine_guidance_table
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Alchemical Lab Orders
+  # ========================================
+
+  - id: brew_potion
+    name: Brew Potion
+    description: Create a magical potion using alchemical methods.
+    orderType: facility
+    associatedFacilityIds:
+      - alchemical_lab
+    timeRequired: 7
+    goldCost:
+      type: variable
+      prompt: Enter potion ingredients cost (varies by rarity)
+    results:
+      - id: brewed_potion
+        type: item
+        config:
+          itemPrompt: Enter the potion name (e.g., "Potion of Healing")
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: craft_alchemical_item
+    name: Craft Alchemical Item
+    description: Create alchemical items like acid, alchemist's fire, or antitoxin.
+    orderType: facility
+    associatedFacilityIds:
+      - alchemical_lab
+    timeRequired: 3
+    goldCost:
+      type: variable
+      prompt: Enter materials cost
+    results:
+      - id: alchemical_item
+        type: item
+        config:
+          itemPrompt: Enter the alchemical item name
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Stronghold-Level Orders (No Facility Required)
+  # ========================================
+
+  - id: fortify_defenses
+    name: Fortify Defenses
+    description: Improve the stronghold's walls, gates, and defensive structures.
+    orderType: stronghold
+    timeRequired: 21
+    goldCost:
+      type: constant
+      amount: 1000
+    results:
+      - id: fortification_buff
+        type: buff
+        config:
+          buffId: fortified_defenses
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: host_festival
+    name: Host Festival
+    description: Throw a grand celebration to boost morale and attract visitors.
+    orderType: stronghold
+    timeRequired: 7
+    goldCost:
+      type: constant
+      amount: 500
+    results:
+      - id: festival_morale
+        type: morale
+        config:
+          moraleChange: 5
+      - id: festival_gold
+        type: gold
+        config:
+          goldAmount: 300
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: send_expedition
+    name: Send Expedition
+    description: Dispatch defenders and hirelings on a quest or resource-gathering mission.
+    orderType: stronghold
+    timeRequired: 14
+    goldCost:
+      type: variable
+      prompt: Enter expedition supplies cost
+    results:
+      - id: expedition_result
+        type: event
+        config:
+          eventTableId: expedition_table
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'

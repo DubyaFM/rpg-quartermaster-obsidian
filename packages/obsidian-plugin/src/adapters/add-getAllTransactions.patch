@@ -1,0 +1,10 @@
+612a613,621
+> 
+> 	/**
+> 	 * Get all transaction records in the campaign
+> 	 * Required by PorterService for campaign export
+> 	 */
+> 	async getAllTransactions(): Promise<Transaction[]> {
+> 		return await this.transactionHandler.getAllTransactions();
+> 	}
+> 

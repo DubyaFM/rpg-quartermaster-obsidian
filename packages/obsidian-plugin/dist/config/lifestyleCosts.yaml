@@ -1,0 +1,83 @@
+# D&D 5e Lifestyle Costs and Rations
+# Based on Player's Handbook p. 157-158
+#
+# Lifestyle expenses provide for your adventuring life when you're not actively adventuring.
+# Rations are dry foods suitable for extended travel.
+#
+# Users can customize these costs for their campaigns.
+
+# Lifestyle Levels (per day)
+# Reference: PHB p. 157
+lifestyleLevels:
+  wretched:
+    name: Wretched
+    costPerDay:
+      copper: 0
+      silver: 0
+      gold: 0
+      platinum: 0
+    description: "You live in inhumane conditions. With no place to call home, you shelter wherever you can, sneaking into barns, huddling in old crates, and relying on the good graces of people better off than you."
+
+  squalid:
+    name: Squalid
+    costPerDay:
+      copper: 0
+      silver: 1
+      gold: 0
+      platinum: 0
+    description: "You live in a leaky stable, a mud-floored hut just outside town, or a vermin-infested boarding house in the slums. You have shelter from the elements, but you live in a desperate and often violent environment."
+
+  poor:
+    name: Poor
+    costPerDay:
+      copper: 0
+      silver: 2
+      gold: 0
+      platinum: 0
+    description: "A poor lifestyle means going without the comforts available in a stable community. Simple food and lodgings, threadbare clothing, and unpredictable conditions result in a sufficient, though probably unpleasant, experience."
+
+  modest:
+    name: Modest
+    costPerDay:
+      copper: 0
+      silver: 0
+      gold: 1
+      platinum: 0
+    description: "A modest lifestyle keeps you out of the slums and ensures that you can maintain your equipment. You live in an older part of town, renting a room in a boarding house, inn, or temple."
+
+  comfortable:
+    name: Comfortable
+    costPerDay:
+      copper: 0
+      silver: 0
+      gold: 2
+      platinum: 0
+    description: "Choosing a comfortable lifestyle means that you can afford nicer clothing and can easily maintain your equipment. You live in a small cottage in a middle-class neighborhood or in a private room at a fine inn."
+
+  wealthy:
+    name: Wealthy
+    costPerDay:
+      copper: 0
+      silver: 0
+      gold: 4
+      platinum: 0
+    description: "Choosing a wealthy lifestyle means living a life of luxury, though you might not have achieved the social status associated with the old money of nobility or royalty. You live a lifestyle comparable to that of a highly successful merchant, a favored servant of the royalty, or the owner of a few small businesses."
+
+  aristocratic:
+    name: Aristocratic
+    costPerDay:
+      copper: 0
+      silver: 0
+      gold: 10
+      platinum: 0
+    description: "You live a life of plenty and comfort. You move in circles populated by the most powerful people in the community. You have excellent lodgings, perhaps a townhouse in the nicest part of town or rooms in the finest inn."
+
+# Rations (per day)
+# Reference: PHB p. 158
+rations:
+  costPerDay:
+    copper: 0
+    silver: 5
+    gold: 0
+    platinum: 0
+  description: "Rations consist of dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts."

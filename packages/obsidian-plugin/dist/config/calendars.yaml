@@ -1,0 +1,145 @@
+# Calendar Definitions
+# Defines available calendar systems for time tracking
+
+calendars:
+  - id: harptos
+    name: Calendar of Harptos
+    description: The standard calendar of Faerûn (Forgotten Realms)
+    weekdays:
+      - 1st Day
+      - 2nd Day
+      - 3rd Day
+      - 4th Day
+      - 5th Day
+      - 6th Day
+      - 7th Day
+      - 8th Day
+      - 9th Day
+      - 10th Day
+    months:
+      - name: Hammer
+        days: 30
+        order: 0
+      - name: Alturiak
+        days: 30
+        order: 1
+      - name: Ches
+        days: 30
+        order: 2
+      - name: Tarsakh
+        days: 30
+        order: 3
+      - name: Mirtul
+        days: 30
+        order: 4
+      - name: Kythorn
+        days: 30
+        order: 5
+      - name: Flamerule
+        days: 30
+        order: 6
+      - name: Eleasis
+        days: 30
+        order: 7
+      - name: Eleint
+        days: 30
+        order: 8
+      - name: Marpenoth
+        days: 30
+        order: 9
+      - name: Uktar
+        days: 30
+        order: 10
+      - name: Nightal
+        days: 30
+        order: 11
+    holidays:
+      - name: Midwinter
+        description: Festival day between Hammer and Alturiak
+        dayOfYear: 30
+        notifyOnArrival: true
+      - name: Greengrass
+        description: Festival day between Tarsakh and Mirtul
+        dayOfYear: 120
+        notifyOnArrival: true
+      - name: Midsummer
+        description: Festival day between Flamerule and Eleasis
+        dayOfYear: 210
+        notifyOnArrival: true
+      - name: Highharvestide
+        description: Festival day between Eleint and Marpenoth
+        dayOfYear: 270
+        notifyOnArrival: true
+      - name: The Feast of the Moon
+        description: Festival day between Uktar and Nightal
+        dayOfYear: 360
+        notifyOnArrival: true
+    startingYear: 1492
+    yearSuffix: DR
+
+  - id: gregorian
+    name: Gregorian Calendar
+    description: The standard real-world calendar
+    weekdays:
+      - Sunday
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+    months:
+      - name: January
+        days: 31
+        order: 0
+      - name: February
+        days: 28
+        order: 1
+      - name: March
+        days: 31
+        order: 2
+      - name: April
+        days: 30
+        order: 3
+      - name: May
+        days: 31
+        order: 4
+      - name: June
+        days: 30
+        order: 5
+      - name: July
+        days: 31
+        order: 6
+      - name: August
+        days: 31
+        order: 7
+      - name: September
+        days: 30
+        order: 8
+      - name: October
+        days: 31
+        order: 9
+      - name: November
+        days: 30
+        order: 10
+      - name: December
+        days: 31
+        order: 11
+    holidays:
+      - name: New Year's Day
+        description: First day of the year
+        month: 0
+        day: 1
+        notifyOnArrival: true
+      - name: Halloween
+        description: Spooky season
+        month: 9
+        day: 31
+        notifyOnArrival: true
+      - name: Christmas
+        description: Christmas Day
+        month: 11
+        day: 25
+        notifyOnArrival: true
+    startingYear: 2024
+    yearSuffix: AD

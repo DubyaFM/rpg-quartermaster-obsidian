@@ -1,0 +1,168 @@
+// Add these methods to TransactionLogHandler class
+
+	/**
+	 * Get all transactions from the transaction log
+	 * Required by PorterService for campaign export
+	 */
+	async getAllTransactions(): Promise<Transaction[]> {
+		try {
+			const file = this.app.vault.getAbstractFileByPath(this.logFilePath);
+			if (!file) {
+				// Log file doesn't exist yet - return empty array
+				return [];
+			}
+
+			const content = await this.app.vault.read(file as TFile);
+			return this.parseTransactionLog(content);
+		} catch (error) {
+			console.warn(`[TransactionLogHandler] Error reading transaction log: ${error}`);
+			return [];
+		}
+	}
+
+	/**
+	 * Parse transaction log markdown content into Transaction objects
+	 */
+	private parseTransactionLog(content: string): Transaction[] {
+		const transactions: Transaction[] = [];
+
+		// Split content by transaction entries (separated by ## headers)
+		const entries = content.split(/^## /m).filter(entry => entry.trim().length > 0);
+
+		for (const entry of entries) {
+			try {
+				const transaction = this.parseTransactionEntry(entry);
+				if (transaction) {
+					transactions.push(transaction);
+				}
+			} catch (error) {
+				// Log parse error but continue processing other transactions
+				console.warn(`[TransactionLogHandler] Failed to parse transaction entry: ${error}`);
+			}
+		}
+
+		return transactions;
+	}
+
+	/**
+	 * Parse a single transaction entry from the log
+	 */
+	private parseTransactionEntry(entry: string): Transaction | null {
+		// Skip headers like "Transaction Log"
+		if (!entry.includes('**Total Cost:**')) {
+			return null;
+		}
+
+		// Extract transaction metadata from HTML comment
+		const metadataMatch = entry.match(/<!--\s*(.*?)\s*-->/);
+		let id = '';
+		let shopId: string | undefined;
+		let npcId: string | undefined;
+
+		if (metadataMatch) {
+			const metadata = metadataMatch[1];
+			const txnMatch = metadata.match(/txn:\s*(\S+)/);
+			const shopMatch = metadata.match(/shop:\s*(\S+)/);
+			const npcMatch = metadata.match(/npc:\s*(\S+)/);
+
+			if (txnMatch) id = txnMatch[1];
+			if (shopMatch) shopId = shopMatch[1];
+			if (npcMatch) npcId = npcMatch[1];
+		}
+
+		// Extract header info (date and source)
+		const headerMatch = entry.match(/^(.*?)\s*-\s*(.+?)$/m);
+		if (!headerMatch) return null;
+
+		const dateStr = headerMatch[1].trim();
+		const source = headerMatch[2].trim();
+
+		// Parse timestamp from date
+		let timestamp: number;
+		const dayMatch = dateStr.match(/Day (\d+)/);
+		if (dayMatch) {
+			// Use calendar day as timestamp (in days since start)
+			timestamp = parseInt(dayMatch[1]) * 86400000; // Convert days to milliseconds
+		} else {
+			// Try to parse as ISO date
+			const parsedDate = new Date(dateStr);
+			timestamp = parsedDate.getTime() || Date.now();
+		}
+
+		// Extract total cost
+		const costMatch = entry.match(/\*\*Total Cost:\*\*\s*(.+?)$/m);
+		if (!costMatch) return null;
+		const cost = costMatch[1].trim();
+
+		// Extract transaction type
+		const typeMatch = entry.match(/\*\*Type:\*\*\s*(\w+)/);
+		let type: Transaction['type'] = 'purchase'; // Default
+		if (typeMatch) {
+			const typeStr = typeMatch[1].toLowerCase();
+			if (typeStr === 'sale' || typeStr === 'purchase' || typeStr === 'trade' ||
+			    typeStr === 'loot' || typeStr === 'reward' || typeStr === 'adjustment') {
+				type = typeStr as Transaction['type'];
+			}
+		}
+
+		// Extract calendar day
+		let calendarDay: number | undefined;
+		const calendarDayMatch = entry.match(/\*\*Calendar Day:\*\*\s*(\d+)/);
+		if (calendarDayMatch) {
+			calendarDay = parseInt(calendarDayMatch[1]);
+		}
+
+		// Extract formatted date
+		let formattedDate: string | undefined;
+		const formattedDateMatch = dateStr.match(/\((.*?)\)/);
+		if (formattedDateMatch) {
+			formattedDate = formattedDateMatch[1];
+		}
+
+		// Extract items
+		const items: PurchasedItem[] = [];
+		const itemsSection = entry.match(/\*\*Items:\*\*\n((?:- .*\n?)+)/);
+		if (itemsSection) {
+			const itemLines = itemsSection[1].split('\n').filter(line => line.trim().startsWith('-'));
+			for (const line of itemLines) {
+				// Parse: "- Bought/Sold: Item Name (Qty x) - Cost"
+				const itemMatch = line.match(/^- (Bought|Sold):\s*(.+?)\s*\((\d+)x\)\s*-\s*(.+?)$/);
+				if (itemMatch) {
+					const isSale = itemMatch[1] === 'Sold';
+					const name = itemMatch[2].trim();
+					const quantity = parseInt(itemMatch[3]);
+					const totalCost = itemMatch[4].trim();
+
+					items.push({
+						name,
+						quantity,
+						cost: totalCost, // Individual cost (not parsed from log)
+						totalCost,
+						isSale
+					});
+				}
+			}
+		}
+
+		// Build transaction context
+		const context: TransactionContext | undefined = (id || shopId || npcId || calendarDay !== undefined || formattedDate || type !== 'purchase')
+			? {
+					id,
+					shopId,
+					npcId,
+					calendarDay,
+					formattedDate,
+					transactionType: type === 'sale' ? 'sale' : 'purchase'
+			  }
+			: undefined;
+
+		return {
+			id: id || `txn-${timestamp}`, // Fallback ID for old transactions
+			timestamp,
+			type,
+			source,
+			items,
+			cost,
+			context
+		};
+	}

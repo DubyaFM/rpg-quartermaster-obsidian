@@ -1,0 +1,223 @@
+# UI Strings and Help Text
+# All user-facing text for labels, descriptions, and help content
+
+# =============================================================================
+# SHOP TYPES
+# Display labels and descriptions for different shop types
+# =============================================================================
+shopTypes:
+  blacksmith:
+    label: "Blacksmith"
+    description: "Weapons and armor smith"
+
+  alchemist:
+    label: "Alchemist"
+    description: "Potions and elixirs"
+
+  general:
+    label: "General Store"
+    description: "All-purpose merchant"
+
+  magic:
+    label: "Magic Shop"
+    description: "Arcane goods and artifacts"
+
+  tavern:
+    label: "Tavern"
+    description: "Food, drink, and lodging"
+
+# =============================================================================
+# WEALTH LEVELS
+# Display labels and guide text for shop wealth tiers
+# =============================================================================
+wealthLevels:
+  poor:
+    label: "Poor - Basic goods only"
+    guide: "8-15 common items, rare magic items almost never available"
+
+  modest:
+    label: "Modest - Some variety"
+    guide: "10-20 common items, occasional uncommon item"
+
+  comfortable:
+    label: "Comfortable - Good selection"
+    guide: "12-25 common items, several uncommon, rare items possible"
+
+  wealthy:
+    label: "Wealthy - Quality goods"
+    guide: "15-30 common items, many uncommon, rare and very rare items"
+
+  aristocratic:
+    label: "Aristocratic - Rare items available"
+    guide: "18-35 common items, extensive variety including legendary items"
+
+# =============================================================================
+# HELP TEXT
+# Examples and explanatory text for settings and features
+# =============================================================================
+helpText:
+  itemDetection:
+    title: "Detection Examples:"
+    examples:
+      - 'Parameter: "type" = "equipment" (for custom item organization)'
+      - 'Parameter: "category" = "weapon" (for specific item types)'
+      - 'Tag: "item/" matches "item/weapon/sword" or "item/armor/chain"'
+      - 'Tag: "#item" matches exact tag "#item"'
+
+  currencyFormat:
+    title: "Currency Format Examples:"
+    examples:
+      - '"25 gp" or "25 gold" → 25 gold pieces'
+      - '"1 pp 5 gp 3 sp 2 cp" → mixed currencies'
+      - '"50" → 50 gold pieces (default)'
+      - '"10sp" or "10 silver" → 10 silver pieces'
+    note: "Items without valid cost values are automatically excluded"
+
+# =============================================================================
+# BUTTON TEXT
+# Common button labels used throughout the UI
+# =============================================================================
+buttons:
+  generateNewShop: "Generate New Shop"
+  visitExistingShop: "Visit Existing Shop"
+  logQuickTransaction: "Log Quick Transaction"
+  generateShopkeep: "Generate Shopkeep"
+  rerollShopkeep: "Re-roll Shopkeep"
+  generateShop: "Generate Shop"
+  addToCart: "Add to Cart"
+  groupPurchase: "Group Purchase"
+  bargain: "Bargain"
+  reroll: "Re-roll"
+  completePurchase: "Complete Purchase"
+  saveShopToNote: "Save Shop to Note"
+  addItem: "Add Item"
+  remove: "Remove"
+  cancel: "Cancel"
+  addMember: "Add Member"
+  updateMember: "Update Member"
+  edit: "Edit"
+  refreshSources: "Refresh Sources"
+  checkAll: "Check All"
+  uncheckAll: "Uncheck All"
+
+# =============================================================================
+# PLACEHOLDERS
+# Placeholder text for input fields
+# =============================================================================
+placeholders:
+  shopName: "The Rusty Anvil"
+  shopLocation: "Market District, The Docks, etc."
+  itemSearch: "Start typing item name..."
+  quantity: "1"
+  price: "0"
+  playerName: "Gandalf"
+  characterFile: "Characters/Gandalf.md"
+  partyInventoryFile: "Party-Inventory.md"
+  transactionLogFile: "Transaction-Log.md"
+  itemsFolder: "Items/"
+  shopsFolder: "Shops/"
+  itemTag: "item/"
+  itemParameter: "type"
+  itemParameterValue: "item"
+  defaultCurrency: "gold"
+  searchItems: "Type to search items..."
+
+# =============================================================================
+# SECTION HEADERS
+# Headers for different UI sections
+# =============================================================================
+headers:
+  rpgShopkeep: "RPG Shopkeep"
+  generateNewShop: "Generate New Shop"
+  visitExistingShop: "Visit Existing Shop"
+  quickTransaction: "Quick Transaction"
+  shopkeep: "Shopkeep"
+  wealthLevelGuide: "Wealth Level Guide:"
+  inventory: "Inventory"
+  shoppingCart: "Shopping Cart"
+  addItemToShop: "Add Item to Shop"
+  searchItems: "Search Items:"
+  settings: "RPG Shopkeep Settings"
+  partyManagement: "Party Management"
+  itemDetection: "Item Detection"
+  sourceFiltering: "Source Filtering"
+  partyMembers: "Party Members"
+
+# =============================================================================
+# DESCRIPTIONS
+# Descriptive text for settings and features
+# =============================================================================
+descriptions:
+  shopName: "Enter a name for this shop"
+  shopType: "Select the type of shop to generate"
+  wealthLevel: "Determines the shop's inventory quality and variety"
+  shopLocation: "Optional location for this shop"
+  itemSearch: "Search for an item"
+  player: "Which player is making this purchase?"
+  playerName: "Name of the party member"
+  linkedFile: "Link to a character sheet or player note"
+  partyInventoryFile: "Path to the party inventory file"
+  transactionLogFile: "Path to the transaction log file"
+  defaultCurrency: "Default currency name"
+  autoSaveShops: "Automatically save shops when completing purchases (when disabled, you can manually save after purchasing)"
+  itemsFolder: "Folder path to scan for items (leave empty to scan entire vault)"
+  shopsFolder: "Folder where saved shop notes will be created"
+  itemDetectionMethod: "How to identify item files"
+  itemParameter: "Frontmatter parameter to check (e.g., type, category)"
+  itemParameterValue: "Value to look for in the parameter (e.g., weapon, equipment, item)"
+  itemTag: 'Tag pattern to look for (e.g., "item/" will match "item/weapon/sword")'
+  indexSources: "Scan all item files and update the list of available sources"
+  selectSources: "Select which sources to include in shop generation ({enabled}/{total} enabled)"
+  enablePlayerTracking: "Track which player purchased each item"
+  addPartyMember: "Add a new party member"
+
+# =============================================================================
+# MESSAGES
+# User feedback messages and notices
+# =============================================================================
+messages:
+  noShopkeep: "No shopkeep generated yet"
+  fillAllFields: "Please fill in all fields"
+  noExistingShops: "No existing shops found. Create a new shop first!"
+  noItemsAvailable: "No items available"
+  cartEmpty: "Cart is empty"
+  selectItemOrPrice: "Please select an item or enter a price"
+  invalidCostFormat: 'Invalid cost format. Use formats like "25 gp" or "1 pp 5 gp"'
+  noShopkeepToBargain: "No shopkeep to bargain with!"
+  bargainSuccess: "Bargain successful! {percent}% discount applied to {itemName}"
+  itemRemoved: "Item removed from shop"
+  noOtherRarityItems: "No other {rarity} items available to re-roll"
+  rerolled: "Re-rolled {oldItem} → {newItem}"
+  addedToShop: "Added {itemName} to shop"
+  purchaseComplete: "Purchase completed! Total: {total}"
+  shopSaved: "Shop saved to {filename}"
+  saveError: "Error saving shop: {error}"
+  inventoryCreated: "Created new party inventory file: {filename}"
+  transactionLogCreated: "Created new transaction log file: {filename}"
+  loggedTransaction: "Logged transaction: {itemName} x{quantity} for {total}"
+  sourcesFound: "Found {count} source(s)"
+  noSourcesFound: "No sources found. Click \"Refresh Sources\" to scan for item sources."
+  playerNameRequired: "Player name is required"
+  noItemsFound: "No items found matching search criteria"
+  itemsFound: "{count} item(s) found"
+  moreItems: "... and {count} more. Refine your search to see more items."
+
+# =============================================================================
+# LABELS
+# Field labels and short text
+# =============================================================================
+labels:
+  name: "Name:"
+  species: "Species:"
+  gender: "Gender:"
+  disposition: "Disposition:"
+  quirk: "Quirk:"
+  type: "Type:"
+  wealth: "Wealth:"
+  location: "Location:"
+  bargainDC: "Bargain DC:"
+  player: "Player:"
+  selectPlayer: "-- Select Player --"
+  linkedTo: "Linked to:"
+  noLinkedFile: "No linked file"
+  wasPrice: "was {price}"

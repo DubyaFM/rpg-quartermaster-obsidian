@@ -1,0 +1,31 @@
+{
+  "name": "quartermaster",
+  "version": "1.0.0",
+  "description": "Monorepo for Quartermaster - TTRPG economy management system",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=packages/obsidian-plugin",
+    "dev": "npm run dev --workspace=packages/obsidian-plugin",
+    "test": "npm run test --workspace=packages/core",
+    "test:all": "npm run test --workspaces --if-present",
+    "deploy": "npm run deploy --workspace=packages/obsidian-plugin"
+  },
+  "keywords": [
+    "obsidian",
+    "plugin",
+    "ttrpg",
+    "dnd",
+    "rpg"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "babel-jest": "^30.2.0",
+    "jest-transform-stub": "^2.0.0",
+    "typescript": "4.7.4"
+  }
+}

@@ -1,0 +1,269 @@
+# Shopkeeper Configuration for D&D 5e
+# Random NPC generation for shop owners with weighted species distribution
+
+# First names by gender
+names:
+  male:
+    - Aldric
+    - Borin
+    - Cedric
+    - Darius
+    - Eldon
+    - Finn
+    - Gareth
+    - Hadrian
+    - Igor
+    - Jasper
+    - Kael
+    - Lorian
+    - Marcus
+    - Nolan
+    - Orin
+    - Percival
+    - Quinlan
+    - Rowan
+    - Silas
+    - Theron
+    - Ulric
+    - Varian
+    - Wesley
+    - Xander
+    - Yorick
+    - Zane
+    - Alastair
+    - Barnaby
+    - Corvus
+    - Draven
+
+  female:
+    - Aria
+    - Brynn
+    - Celia
+    - Diana
+    - Elara
+    - Faye
+    - Gwen
+    - Helena
+    - Isla
+    - Jade
+    - Kira
+    - Luna
+    - Mira
+    - Nessa
+    - Ophelia
+    - Petra
+    - Quinn
+    - Rosalind
+    - Sylvia
+    - Thalia
+    - Una
+    - Vera
+    - Wren
+    - Xenia
+    - Yara
+    - Zara
+    - Astrid
+    - Beatrice
+    - Cassandra
+    - Delilah
+
+  neutral:
+    - Ash
+    - Brook
+    - Cedar
+    - Dale
+    - Echo
+    - Fox
+    - Gray
+    - Haven
+    - Indigo
+    - Jordan
+    - Kit
+    - Lake
+    - Morgan
+    - North
+    - Ocean
+    - Piper
+    - Quest
+    - River
+    - Sky
+    - Taylor
+    - Vale
+    - Wren
+    - Winter
+    - Yarrow
+    - Zenith
+    - Arbor
+    - Beacon
+    - Cloud
+    - Dusk
+    - Ember
+
+# Family names/surnames
+surnames:
+  - Ironforge
+  - Goldleaf
+  - Stonewell
+  - Brightwater
+  - Darkwood
+  - Swiftwind
+  - Thornheart
+  - Emberfall
+  - Moonwhisper
+  - Sunstrider
+  - Frostbane
+  - Stormcaller
+  - Ashwood
+  - Blackthorn
+  - Copperfield
+  - Deepdelver
+  - Eagleeye
+  - Fairwind
+  - Greenhill
+  - Highcliff
+  - Ironside
+  - Jewelcutter
+  - Kindleflame
+  - Longstride
+  - Merryweather
+  - Nightshade
+  - Oakenshield
+  - Proudfoot
+  - Quicksilver
+  - Ravenwood
+
+# Gender options
+genders:
+  - male
+  - female
+  - non-binary
+
+# Species/races with weighted distribution
+# Tiers create realistic distribution with common races being more prevalent
+# Total weight: 100.0 (percentages)
+species:
+  # Tier 1: Most common (25%)
+  tier1:
+    - name: Human
+      weight: 25.0
+
+  # Tier 2: Common (15% each = 45% total)
+  tier2:
+    - name: Dwarf
+      weight: 15.0
+    - name: Halfling
+      weight: 15.0
+    - name: Half-Elf
+      weight: 15.0
+
+  # Tier 3: Uncommon (3.57% each = ~25% total for 7 species)
+  tier3:
+    - name: Elf
+      weight: 3.57
+    - name: Gnome
+      weight: 3.57
+    - name: Dragonborn
+      weight: 3.57
+    - name: Tiefling
+      weight: 3.57
+    - name: Aasimar
+      weight: 3.57
+    - name: Goliath
+      weight: 3.57
+    - name: Half-Orc
+      weight: 3.57
+
+  # Tier 4: Rare (0.71% each = ~5% total for 7 species)
+  tier4:
+    - name: Tabaxi
+      weight: 0.71
+    - name: Firbolg
+      weight: 0.71
+    - name: Kenku
+      weight: 0.71
+    - name: Lizardfolk
+      weight: 0.71
+    - name: Tortle
+      weight: 0.71
+    - name: Genasi
+      weight: 0.71
+    - name: Triton
+      weight: 0.71
+
+# Disposition - affects bargaining DC (based on D&D 5e social interaction DCs)
+dispositions:
+  - type: hostile
+    weight: 5
+    description: Hostile
+    dc: 20
+
+  - type: unfriendly
+    weight: 15
+    description: Unfriendly
+    dc: 15
+
+  - type: neutral
+    weight: 50
+    description: Neutral
+    dc: 10
+
+  - type: friendly
+    weight: 20
+    description: Friendly
+    dc: 5
+
+  - type: helpful
+    weight: 10
+    description: Helpful
+    dc: 0
+
+# Quirks and personality traits
+quirks:
+  - Always speaks in rhymes
+  - Has a pet rat that sits on their shoulder
+  - Constantly polishing their wares
+  - Obsessed with collecting coins from different kingdoms
+  - Never makes eye contact
+  - Laughs at inappropriate times
+  - Speaks very loudly
+  - Whispers everything
+  - Tells long-winded stories about their merchandise
+  - Haggles for the fun of it, even when prices are fair
+  - Insists on inspecting every coin carefully
+  - Has a terrible memory for names
+  - Always eating something
+  - Obsessed with cleanliness
+  - Superstitious about certain numbers
+  - Gives everyone a nickname
+  - Hums while working
+  - Collects unusual trinkets
+  - Has a distinctive accent
+  - Always comments on the weather
+  - Incredibly suspicious of strangers
+  - Overly trusting and naive
+  - Tells the same joke repeatedly
+  - Has a nervous tic
+  - Speaks to their merchandise
+  - Always has a drink in hand
+  - Compulsively counts things
+  - Obsessed with their appearance
+  - Gives unsolicited advice
+  - Has an unusual laugh
+
+# Motivations (alternative to quirks)
+motivations:
+  - Saving gold to retire comfortably
+  - Supporting a family member in need
+  - Trying to become the wealthiest merchant in town
+  - Seeking rare items to complete a collection
+  - Funding an adventuring expedition
+  - Paying off a substantial debt
+  - Building a trading empire
+  - Searching for information about a lost relative
+  - Trying to impress a romantic interest
+  - Seeking revenge against a rival merchant
+  - Funding a local temple or charity
+  - Saving for a magical education
+  - Building a legacy for their children
+  - Attempting to join a merchant guild
+  - Researching ancient artifacts

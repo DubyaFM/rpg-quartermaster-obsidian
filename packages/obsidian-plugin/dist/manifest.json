@@ -1,0 +1,11 @@
+{
+	"id": "quartermaster",
+	"name": "Quartermaster",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Automate TTRPG economy management with dynamic shops, inventory tracking, and transaction logging",
+	"author": "DubyaFM",
+	"authorUrl": "",
+	"fundingUrl": "",
+	"isDesktopOnly": false
+}

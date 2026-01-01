@@ -1,0 +1,78 @@
+# File Templates
+# Markdown templates for auto-generated files
+
+# =============================================================================
+# PARTY INVENTORY TEMPLATE
+# Initial content when creating a new party inventory file
+# =============================================================================
+partyInventory: |
+  # Party Inventory
+
+  ## Currency
+  - Gold: 1000
+
+  ## Items
+
+# =============================================================================
+# TRANSACTION LOG TEMPLATE
+# Initial content when creating a new transaction log file
+# =============================================================================
+transactionLog: |
+  # Transaction Log
+
+# =============================================================================
+# SHOP NOTE TEMPLATE
+# Template for generated shop notes
+# Variables: {shopName}, {shopType}, {wealthLevel}, {location}
+# =============================================================================
+shopNote:
+  header: |
+    # {shopName}
+
+    A {shopType} shop.{wealthDescription}
+
+  # Optional sections (will be added if data exists)
+  shopkeepSection: |
+    ## Shopkeep
+
+    **{shopkeepName}**
+    - Species: {species}
+    - Gender: {gender}
+    - Disposition: {disposition}
+    - Quirk/Motivation: *{quirk}*
+
+  inventorySection: |
+    ## Inventory
+
+# =============================================================================
+# TRANSACTION ENTRY TEMPLATE
+# Template for individual transaction log entries
+# Variables: {timestamp}, {shopName}, {totalCost}, {items}
+# =============================================================================
+transactionEntry:
+  header: |
+    ## {timestamp} - {shopName}
+    **Total Cost:** {totalCost}
+    **Items:**
+
+  # With player tracking enabled
+  playerGrouped: |
+
+    **{playerName}:**
+
+  # Item line format
+  itemLine: "- {itemLink} ({quantity}x) - {totalCost}"
+
+# =============================================================================
+# FRONTMATTER TEMPLATE
+# YAML frontmatter for shop notes
+# =============================================================================
+shopFrontmatter:
+  fields:
+    - name
+    - type
+    - wealthLevel
+    - inventory
+    - npcLink
+    - location
+    - shopkeep

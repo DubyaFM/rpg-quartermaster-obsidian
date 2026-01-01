@@ -1,0 +1,683 @@
+# RPG Shopkeep Configuration
+# Shop generation settings, bargaining rules, and rarity definitions for D&D 5e
+
+# =============================================================================
+# RARITY CONFIGURATION
+# D&D 5e item rarity tiers, aliases, and display properties
+# =============================================================================
+rarities:
+  - id: common
+    aliases: ["common", "none"]
+    color: "#808080"
+    description: "Common items available everywhere"
+
+  - id: uncommon
+    aliases: ["uncommon"]
+    color: "#1eff00"
+    description: "Uncommon magic items"
+
+  - id: rare
+    aliases: ["rare"]
+    color: "#0070dd"
+    description: "Rare magic items"
+
+  - id: very-rare
+    aliases: ["very-rare", "veryrare"]
+    color: "#a335ee"
+    description: "Very rare magic items"
+
+  - id: legendary
+    aliases: ["legendary"]
+    color: "#ff8000"
+    description: "Legendary artifacts"
+
+# =============================================================================
+# BARGAINING CONFIGURATION
+# D&D 5e difficulty classes and discount percentages for persuasion checks
+# =============================================================================
+bargaining:
+  helpful:
+    dc: 0
+    discount: 0.25
+    description: "Very friendly, willing to help"
+
+  friendly:
+    dc: 5
+    discount: 0.20
+    description: "Friendly and accommodating"
+
+  neutral:
+    dc: 10
+    discount: 0.15
+    description: "Neutral, business-focused"
+
+  unfriendly:
+    dc: 15
+    discount: 0.10
+    description: "Unfriendly, reluctant to bargain"
+
+  hostile:
+    dc: 20
+    discount: 0.05
+    description: "Hostile, barely willing to trade"
+
+  default: 0.10  # Fallback if DC not found
+
+# =============================================================================
+# SHOP TYPE FILTERS
+# What item types each shop type should stock
+# =============================================================================
+shopTypeFilters:
+  blacksmith:
+    allowedTypes:
+      - weapon
+      - armor
+    description: "Weapons and armor"
+
+  alchemist:
+    allowedTypes:
+      - potion
+      - scroll
+    description: "Potions and scrolls"
+
+  magic:
+    allowedTypes:
+      - scroll
+    excludeCommon: true  # Excludes common/none rarity items
+    description: "Magical items and scrolls"
+
+  tavern:
+    allowedTypes:
+      - food
+      - drink
+    description: "Food and beverages"
+
+  general:
+    allowedTypes: []  # Empty = all types allowed
+    description: "All types of goods"
+
+  marketplace:
+    allowedTypes: []  # Empty = all types allowed
+    description: "Large marketplace with extensive inventory"
+
+  inn:
+    isService: true  # Service provider, not item shop
+    description: "Lodging, meals, and stabling"
+
+  temple:
+    isService: true  # Service provider for spellcasting
+    description: "Spellcasting and divine services"
+
+  travel:
+    isService: true  # Service provider for transportation
+    description: "Transportation and guide services"
+
+# =============================================================================
+# SHOP GENERATION CONFIGURATION
+# New magic item system: separate basic items from magic items
+# Format:
+#   basicItemTypes: { weapon: 100, armor: 80 } = percentage chance
+#   magicItemCountWeights: { "0": 70, "1": 20 } = weighted roll for count
+#   defaultMagicItemModifier: 0.5 = multiplier for party-level base chances
+#   overrideMagicItemChances: optional explicit rarity chances (bypasses modifiers)
+# =============================================================================
+shops:
+  blacksmith:
+    poor:
+      basicItemTypes:
+        weapon: 40  # Reduced from 100 - base stock provides guaranteed weapons
+        armor: 40   # Reduced from 100 - base stock provides guaranteed armor
+        tool: 20     # Unchanged - low chance
+      magicItemCountWeights:
+        "0": 80  # 80% chance of no magic items
+        "1": 15  # 15% chance of 1 magic item
+        "2": 5   # 5% chance of 2 magic items
+      defaultMagicItemModifier: 0.1  # 10% of party-level base
+      fundsOnHand: "2d6+5 gp"
+
+    modest:
+      basicItemTypes:
+        weapon: 50  # Reduced from 100
+        armor: 50   # Reduced from 100
+        tool: 40
+      magicItemCountWeights:
+        "0": 60
+        "1": 25
+        "2": 10
+        "3": 5
+      defaultMagicItemModifier: 0.3
+      fundsOnHand: "5d10+20 gp"
+
+    comfortable:
+      basicItemTypes:
+        weapon: 50  # Reduced from 100
+        armor: 50   # Reduced from 100
+        tool: 60
+      magicItemCountWeights:
+        "0": 40
+        "1": 30
+        "2": 20
+        "3": 10
+      defaultMagicItemModifier: 0.6
+      fundsOnHand: "10d10+50 gp"
+
+    wealthy:
+      basicItemTypes:
+        weapon: 60  # Reduced from 100
+        armor: 60   # Reduced from 100
+        tool: 75
+      magicItemCountWeights:
+        "0": 25
+        "1": 30
+        "2": 25
+        "3": 15
+        "4": 5
+      defaultMagicItemModifier: 0.8
+      fundsOnHand: "20d10+150 gp"
+
+    aristocratic:
+      basicItemTypes:
+        weapon: 60  # Reduced from 100
+        armor: 60   # Reduced from 100
+        tool: 90
+      magicItemCountWeights:
+        "0": 10
+        "1": 20
+        "2": 30
+        "3": 25
+        "4": 10
+        "5": 5
+      overrideMagicItemChances:
+        common: 90
+        uncommon: 70
+        rare: 50
+        veryRare: 30
+        legendary: 10
+      fundsOnHand: "50d10+500 gp"
+
+  alchemist:
+    poor:
+      basicItemTypes:
+        potion: 40  # Reduced from 100 - base stock provides guaranteed potions
+        scroll: 40  # Reduced from 100 - base stock provides guaranteed scrolls
+      magicItemCountWeights:
+        "0": 70
+        "1": 20
+        "2": 10
+      defaultMagicItemModifier: 0.15
+      fundsOnHand: "3d6+10 gp"
+
+    modest:
+      basicItemTypes:
+        potion: 50  # Reduced from 100
+        scroll: 50  # Reduced from 100
+      magicItemCountWeights:
+        "0": 50
+        "1": 30
+        "2": 15
+        "3": 5
+      defaultMagicItemModifier: 0.3
+      fundsOnHand: "6d10+25 gp"
+
+    comfortable:
+      basicItemTypes:
+        potion: 50  # Reduced from 100
+        scroll: 50  # Reduced from 100
+      magicItemCountWeights:
+        "0": 30
+        "1": 35
+        "2": 25
+        "3": 10
+      defaultMagicItemModifier: 0.6
+      fundsOnHand: "12d10+60 gp"
+
+    wealthy:
+      basicItemTypes:
+        potion: 60  # Reduced from 100
+        scroll: 60  # Reduced from 100
+      magicItemCountWeights:
+        "0": 20
+        "1": 30
+        "2": 30
+        "3": 15
+        "4": 5
+      defaultMagicItemModifier: 0.8
+      fundsOnHand: "25d10+200 gp"
+
+    aristocratic:
+      basicItemTypes:
+        potion: 60  # Reduced from 100
+        scroll: 60  # Reduced from 100
+      magicItemCountWeights:
+        "0": 10
+        "1": 20
+        "2": 30
+        "3": 25
+        "4": 10
+        "5": 5
+      overrideMagicItemChances:
+        common: 85
+        uncommon: 70
+        rare: 55
+        veryRare: 35
+        legendary: 15
+      fundsOnHand: "60d10+600 gp"
+
+  magic:
+    poor:
+      basicItemTypes:
+        scroll: 40  # Reduced from 80 - base stock provides guaranteed scrolls
+      magicItemCountWeights:
+        "0": 50  # Magic shops have higher chance of magic items even when poor
+        "1": 30
+        "2": 15
+        "3": 5
+      defaultMagicItemModifier: 0.3
+      fundsOnHand: "5d6+15 gp"
+
+    modest:
+      basicItemTypes:
+        scroll: 50  # Reduced from 100
+      magicItemCountWeights:
+        "0": 30
+        "1": 35
+        "2": 25
+        "3": 10
+      defaultMagicItemModifier: 0.5
+      fundsOnHand: "10d10+40 gp"
+
+    comfortable:
+      basicItemTypes:
+        scroll: 50  # Reduced from 100
+      magicItemCountWeights:
+        "0": 20
+        "1": 30
+        "2": 30
+        "3": 15
+        "4": 5
+      defaultMagicItemModifier: 0.7
+      fundsOnHand: "15d10+100 gp"
+
+    wealthy:
+      basicItemTypes:
+        scroll: 60  # Reduced from 100
+      magicItemCountWeights:
+        "0": 10
+        "1": 25
+        "2": 30
+        "3": 25
+        "4": 8
+        "5": 2
+      defaultMagicItemModifier: 0.9
+      fundsOnHand: "30d10+250 gp"
+
+    aristocratic:
+      basicItemTypes:
+        scroll: 60  # Reduced from 100
+      magicItemCountWeights:
+        "0": 5
+        "1": 15
+        "2": 25
+        "3": 30
+        "4": 15
+        "5": 7
+        "6": 3
+      overrideMagicItemChances:
+        common: 80
+        uncommon: 75
+        rare: 65
+        veryRare: 50
+        legendary: 20
+      fundsOnHand: "75d10+750 gp"
+
+  general:
+    poor:
+      basicItemTypes:
+        weapon: 30  # Reduced - not primary focus
+        armor: 30   # Reduced - not primary focus
+        tool: 40    # Reduced from 100 - base stock provides common tools
+        gear: 50    # Reduced from 100 - base stock provides essential gear
+        food: 40    # Reduced from 100 - base stock provides rations
+        drink: 40   # Reduced from 100
+      magicItemCountWeights:
+        "0": 90  # General stores rarely have magic items when poor
+        "1": 8
+        "2": 2
+      defaultMagicItemModifier: 0.05
+      fundsOnHand: "2d6+10 gp"
+
+    modest:
+      basicItemTypes:
+        weapon: 35  # Reduced from 70
+        armor: 35   # Reduced from 70
+        tool: 50    # Reduced from 100
+        gear: 50    # Reduced from 100
+        food: 40    # Reduced from 100
+        drink: 40   # Reduced from 100
+      magicItemCountWeights:
+        "0": 80
+        "1": 15
+        "2": 5
+      defaultMagicItemModifier: 0.15
+      fundsOnHand: "5d10+22 gp"
+
+    comfortable:
+      basicItemTypes:
+        weapon: 40  # Reduced from 80
+        armor: 40   # Reduced from 80
+        tool: 50    # Reduced from 100
+        gear: 50    # Reduced from 100
+        food: 40    # Reduced from 100
+        drink: 40   # Reduced from 100
+      magicItemCountWeights:
+        "0": 65
+        "1": 25
+        "2": 8
+        "3": 2
+      defaultMagicItemModifier: 0.3
+      fundsOnHand: "10d10+55 gp"
+
+    wealthy:
+      basicItemTypes:
+        weapon: 45  # Reduced from 90
+        armor: 45   # Reduced from 90
+        tool: 60    # Reduced from 100
+        gear: 60    # Reduced from 100
+        food: 50    # Reduced from 100
+        drink: 50   # Reduced from 100
+      magicItemCountWeights:
+        "0": 50
+        "1": 30
+        "2": 15
+        "3": 5
+      defaultMagicItemModifier: 0.5
+      fundsOnHand: "18d10+175 gp"
+
+    aristocratic:
+      basicItemTypes:
+        weapon: 50  # Reduced from 100
+        armor: 50   # Reduced from 100
+        tool: 60    # Reduced from 100
+        gear: 60    # Reduced from 100
+        food: 50    # Reduced from 100
+        drink: 50   # Reduced from 100
+      magicItemCountWeights:
+        "0": 35
+        "1": 35
+        "2": 20
+        "3": 8
+        "4": 2
+      defaultMagicItemModifier: 0.7
+      fundsOnHand: "55d10+550 gp"
+
+  tavern:
+    poor:
+      basicItemTypes:
+        food: 40  # Reduced from 100 - base stock provides rations
+        drink: 40  # Reduced from 100
+      magicItemCountWeights:
+        "0": 95  # Taverns very rarely have magic items
+        "1": 4
+        "2": 1
+      defaultMagicItemModifier: 0.02
+      fundsOnHand: "1d6+8 gp"
+
+    modest:
+      basicItemTypes:
+        food: 40  # Reduced from 100
+        drink: 40  # Reduced from 100
+      magicItemCountWeights:
+        "0": 90
+        "1": 8
+        "2": 2
+      defaultMagicItemModifier: 0.05
+      fundsOnHand: "4d10+18 gp"
+
+    comfortable:
+      basicItemTypes:
+        food: 40  # Reduced from 100
+        drink: 40  # Reduced from 100
+      magicItemCountWeights:
+        "0": 85
+        "1": 12
+        "2": 3
+      defaultMagicItemModifier: 0.1
+      fundsOnHand: "9d10+45 gp"
+
+    wealthy:
+      basicItemTypes:
+        food: 50  # Reduced from 100
+        drink: 50  # Reduced from 100
+      magicItemCountWeights:
+        "0": 75
+        "1": 20
+        "2": 4
+        "3": 1
+      defaultMagicItemModifier: 0.15
+      fundsOnHand: "17d10+120 gp"
+
+    aristocratic:
+      basicItemTypes:
+        food: 50  # Reduced from 100
+        drink: 50  # Reduced from 100
+      magicItemCountWeights:
+        "0": 65
+        "1": 25
+        "2": 8
+        "3": 2
+      defaultMagicItemModifier: 0.2
+      fundsOnHand: "45d10+450 gp"
+
+  marketplace:
+    poor:
+      basicItemTypes:
+        weapon: 100
+        armor: 100
+        tool: 100
+        gear: 100
+        food: 100
+        drink: 100
+        potion: 100
+        scroll: 100
+      magicItemCountWeights:
+        "0": 30  # Marketplaces have better magic item availability
+        "1": 25
+        "2": 20
+        "3": 15
+        "4": 7
+        "5": 3
+      defaultMagicItemModifier: 0.7
+      fundsOnHand: "3d10+15 gp"
+
+    modest:
+      basicItemTypes:
+        weapon: 100
+        armor: 100
+        tool: 100
+        gear: 100
+        food: 100
+        drink: 100
+        potion: 100
+        scroll: 100
+      magicItemCountWeights:
+        "0": 20
+        "1": 25
+        "2": 25
+        "3": 18
+        "4": 8
+        "5": 4
+      defaultMagicItemModifier: 0.8
+      fundsOnHand: "6d10+30 gp"
+
+    comfortable:
+      basicItemTypes:
+        weapon: 100
+        armor: 100
+        tool: 100
+        gear: 100
+        food: 100
+        drink: 100
+        potion: 100
+        scroll: 100
+      magicItemCountWeights:
+        "0": 10
+        "1": 20
+        "2": 30
+        "3": 25
+        "4": 10
+        "5": 5
+      defaultMagicItemModifier: 0.9
+      fundsOnHand: "12d10+70 gp"
+
+    wealthy:
+      basicItemTypes:
+        weapon: 100
+        armor: 100
+        tool: 100
+        gear: 100
+        food: 100
+        drink: 100
+        potion: 100
+        scroll: 100
+      magicItemCountWeights:
+        "0": 5
+        "1": 15
+        "2": 25
+        "3": 30
+        "4": 15
+        "5": 7
+        "6": 3
+      overrideMagicItemChances:
+        common: 100
+        uncommon: 100
+        rare: 95
+        veryRare: 60
+        legendary: 25
+      fundsOnHand: "25d10+200 gp"
+
+    aristocratic:
+      basicItemTypes:
+        weapon: 100
+        armor: 100
+        tool: 100
+        gear: 100
+        food: 100
+        drink: 100
+        potion: 100
+        scroll: 100
+      magicItemCountWeights:
+        "0": 2
+        "1": 8
+        "2": 20
+        "3": 30
+        "4": 20
+        "5": 12
+        "6": 5
+        "7": 3
+      overrideMagicItemChances:
+        common: 100
+        uncommon: 100
+        rare: 100
+        veryRare: 70
+        legendary: 30
+      fundsOnHand: "60d10+700 gp"
+
+  # Service provider configurations
+  # These use different structure - service counts instead of rarity-based items
+  inn:
+    poor:
+      maxServices:
+        lodging: 2
+        meals: 2
+        drinks: 2
+        stabling: 1
+      fundsOnHand: "1d6+5 gp"
+
+    modest:
+      maxServices:
+        lodging: 3
+        meals: 3
+        drinks: 4
+        stabling: 1
+      fundsOnHand: "4d10+15 gp"
+
+    comfortable:
+      maxServices:
+        lodging: 4
+        meals: 4
+        drinks: 5
+        stabling: 1
+      fundsOnHand: "8d10+40 gp"
+
+    wealthy:
+      maxServices:
+        lodging: 4
+        meals: 4
+        drinks: 3
+        stabling: 1
+      fundsOnHand: "15d10+100 gp"
+
+    aristocratic:
+      maxServices:
+        lodging: 3
+        meals: 3
+        drinks: 2
+        stabling: 1
+      fundsOnHand: "40d10+400 gp"
+
+  temple:
+    poor:
+      maxServices:
+        spellcasting: 2
+      fundsOnHand: "1d6+7 gp"
+
+    modest:
+      maxServices:
+        spellcasting: 3
+      fundsOnHand: "4d10+20 gp"
+
+    comfortable:
+      maxServices:
+        spellcasting: 4
+      fundsOnHand: "9d10+50 gp"
+
+    wealthy:
+      maxServices:
+        spellcasting: 5
+      fundsOnHand: "16d10+120 gp"
+
+    aristocratic:
+      maxServices:
+        spellcasting: 6
+      fundsOnHand: "42d10+450 gp"
+
+  travel:
+    poor:
+      maxServices:
+        land: 2
+        guides: 0
+      fundsOnHand: "1d6+6 gp"
+
+    modest:
+      maxServices:
+        land: 4
+        guides: 2
+      fundsOnHand: "4d10+17 gp"
+
+    comfortable:
+      maxServices:
+        land: 4
+        guides: 3
+      fundsOnHand: "8d10+45 gp"
+
+    wealthy:
+      maxServices:
+        land: 3
+        guides: 3
+      fundsOnHand: "16d10+110 gp"
+
+    aristocratic:
+      maxServices:
+        land: 2
+        guides: 3
+      fundsOnHand: "42d10+420 gp"

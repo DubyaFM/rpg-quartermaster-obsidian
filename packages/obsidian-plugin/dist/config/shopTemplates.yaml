@@ -1,0 +1,276 @@
+# Shop Templates Configuration
+# Pre-configured shop templates for quick shop generation
+# Each template defines a complete shop configuration ready to use
+
+templates:
+  # ===== BLACKSMITH SHOPS =====
+  village_blacksmith:
+    name: "Village Smithy"
+    type: "blacksmith"
+    wealthLevel: "modest"
+    location: "Village Square"
+    description: "A small blacksmith shop in a rural village, serving local farmers and travelers"
+    faction: "None"
+
+  city_armory:
+    name: "The Iron Keep"
+    type: "blacksmith"
+    wealthLevel: "wealthy"
+    location: "Artisan Quarter"
+    description: "A prestigious armory in the city, known for quality weapons and armor"
+    faction: "Merchant's Guild"
+
+  military_forge:
+    name: "Imperial Forge"
+    type: "blacksmith"
+    wealthLevel: "aristocratic"
+    location: "Castle District"
+    description: "Elite military forge serving the royal guard and noble warriors"
+    faction: "Lords' Alliance"
+
+  roadside_smithy:
+    name: "Wayside Forge"
+    type: "blacksmith"
+    wealthLevel: "poor"
+    location: "Trade Road"
+    description: "A humble roadside smithy offering basic repairs and simple weapons"
+    faction: "None"
+
+  # ===== ALCHEMIST SHOPS =====
+  village_apothecary:
+    name: "Herb & Remedy"
+    type: "alchemist"
+    wealthLevel: "modest"
+    location: "Market Street"
+    description: "A modest apothecary selling potions, salves, and herbal remedies"
+    faction: "None"
+
+  grand_alchemist:
+    name: "The Gilded Vial"
+    type: "alchemist"
+    wealthLevel: "wealthy"
+    location: "Scholar's District"
+    description: "An upscale alchemical laboratory with rare potions and exotic ingredients"
+    faction: "Merchant's Guild"
+
+  shady_potions:
+    name: "The Bubbling Cauldron"
+    type: "alchemist"
+    wealthLevel: "comfortable"
+    location: "Dock District"
+    description: "A somewhat disreputable potion shop known for questionable ingredients"
+    faction: "Thieves' Guild"
+
+  royal_alchemist:
+    name: "Royal Alchemical Society"
+    type: "alchemist"
+    wealthLevel: "aristocratic"
+    location: "Palace Grounds"
+    description: "The premier alchemical establishment serving nobility and royalty"
+    faction: "Lords' Alliance"
+
+  # ===== MAGIC SHOPS =====
+  arcane_emporium:
+    name: "Mystical Curiosities"
+    type: "magic"
+    wealthLevel: "wealthy"
+    location: "Mage Quarter"
+    description: "A prestigious magic shop filled with enchanted items and scrolls"
+    faction: "None"
+
+  wizard_tower_shop:
+    name: "The Spellbound Tower"
+    type: "magic"
+    wealthLevel: "aristocratic"
+    location: "Wizard's Enclave"
+    description: "An exclusive magical emporium at the base of a wizard's tower"
+    faction: "None"
+
+  hedge_wizard:
+    name: "Cantrips & Curiosities"
+    type: "magic"
+    wealthLevel: "modest"
+    location: "Old Town"
+    description: "A small shop run by a hedge wizard, offering basic magical supplies"
+    faction: "None"
+
+  harpers_cache:
+    name: "The Veiled Archive"
+    type: "magic"
+    wealthLevel: "comfortable"
+    location: "Hidden Alley"
+    description: "A secretive shop with connections to the Harpers organization"
+    faction: "Harpers"
+
+  # ===== GENERAL STORES =====
+  village_general:
+    name: "General Goods & Sundries"
+    type: "general"
+    wealthLevel: "modest"
+    location: "Town Center"
+    description: "A typical village general store with everyday supplies and equipment"
+    faction: "None"
+
+  roadside_trader:
+    name: "Wayside Trading Post"
+    type: "general"
+    wealthLevel: "comfortable"
+    location: "Trade Road"
+    description: "A well-stocked trading post serving merchants and travelers"
+    faction: "Merchant's Guild"
+
+  frontier_outpost:
+    name: "Frontier Provisions"
+    type: "general"
+    wealthLevel: "poor"
+    location: "Wilderness Settlement"
+    description: "A bare-bones supply store on the edge of civilization"
+    faction: "None"
+
+  city_emporium:
+    name: "The Grand Emporium"
+    type: "general"
+    wealthLevel: "wealthy"
+    location: "Market Square"
+    description: "A large city emporium with extensive inventory and rare goods"
+    faction: "Merchant's Guild"
+
+  # ===== TAVERNS =====
+  rustic_inn:
+    name: "The Rusty Flagon"
+    type: "tavern"
+    wealthLevel: "poor"
+    location: "Village Outskirts"
+    description: "A simple tavern serving cheap ale and basic fare"
+    faction: "None"
+
+  travelers_rest:
+    name: "The Wanderer's Rest"
+    type: "tavern"
+    wealthLevel: "modest"
+    location: "Trade Road"
+    description: "A popular roadside inn frequented by merchants and adventurers"
+    faction: "Adventurer's Guild"
+
+  upscale_tavern:
+    name: "The Silver Chalice"
+    type: "tavern"
+    wealthLevel: "wealthy"
+    location: "Noble Quarter"
+    description: "An elegant establishment serving fine wines and gourmet cuisine"
+    faction: "None"
+
+  rowdy_dockside:
+    name: "The Salty Barnacle"
+    type: "tavern"
+    wealthLevel: "comfortable"
+    location: "Harbor District"
+    description: "A lively dockside tavern known for strong drinks and rowdy patrons"
+    faction: "Thieves' Guild"
+
+  # ===== MARKETPLACES =====
+  grand_bazaar:
+    name: "The Grand Bazaar"
+    type: "marketplace"
+    wealthLevel: "wealthy"
+    location: "Market District"
+    description: "A massive marketplace with hundreds of vendors and every imaginable item"
+    faction: "Merchant's Guild"
+
+  trading_plaza:
+    name: "Central Trading Plaza"
+    type: "marketplace"
+    wealthLevel: "comfortable"
+    location: "City Center"
+    description: "A bustling open-air market with diverse goods from many lands"
+    faction: "Merchant's Guild"
+
+  night_market:
+    name: "The Shadow Market"
+    type: "marketplace"
+    wealthLevel: "wealthy"
+    location: "Warehouse District"
+    description: "A secretive night market dealing in exotic and questionable goods"
+    faction: "Zhentarim"
+
+  # ===== SERVICE PROVIDERS =====
+  roadside_inn:
+    name: "The Wayfarer's Lodge"
+    type: "inn"
+    wealthLevel: "modest"
+    location: "Trade Road"
+    description: "A comfortable inn providing lodging, meals, and stabling for travelers"
+    faction: "None"
+
+  luxury_inn:
+    name: "The Golden Lion Inn"
+    type: "inn"
+    wealthLevel: "aristocratic"
+    location: "Noble Quarter"
+    description: "A luxurious inn catering to wealthy travelers and nobility"
+    faction: "None"
+
+  temple_of_healing:
+    name: "Temple of the Dawn"
+    type: "temple"
+    wealthLevel: "comfortable"
+    location: "Temple District"
+    description: "A temple offering healing services and divine spellcasting"
+    faction: "Order of the Gauntlet"
+
+  grand_cathedral:
+    name: "The Grand Cathedral"
+    type: "temple"
+    wealthLevel: "aristocratic"
+    location: "Cathedral Square"
+    description: "A magnificent cathedral with powerful clerics and extensive services"
+    faction: "Order of the Gauntlet"
+
+  stables_and_coaches:
+    name: "Swift Horse Stables"
+    type: "travel"
+    wealthLevel: "comfortable"
+    location: "Stable Quarter"
+    description: "A well-maintained stable offering mounts, coaches, and guide services"
+    faction: "None"
+
+  caravan_outfitter:
+    name: "Desert Star Caravans"
+    type: "travel"
+    wealthLevel: "wealthy"
+    location: "Trade District"
+    description: "Professional caravan outfitters specializing in long-distance travel"
+    faction: "Merchant's Guild"
+
+  # ===== SPECIALIZED/THEMATIC SHOPS =====
+  zhentarim_front:
+    name: "Black Network Imports"
+    type: "general"
+    wealthLevel: "wealthy"
+    location: "Merchant District"
+    description: "A seemingly legitimate trading company with Zhentarim connections"
+    faction: "Zhentarim"
+
+  emerald_enclave_outpost:
+    name: "Nature's Bounty"
+    type: "alchemist"
+    wealthLevel: "comfortable"
+    location: "Druid Grove"
+    description: "A natural apothecary run by druids, offering herbal remedies and potions"
+    faction: "Emerald Enclave"
+
+  drow_black_market:
+    name: "The Underdark Vault"
+    type: "marketplace"
+    wealthLevel: "aristocratic"
+    location: "Undercity"
+    description: "A dangerous black market run by drow mercenaries dealing in rare items"
+    faction: "The Bregan D'aerthe"
+
+  red_wizard_shop:
+    name: "Crimson Arcana"
+    type: "magic"
+    wealthLevel: "wealthy"
+    location: "Foreign Quarter"
+    description: "A shop run by Red Wizards of Thay, specializing in necromantic items"
+    faction: "The Red Wizards of Thay"

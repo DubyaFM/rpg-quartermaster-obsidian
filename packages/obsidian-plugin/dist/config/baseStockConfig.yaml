@@ -1,0 +1,1455 @@
+# Base Stock Configuration
+# Guaranteed items for each shop type and wealth level
+# Items are verified to exist in packages/core/data/srdItems.ts
+#
+# Format:
+#   shopType:
+#     wealthLevel:
+#       - item: "Item Name"
+#         minStock: 1
+#         maxStock: 5
+#         spawnChance: 100
+#
+# Wealth Level Mappings (from example-stores.md):
+#   poor ← Village shops
+#   modest ← Village/Town boundary
+#   comfortable ← Town shops
+#   wealthy ← Town/City boundary
+#   aristocratic ← City shops
+
+# =============================================================================
+# BLACKSMITH
+# Based on: Armourer & Blacksmiths + Leatherworker from reference
+# =============================================================================
+blacksmith:
+  poor:
+    # Simple melee weapons (always available)
+    - item: "Dagger"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Handaxe"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Javelin"
+      minStock: 2
+      maxStock: 6
+      spawnChance: 100
+    - item: "Light Hammer"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Mace"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Sickle"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Spear"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+
+    # Basic armor
+    - item: "Padded Armor"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Leather Armor"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Hide Armor"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Chain Shirt"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Scale Mail"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Ring Mail"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Shield"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Ammunition
+    - item: "Arrows (20)"
+      minStock: 5
+      maxStock: 15
+      spawnChance: 100
+    - item: "Crossbow Bolts (20)"
+      minStock: 3
+      maxStock: 10
+      spawnChance: 100
+
+    # Basic tools/equipment
+    - item: "Crowbar"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Grappling Hook"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Hammer"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Piton"
+      minStock: 5
+      maxStock: 20
+      spawnChance: 100
+    - item: "Manacles"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Chain (10 feet)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+  modest:
+    # Simple melee (inherited + additions)
+    - item: "Dagger"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Handaxe"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Javelin"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+    - item: "Light Hammer"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Mace"
+      minStock: 2
+      maxStock: 3
+      spawnChance: 100
+    - item: "Spear"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+
+    # Martial weapons (new)
+    - item: "Battleaxe"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Flail"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Glaive"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Greataxe"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Greatsword"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Halberd"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Lance"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Longsword"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Maul"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Morningstar"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Pike"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Rapier"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Scimitar"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Shortsword"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Trident"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Warhammer"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "War Pick"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+    # Armor upgrades
+    - item: "Padded Armor"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Leather Armor"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Studded Leather Armor"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Hide Armor"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Chain Shirt"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Scale Mail"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Ring Mail"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Chain Mail"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Shield"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+
+    # Ammunition
+    - item: "Arrows (20)"
+      minStock: 10
+      maxStock: 20
+      spawnChance: 100
+    - item: "Crossbow Bolts (20)"
+      minStock: 5
+      maxStock: 15
+      spawnChance: 100
+    - item: "Sling Bullets (20)"
+      minStock: 3
+      maxStock: 10
+      spawnChance: 100
+
+    # Tools
+    - item: "Crowbar"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Grappling Hook"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Manacles"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Chain (10 feet)"
+      minStock: 1
+      maxStock: 4
+      spawnChance: 100
+
+  comfortable:
+    # All martial weapons available
+    - item: "Battleaxe"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Flail"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Glaive"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Greataxe"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Greatsword"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Halberd"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Longsword"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Maul"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Morningstar"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Rapier"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Scimitar"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Shortsword"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Warhammer"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Medium/heavy armor
+    - item: "Chain Shirt"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Scale Mail"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Breastplate"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Chain Mail"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Splint Armor"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Shield"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+
+    # Ranged weapons
+    - item: "Light Crossbow"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Heavy Crossbow"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Longbow"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+    # Ammunition
+    - item: "Arrows (20)"
+      minStock: 15
+      maxStock: 30
+      spawnChance: 100
+    - item: "Crossbow Bolts (20)"
+      minStock: 10
+      maxStock: 20
+      spawnChance: 100
+
+  wealthy:
+    # Premium martial weapons
+    - item: "Greatsword"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Longsword"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Rapier"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Warhammer"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Battleaxe"
+      minStock: 2
+      maxStock: 3
+      spawnChance: 100
+    - item: "Scimitar"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Heavy armor
+    - item: "Breastplate"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Half Plate"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Splint Armor"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Plate Armor"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Shield"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+
+    # Ranged weapons
+    - item: "Longbow"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Heavy Crossbow"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+    # Ammunition
+    - item: "Arrows (20)"
+      minStock: 20
+      maxStock: 40
+      spawnChance: 100
+    - item: "Crossbow Bolts (20)"
+      minStock: 15
+      maxStock: 30
+      spawnChance: 100
+
+  aristocratic:
+    # All weapons in high quantities
+    - item: "Greatsword"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Longsword"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+    - item: "Rapier"
+      minStock: 3
+      maxStock: 5
+      spawnChance: 100
+    - item: "Warhammer"
+      minStock: 3
+      maxStock: 5
+      spawnChance: 100
+    - item: "Battleaxe"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Scimitar"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Shortsword"
+      minStock: 3
+      maxStock: 5
+      spawnChance: 100
+
+    # All armor types
+    - item: "Plate Armor"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Half Plate"
+      minStock: 2
+      maxStock: 3
+      spawnChance: 100
+    - item: "Splint Armor"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Breastplate"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Chain Mail"
+      minStock: 2
+      maxStock: 3
+      spawnChance: 100
+    - item: "Shield"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+
+    # Ranged weapons
+    - item: "Longbow"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Heavy Crossbow"
+      minStock: 2
+      maxStock: 3
+      spawnChance: 100
+
+    # Ammunition in bulk
+    - item: "Arrows (20)"
+      minStock: 30
+      maxStock: 60
+      spawnChance: 100
+    - item: "Crossbow Bolts (20)"
+      minStock: 20
+      maxStock: 40
+      spawnChance: 100
+
+# =============================================================================
+# ALCHEMIST
+# Based on: Alchemists & Apothecaries from reference
+# =============================================================================
+alchemist:
+  poor:
+    # Essential potions
+    - item: "Potion of Healing"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+
+    # Basic supplies
+    - item: "Oil (flask)"
+      minStock: 5
+      maxStock: 15
+      spawnChance: 100
+
+    # Scrolls
+    - item: "Spell Scroll (Cantrip)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Spell Scroll (1st Level)"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+    # Tools
+    - item: "Herbalism Kit"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+  modest:
+    # Potions
+    - item: "Potion of Healing"
+      minStock: 5
+      maxStock: 12
+      spawnChance: 100
+    - item: "Potion of Climbing"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Potion of Greater Healing"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Supplies
+    - item: "Oil (flask)"
+      minStock: 10
+      maxStock: 20
+      spawnChance: 100
+
+    # Scrolls
+    - item: "Spell Scroll (Cantrip)"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Spell Scroll (1st Level)"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Spell Scroll (2nd Level)"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+    # Tools
+    - item: "Herbalism Kit"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Component Pouch"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+  comfortable:
+    # Potions
+    - item: "Potion of Healing"
+      minStock: 8
+      maxStock: 15
+      spawnChance: 100
+    - item: "Potion of Greater Healing"
+      minStock: 2
+      maxStock: 6
+      spawnChance: 100
+    - item: "Potion of Climbing"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Potion of Superior Healing"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+    # Supplies
+    - item: "Oil (flask)"
+      minStock: 15
+      maxStock: 30
+      spawnChance: 100
+
+    # Scrolls
+    - item: "Spell Scroll (Cantrip)"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Spell Scroll (1st Level)"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Spell Scroll (2nd Level)"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Spell Scroll (3rd Level)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Tools
+    - item: "Herbalism Kit"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Component Pouch"
+      minStock: 2
+      maxStock: 3
+      spawnChance: 100
+    - item: "Healer's Kit"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+
+  wealthy:
+    # Potions
+    - item: "Potion of Healing"
+      minStock: 10
+      maxStock: 20
+      spawnChance: 100
+    - item: "Potion of Greater Healing"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+    - item: "Potion of Superior Healing"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Potion of Climbing"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+
+    # Scrolls
+    - item: "Spell Scroll (1st Level)"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+    - item: "Spell Scroll (2nd Level)"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Spell Scroll (3rd Level)"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Spell Scroll (4th Level)"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+    # Tools
+    - item: "Herbalism Kit"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Component Pouch"
+      minStock: 3
+      maxStock: 5
+      spawnChance: 100
+    - item: "Healer's Kit"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+
+  aristocratic:
+    # Potions (premium quantities)
+    - item: "Potion of Healing"
+      minStock: 15
+      maxStock: 30
+      spawnChance: 100
+    - item: "Potion of Greater Healing"
+      minStock: 6
+      maxStock: 12
+      spawnChance: 100
+    - item: "Potion of Superior Healing"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Potion of Climbing"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+
+    # Scrolls (all levels)
+    - item: "Spell Scroll (Cantrip)"
+      minStock: 5
+      maxStock: 10
+      spawnChance: 100
+    - item: "Spell Scroll (1st Level)"
+      minStock: 5
+      maxStock: 10
+      spawnChance: 100
+    - item: "Spell Scroll (2nd Level)"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+    - item: "Spell Scroll (3rd Level)"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Spell Scroll (4th Level)"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Spell Scroll (5th Level)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Tools
+    - item: "Herbalism Kit"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Component Pouch"
+      minStock: 4
+      maxStock: 7
+      spawnChance: 100
+    - item: "Healer's Kit"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+
+# =============================================================================
+# MAGIC SHOP
+# Based on: Arcane Store from reference
+# =============================================================================
+magic:
+  poor:
+    # Scrolls (primary stock)
+    - item: "Spell Scroll (Cantrip)"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+    - item: "Spell Scroll (1st Level)"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+
+    # Components
+    - item: "Component Pouch"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+  modest:
+    # Scrolls
+    - item: "Spell Scroll (Cantrip)"
+      minStock: 5
+      maxStock: 12
+      spawnChance: 100
+    - item: "Spell Scroll (1st Level)"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+    - item: "Spell Scroll (2nd Level)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Components
+    - item: "Component Pouch"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+
+    # Potions (magic shops can have some)
+    - item: "Potion of Healing"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+
+  comfortable:
+    # Scrolls
+    - item: "Spell Scroll (Cantrip)"
+      minStock: 8
+      maxStock: 15
+      spawnChance: 100
+    - item: "Spell Scroll (1st Level)"
+      minStock: 5
+      maxStock: 10
+      spawnChance: 100
+    - item: "Spell Scroll (2nd Level)"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Spell Scroll (3rd Level)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Components
+    - item: "Component Pouch"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+
+    # Potions
+    - item: "Potion of Healing"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+    - item: "Potion of Greater Healing"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Spellbooks
+    - item: "Spellbook"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+  wealthy:
+    # Scrolls (all common levels)
+    - item: "Spell Scroll (Cantrip)"
+      minStock: 10
+      maxStock: 20
+      spawnChance: 100
+    - item: "Spell Scroll (1st Level)"
+      minStock: 6
+      maxStock: 12
+      spawnChance: 100
+    - item: "Spell Scroll (2nd Level)"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+    - item: "Spell Scroll (3rd Level)"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Spell Scroll (4th Level)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Components
+    - item: "Component Pouch"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+
+    # Potions
+    - item: "Potion of Healing"
+      minStock: 6
+      maxStock: 12
+      spawnChance: 100
+    - item: "Potion of Greater Healing"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+
+    # Spellbooks
+    - item: "Spellbook"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+
+  aristocratic:
+    # Scrolls (all levels including rare)
+    - item: "Spell Scroll (Cantrip)"
+      minStock: 15
+      maxStock: 30
+      spawnChance: 100
+    - item: "Spell Scroll (1st Level)"
+      minStock: 10
+      maxStock: 20
+      spawnChance: 100
+    - item: "Spell Scroll (2nd Level)"
+      minStock: 6
+      maxStock: 12
+      spawnChance: 100
+    - item: "Spell Scroll (3rd Level)"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+    - item: "Spell Scroll (4th Level)"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Spell Scroll (5th Level)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Components
+    - item: "Component Pouch"
+      minStock: 6
+      maxStock: 12
+      spawnChance: 100
+
+    # Potions
+    - item: "Potion of Healing"
+      minStock: 8
+      maxStock: 16
+      spawnChance: 100
+    - item: "Potion of Greater Healing"
+      minStock: 4
+      maxStock: 8
+      spawnChance: 100
+    - item: "Potion of Superior Healing"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Spellbooks
+    - item: "Spellbook"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+
+    # Uncommon magic items
+    - item: "Bag of Holding"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Immovable Rod"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+# =============================================================================
+# GENERAL STORE
+# Based on: General Store + Tailor & Textile + Temple & Faith from reference
+# =============================================================================
+general:
+  poor:
+    # Essential adventuring supplies
+    - item: "Rope, Hempen (50 feet)"
+      minStock: 3
+      maxStock: 10
+      spawnChance: 100
+    - item: "Rations (1 day)"
+      minStock: 20
+      maxStock: 50
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 20
+      maxStock: 60
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 5
+      maxStock: 15
+      spawnChance: 100
+    - item: "Backpack"
+      minStock: 3
+      maxStock: 10
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 3
+      maxStock: 10
+      spawnChance: 100
+    - item: "Tinderbox"
+      minStock: 2
+      maxStock: 8
+      spawnChance: 100
+
+    # Basic tools
+    - item: "Crowbar"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Hammer"
+      minStock: 1
+      maxStock: 4
+      spawnChance: 100
+
+    # Lighting
+    - item: "Lantern, Hooded"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Oil (flask)"
+      minStock: 5
+      maxStock: 20
+      spawnChance: 100
+
+  modest:
+    # Essential supplies (more quantity)
+    - item: "Rope, Hempen (50 feet)"
+      minStock: 5
+      maxStock: 15
+      spawnChance: 100
+    - item: "Rope, Silk (50 feet)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Rations (1 day)"
+      minStock: 30
+      maxStock: 80
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 30
+      maxStock: 100
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 8
+      maxStock: 20
+      spawnChance: 100
+    - item: "Backpack"
+      minStock: 5
+      maxStock: 15
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 5
+      maxStock: 12
+      spawnChance: 100
+    - item: "Tinderbox"
+      minStock: 3
+      maxStock: 10
+      spawnChance: 100
+
+    # Tools
+    - item: "Crowbar"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Hammer"
+      minStock: 2
+      maxStock: 6
+      spawnChance: 100
+    - item: "Grappling Hook"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Lighting
+    - item: "Lantern, Hooded"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Lantern, Bullseye"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+    - item: "Oil (flask)"
+      minStock: 10
+      maxStock: 30
+      spawnChance: 100
+
+  comfortable:
+    # Full adventuring supplies
+    - item: "Rope, Hempen (50 feet)"
+      minStock: 8
+      maxStock: 20
+      spawnChance: 100
+    - item: "Rope, Silk (50 feet)"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Rations (1 day)"
+      minStock: 50
+      maxStock: 120
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 50
+      maxStock: 150
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 12
+      maxStock: 30
+      spawnChance: 100
+    - item: "Backpack"
+      minStock: 8
+      maxStock: 20
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 8
+      maxStock: 15
+      spawnChance: 100
+    - item: "Tinderbox"
+      minStock: 5
+      maxStock: 15
+      spawnChance: 100
+
+    # Tools
+    - item: "Crowbar"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Hammer"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+    - item: "Grappling Hook"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Climbing Kit"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Healer's Kit"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Thieves' Tools"
+      minStock: 1
+      maxStock: 2
+      spawnChance: 100
+
+    # Lighting
+    - item: "Lantern, Hooded"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+    - item: "Lantern, Bullseye"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Oil (flask)"
+      minStock: 15
+      maxStock: 40
+      spawnChance: 100
+
+  wealthy:
+    # Premium supplies
+    - item: "Rope, Silk (50 feet)"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+    - item: "Rope, Hempen (50 feet)"
+      minStock: 10
+      maxStock: 25
+      spawnChance: 100
+    - item: "Rations (1 day)"
+      minStock: 80
+      maxStock: 200
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 80
+      maxStock: 200
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 15
+      maxStock: 40
+      spawnChance: 100
+    - item: "Backpack"
+      minStock: 10
+      maxStock: 25
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 10
+      maxStock: 20
+      spawnChance: 100
+
+    # Advanced tools
+    - item: "Climbing Kit"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Healer's Kit"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+    - item: "Thieves' Tools"
+      minStock: 2
+      maxStock: 4
+      spawnChance: 100
+    - item: "Disguise Kit"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+    # Lighting
+    - item: "Lantern, Hooded"
+      minStock: 4
+      maxStock: 10
+      spawnChance: 100
+    - item: "Lantern, Bullseye"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Oil (flask)"
+      minStock: 20
+      maxStock: 60
+      spawnChance: 100
+
+    # Components
+    - item: "Component Pouch"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+
+  aristocratic:
+    # Everything in bulk
+    - item: "Rope, Silk (50 feet)"
+      minStock: 5
+      maxStock: 12
+      spawnChance: 100
+    - item: "Rope, Hempen (50 feet)"
+      minStock: 15
+      maxStock: 35
+      spawnChance: 100
+    - item: "Rations (1 day)"
+      minStock: 100
+      maxStock: 300
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 100
+      maxStock: 300
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 20
+      maxStock: 50
+      spawnChance: 100
+    - item: "Backpack"
+      minStock: 15
+      maxStock: 35
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 15
+      maxStock: 30
+      spawnChance: 100
+    - item: "Tinderbox"
+      minStock: 10
+      maxStock: 25
+      spawnChance: 100
+
+    # All tools available
+    - item: "Climbing Kit"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+    - item: "Healer's Kit"
+      minStock: 5
+      maxStock: 12
+      spawnChance: 100
+    - item: "Thieves' Tools"
+      minStock: 3
+      maxStock: 6
+      spawnChance: 100
+    - item: "Disguise Kit"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+
+    # Premium lighting
+    - item: "Lantern, Hooded"
+      minStock: 6
+      maxStock: 15
+      spawnChance: 100
+    - item: "Lantern, Bullseye"
+      minStock: 3
+      maxStock: 8
+      spawnChance: 100
+    - item: "Oil (flask)"
+      minStock: 30
+      maxStock: 80
+      spawnChance: 100
+
+    # Components
+    - item: "Component Pouch"
+      minStock: 4
+      maxStock: 10
+      spawnChance: 100
+    - item: "Spellbook"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+# =============================================================================
+# TAVERN
+# Based on: Inn & Tavern from reference
+# Note: Taverns primarily serve food/drink (services), limited item stock
+# =============================================================================
+tavern:
+  poor:
+    # Basic supplies travelers might need
+    - item: "Rations (1 day)"
+      minStock: 10
+      maxStock: 30
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 2
+      maxStock: 8
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 10
+      maxStock: 30
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 1
+      maxStock: 5
+      spawnChance: 100
+
+  modest:
+    # Traveler essentials
+    - item: "Rations (1 day)"
+      minStock: 15
+      maxStock: 50
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 4
+      maxStock: 12
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 15
+      maxStock: 50
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 2
+      maxStock: 8
+      spawnChance: 100
+    - item: "Rope, Hempen (50 feet)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+
+  comfortable:
+    # Better traveler supplies
+    - item: "Rations (1 day)"
+      minStock: 20
+      maxStock: 80
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 6
+      maxStock: 15
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 20
+      maxStock: 80
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 3
+      maxStock: 10
+      spawnChance: 100
+    - item: "Rope, Hempen (50 feet)"
+      minStock: 2
+      maxStock: 5
+      spawnChance: 100
+    - item: "Backpack"
+      minStock: 1
+      maxStock: 5
+      spawnChance: 100
+
+  wealthy:
+    # Quality supplies
+    - item: "Rations (1 day)"
+      minStock: 30
+      maxStock: 100
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 8
+      maxStock: 20
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 30
+      maxStock: 100
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 5
+      maxStock: 15
+      spawnChance: 100
+    - item: "Rope, Silk (50 feet)"
+      minStock: 1
+      maxStock: 3
+      spawnChance: 100
+    - item: "Backpack"
+      minStock: 2
+      maxStock: 8
+      spawnChance: 100
+
+  aristocratic:
+    # Premium traveler goods
+    - item: "Rations (1 day)"
+      minStock: 50
+      maxStock: 150
+      spawnChance: 100
+    - item: "Waterskin"
+      minStock: 10
+      maxStock: 30
+      spawnChance: 100
+    - item: "Torch"
+      minStock: 50
+      maxStock: 150
+      spawnChance: 100
+    - item: "Bedroll"
+      minStock: 8
+      maxStock: 20
+      spawnChance: 100
+    - item: "Rope, Silk (50 feet)"
+      minStock: 2
+      maxStock: 6
+      spawnChance: 100
+    - item: "Backpack"
+      minStock: 4
+      maxStock: 12
+      spawnChance: 100
+    - item: "Lantern, Hooded"
+      minStock: 1
+      maxStock: 5
+      spawnChance: 100

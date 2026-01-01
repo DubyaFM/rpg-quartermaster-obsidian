@@ -1,0 +1,14 @@
+					items.push({
+						// Minimal required Item fields (best-effort from log)
+						name,
+						quantity,
+						cost: {}, // Cannot reliably parse cost from formatted string
+						totalCost: {}, // Cannot reliably parse cost from formatted string
+						type: 'unknown', // Not stored in transaction log
+						rarity: 'unknown', // Not stored in transaction log
+						description: '', // Not stored in transaction log
+						source: '', // Not stored in transaction log
+						file: { path: '', name: '' }, // Not stored in transaction log
+						category: 'unknown', // Not stored in transaction log
+						isSale
+					} as PurchasedItem);

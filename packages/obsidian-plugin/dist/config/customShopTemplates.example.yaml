@@ -1,0 +1,223 @@
+# Custom Shop Templates
+# User-defined templates that override default shop generation configs
+# Each template is keyed by shop type, then wealth level
+#
+# IMPORTANT: Rename this file to "customShopTemplates.yaml" to activate
+# Or create a new file in your vault and configure the path in settings
+#
+# Template Structure:
+# - All fields are optional (omitted fields use defaults from shopConfig.yaml)
+# - Values specified here OVERRIDE the defaults for that shop type/wealth combination
+# - One template per shop type + wealth level combination
+#
+# Available Shop Types: blacksmith, alchemist, magic, general, tavern, marketplace, inn, temple, travel
+# Available Wealth Levels: poor, modest, comfortable, wealthy, aristocratic
+
+templates:
+  # ===== EXAMPLE 1: Military Blacksmith =====
+  # A wealthy blacksmith specializing in weapons for the military
+  blacksmith:
+    wealthy:
+      # Optional: Set range for total number of items
+      totalItemRange:
+        min: 35
+        max: 50
+
+      # Optional: Override max items per rarity
+      # (If totalItemRange is set, these become less strict limits)
+      maxItems:
+        common: 25
+        uncommon: 8
+        rare: 3
+        veryRare: 2
+        legendary: 1
+
+      # Optional: Override rarity spawn chances (0-100%)
+      rarityChances:
+        common: 70
+        uncommon: 40
+        rare: 15
+        veryRare: 5
+        legendary: 1
+
+      # Optional: Item type spawn chances by rarity
+      # Only items of these types will spawn (at the specified chance per rarity)
+      itemTypeChances:
+        weapon:  # More weapons than usual
+          common: 95      # 95% chance for common weapons to spawn
+          uncommon: 90    # 90% chance for uncommon weapons
+          rare: 80
+          veryRare: 70
+          legendary: 50
+        armor:   # Normal armor rates
+          common: 70
+          uncommon: 60
+          rare: 50
+          veryRare: 40
+          legendary: 30
+        potion:  # Few potions
+          common: 20
+          uncommon: 10
+
+      # Optional: Guaranteed specific items
+      # These items will spawn (if spawn chance succeeds) before random items
+      specificItems:
+        - itemName: "Longsword"
+          spawnChance: 100  # Always spawns
+          stockRange:
+            min: 3
+            max: 8
+        - itemName: "Plate Armor"
+          spawnChance: 75   # 75% chance to spawn
+          stockRange:
+            min: 1
+            max: 2
+        - itemName: "Shield"
+          spawnChance: 90
+          stockRange:
+            min: 2
+            max: 5
+
+      # Optional: Override shop's starting funds
+      fundsOnHandDice:
+        count: 30
+        sides: 10
+        bonus: 200
+        currency: "gp"
+
+  # ===== EXAMPLE 2: Herb Shop =====
+  # A modest alchemist focusing on natural remedies
+  alchemist:
+    modest:
+      totalItemRange:
+        min: 15
+        max: 25
+
+      # Focus on potions and scrolls
+      itemTypeChances:
+        potion:
+          common: 100
+          uncommon: 90
+          rare: 70
+        scroll:
+          common: 80
+          uncommon: 60
+          rare: 40
+
+      # Always have healing potions
+      specificItems:
+        - itemName: "Potion of Healing"
+          spawnChance: 100
+          stockRange:
+            min: 5
+            max: 10
+
+      goldOnHandDice:
+        count: 8
+        sides: 10
+        bonus: 30
+        currency: "gp"
+
+  # ===== EXAMPLE 3: Arcane Library =====
+  # A wealthy magic shop with lots of scrolls
+  magic:
+    wealthy:
+      totalItemRange:
+        min: 40
+        max: 60
+
+      # Heavy emphasis on scrolls
+      itemTypeChances:
+        scroll:
+          common: 100
+          uncommon: 95
+          rare: 85
+          veryRare: 70
+          legendary: 50
+        wand:
+          uncommon: 60
+          rare: 50
+          veryRare: 40
+        ring:
+          rare: 60
+          veryRare: 50
+          legendary: 40
+
+      goldOnHandDice:
+        count: 40
+        sides: 10
+        bonus: 300
+        currency: "gp"
+
+  # ===== EXAMPLE 4: Frontier Trading Post =====
+  # A comfortable general store with emphasis on adventuring gear
+  general:
+    comfortable:
+      totalItemRange:
+        min: 30
+        max: 45
+
+      # Broad selection but favor practical items
+      itemTypeChances:
+        "adventuring gear":
+          common: 100
+          uncommon: 70
+        weapon:
+          common: 80
+          uncommon: 50
+        armor:
+          common: 70
+          uncommon: 40
+        potion:
+          common: 60
+          uncommon: 40
+
+      specificItems:
+        - itemName: "Rope, hempen (50 feet)"
+          spawnChance: 100
+          stockRange:
+            min: 3
+            max: 6
+        - itemName: "Rations (1 day)"
+          spawnChance: 100
+          stockRange:
+            min: 20
+            max: 50
+        - itemName: "Torch"
+          spawnChance: 100
+          stockRange:
+            min: 15
+            max: 30
+
+      goldOnHandDice:
+        count: 12
+        sides: 10
+        bonus: 60
+        currency: "gp"
+
+# ===== TEMPLATE NOTES =====
+#
+# Spawn Chances:
+# - itemTypeChances: Probability an item of this type/rarity will be selected
+# - specificItems.spawnChance: Probability this specific item will appear
+# - Set to 100 for guaranteed spawn, 0 to never spawn
+#
+# Stock Ranges:
+# - Determines how many of the item will be in stock if it spawns
+# - Rolled randomly between min and max
+#
+# Funds On Hand:
+# - Dice notation: count d sides + bonus currency
+# - Examples: "5d10+20 gp" = roll 5 ten-sided dice, add 20 in currency
+# - Valid sides: 4, 6, 8, 10, 12, 20, 100
+# - Valid currencies: cp, sp, gp, pp
+#
+# Loading Priority:
+# 1. Shop type + wealth level combination checked first
+# 2. If template exists: merge with defaults (custom overrides defaults)
+# 3. If no template: use shopConfig.yaml defaults
+#
+# Multiple Templates:
+# - You can only have ONE template per shop type + wealth level combination
+# - To use different configurations, create multiple template files
+# - Configure which file to use in plugin settings

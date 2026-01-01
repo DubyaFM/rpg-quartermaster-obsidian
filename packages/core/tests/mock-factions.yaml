@@ -1,0 +1,11 @@
+
+factions:
+  - name: 'The Guild of Adventurers'
+    description: 'A noble organization dedicated to exploration and heroism.'
+    alignment: 'Good'
+  - name: 'Shadow Syndicate'
+    description: 'A clandestine network of rogues and spies.'
+    alignment: 'Evil'
+  - name: 'Merchant's Alliance'
+    description: 'A powerful consortium of traders and entrepreneurs.'
+    alignment: 'Neutral'

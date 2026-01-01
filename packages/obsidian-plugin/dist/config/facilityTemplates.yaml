@@ -1,0 +1,307 @@
+# Facility Templates for Stronghold System
+# Generic fantasy stronghold facilities
+# Each facility can perform specific orders and provides passive benefits
+
+facilities:
+  # ========================================
+  # Basic Facilities (Tier 1)
+  # ========================================
+
+  - id: workshop
+    name: Workshop
+    tier: 1
+    type: basic
+    description: A workspace with tools and benches for crafting mundane items and simple repairs.
+    unlockLevel: 1
+    prerequisites: None
+    size:
+      category: roomy
+      areaSquares: 400
+    hirelingsRequired: 1
+    buildCost:
+      gold: 500
+      timeInDays: 14
+    associatedOrderIds:
+      - craft_mundane_item
+      - repair_equipment
+    passiveBenefits: Equipped hirelings can craft basic items during downtime.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: barracks
+    name: Barracks
+    tier: 1
+    type: basic
+    description: Housing and training facilities for guards and soldiers.
+    unlockLevel: 1
+    prerequisites: None
+    size:
+      category: vast
+      areaSquares: 900
+    hirelingsRequired: 1
+    buildCost:
+      gold: 750
+      timeInDays: 21
+    associatedOrderIds:
+      - recruit_defenders
+      - train_defenders
+    passiveBenefits: Can house up to 20 basic defenders. Training grounds improve defender readiness.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: library
+    name: Library
+    tier: 1
+    type: basic
+    description: A collection of books, scrolls, and reference materials for study and research.
+    unlockLevel: 1
+    prerequisites: None
+    size:
+      category: roomy
+      areaSquares: 400
+    hirelingsRequired: 1
+    buildCost:
+      gold: 1000
+      timeInDays: 28
+    associatedOrderIds:
+      - research_lore
+      - copy_scroll
+    passiveBenefits: Provides advantage on Intelligence checks for research conducted within the stronghold.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: storehouse
+    name: Storehouse
+    tier: 1
+    type: basic
+    description: Secure storage for supplies, equipment, and treasure.
+    unlockLevel: 1
+    prerequisites: None
+    size:
+      category: vast
+      areaSquares: 900
+    hirelingsRequired: 1
+    buildCost:
+      gold: 300
+      timeInDays: 10
+    associatedOrderIds:
+      - organize_inventory
+    passiveBenefits: Increases stronghold inventory capacity. Items stored here are protected from theft and decay.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: garden
+    name: Garden
+    tier: 1
+    type: basic
+    description: Cultivated plots for growing herbs, vegetables, and medicinal plants.
+    unlockLevel: 1
+    prerequisites: Access to sunlight or magical light source
+    size:
+      category: roomy
+      areaSquares: 400
+    hirelingsRequired: 1
+    buildCost:
+      gold: 200
+      timeInDays: 14
+    associatedOrderIds:
+      - harvest_herbs
+      - cultivate_rare_plant
+    passiveBenefits: Provides fresh food and common herbs for the stronghold. Reduces ration costs by 10%.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Special Facilities (Tier 1)
+  # ========================================
+
+  - id: arcane_study
+    name: Arcane Study
+    tier: 1
+    type: special
+    description: A chamber dedicated to magical research and spellcasting practice.
+    unlockLevel: 3
+    prerequisites: At least one party member with spellcasting ability
+    size:
+      category: roomy
+      areaSquares: 400
+    hirelingsRequired: 1
+    buildCost:
+      gold: 2000
+      timeInDays: 35
+    associatedOrderIds:
+      - scribe_spell_scroll
+      - research_spell
+      - enchant_minor_item
+    passiveBenefits: Spellcasters can prepare one additional spell here. Provides magical components worth 100 gp per month.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: sanctum
+    name: Sanctum
+    tier: 1
+    type: special
+    description: A sacred space for prayer, meditation, and divine communion.
+    unlockLevel: 3
+    prerequisites: At least one party member with divine spellcasting
+    size:
+      category: roomy
+      areaSquares: 400
+    hirelingsRequired: 1
+    buildCost:
+      gold: 1500
+      timeInDays: 28
+    associatedOrderIds:
+      - bless_defenders
+      - brew_holy_water
+      - seek_divine_guidance
+    passiveBenefits: Divine spellcasters can commune with their deity once per week. Defenders blessed here gain +1 to morale.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: alchemical_lab
+    name: Alchemical Laboratory
+    tier: 1
+    type: special
+    description: A laboratory equipped for brewing potions and creating alchemical substances.
+    unlockLevel: 3
+    prerequisites: Proficiency in Alchemist's Supplies
+    size:
+      category: roomy
+      areaSquares: 400
+    hirelingsRequired: 1
+    buildCost:
+      gold: 2500
+      timeInDays: 42
+    associatedOrderIds:
+      - brew_potion
+      - craft_alchemical_item
+    passiveBenefits: Can create common potions at half cost. Fire resistance for hirelings working in this facility.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Upgraded Facilities (Tier 2)
+  # ========================================
+
+  - id: master_workshop
+    name: Master Workshop
+    tier: 2
+    baseFacilityId: workshop
+    type: basic
+    description: An advanced workshop with superior tools and forges for crafting masterwork items.
+    unlockLevel: 5
+    prerequisites: Workshop must be built first
+    size:
+      category: roomy
+      areaSquares: 400
+    hirelingsRequired: 2
+    buildCost:
+      gold: 1000
+      timeInDays: 28
+    upgradeCost:
+      gold: 1500
+      timeInDays: 21
+    associatedOrderIds:
+      - craft_mundane_item
+      - repair_equipment
+      - craft_masterwork_item
+    passiveBenefits: Can craft masterwork items. Crafting time reduced by 25%. Equipped hirelings can repair magical items.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: fortress_barracks
+    name: Fortress Barracks
+    tier: 2
+    baseFacilityId: barracks
+    type: basic
+    description: Expanded barracks with advanced training facilities and armories.
+    unlockLevel: 5
+    prerequisites: Barracks must be built first
+    size:
+      category: vast
+      areaSquares: 900
+    hirelingsRequired: 2
+    buildCost:
+      gold: 1500
+      timeInDays: 35
+    upgradeCost:
+      gold: 2000
+      timeInDays: 28
+    associatedOrderIds:
+      - recruit_defenders
+      - train_defenders
+      - recruit_elite_defender
+    passiveBenefits: Can house up to 40 basic defenders. Defenders trained here gain +1 to attack rolls.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  - id: grand_library
+    name: Grand Library
+    tier: 2
+    baseFacilityId: library
+    type: basic
+    description: An extensive collection with rare tomes and dedicated research chambers.
+    unlockLevel: 5
+    prerequisites: Library must be built first
+    size:
+      category: roomy
+      areaSquares: 400
+    hirelingsRequired: 2
+    buildCost:
+      gold: 2000
+      timeInDays: 42
+    upgradeCost:
+      gold: 2500
+      timeInDays: 35
+    associatedOrderIds:
+      - research_lore
+      - copy_scroll
+      - research_advanced_topic
+    passiveBenefits: Research time reduced by 50%. Contains rare lore on history, arcana, and planar knowledge.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
+
+  # ========================================
+  # Elite Facilities (Tier 3)
+  # ========================================
+
+  - id: archmage_tower
+    name: Archmage's Tower
+    tier: 3
+    baseFacilityId: arcane_study
+    type: special
+    description: A towering spire with powerful magical wards and a teleportation circle.
+    unlockLevel: 9
+    prerequisites: Arcane Study must be built first, character level 9+
+    size:
+      category: vast
+      areaSquares: 900
+    hirelingsRequired: 3
+    buildCost:
+      gold: 5000
+      timeInDays: 70
+    upgradeCost:
+      gold: 7500
+      timeInDays: 56
+    associatedOrderIds:
+      - scribe_spell_scroll
+      - research_spell
+      - enchant_minor_item
+      - enchant_major_item
+      - create_teleportation_circle
+    passiveBenefits: Contains a permanent teleportation circle. Spellcasters can prepare two additional spells. Magical components worth 500 gp per month.
+    metadata:
+      createdDate: '2025-11-18'
+      lastModified: '2025-11-18'
