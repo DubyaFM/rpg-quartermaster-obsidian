@@ -121,7 +121,7 @@ export function validateTemplateConfig(config: ShopGenerationConfig): {
 
 	// Validate rarityChances (should be 0-100)
 	const rarityChances = config.rarityChances ?? {};
-	for (const [rarity, chance] of Object.entries(rarityChances)) {
+	for (const [rarity, chance] of Object.entries(rarityChances as Record<string, number>)) {
 		if (chance < 0 || chance > 100) {
 			errors.push(`rarityChances.${rarity} must be between 0 and 100 (got ${chance})`);
 		}
