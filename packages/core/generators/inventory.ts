@@ -444,7 +444,7 @@ export function generateRandomShopInventory(
 		const magicItemCount = rollMagicItemCount(config.magicItemCountWeights ?? {}, randomizer);
 
 		if (magicItemCount > 0) {
-			// STEP 3: Get effective magic chances (pre-calculated by ConfigLoader)
+			// STEP 3: Get effective magic chances (pre-calculated by ConfigService)
 			// These are party-level-based chances modified by wealth and shop modifiers
 			const magicChances = (config as any).effectiveMagicItemChances || {
 				common: 0,

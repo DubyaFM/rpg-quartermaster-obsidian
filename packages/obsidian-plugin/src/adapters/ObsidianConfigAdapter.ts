@@ -183,6 +183,38 @@ export class ObsidianConfigAdapter implements IConfigAdapter {
 	}
 
 	/**
+	 * Load currency configuration from plugin directory
+	 * Used for currency conversion and formatting throughout the app
+	 */
+	async loadCurrencyConfig(): Promise<import('@quartermaster/core/models/currency-config').CurrencyConfig | null> {
+		// Check cache first
+		const cacheKey = 'currencyConfig';
+		if (this.configCache.has(cacheKey)) {
+			return this.configCache.get(cacheKey);
+		}
+
+		// Load from file
+		const config = await this.loadYamlFile('currencies.yaml');
+
+		if (!config) {
+			this.configCache.set(cacheKey, null);
+			return null;
+		}
+
+		// Validate that defaultSystem exists in systems
+		if (!config.defaultSystem || !config.systems || !config.systems[config.defaultSystem]) {
+			console.error('ObsidianConfigAdapter: Invalid currency config structure. defaultSystem:', config.defaultSystem, 'Available systems:', config.systems ? Object.keys(config.systems) : 'none');
+			this.configCache.set(cacheKey, null);
+			return null;
+		}
+
+		// Cache the result
+		this.configCache.set(cacheKey, config);
+
+		return config;
+	}
+
+	/**
 	 * Load renown ladders configuration from plugin directory
 	 * Used by renown system for rank progression
 	 */

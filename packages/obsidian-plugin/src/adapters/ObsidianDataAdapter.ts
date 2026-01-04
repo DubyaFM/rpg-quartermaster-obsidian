@@ -28,7 +28,6 @@ import { ISettingsAdapter } from '@quartermaster/core/interfaces/ISettingsAdapte
 import { ICampaignContext } from '@quartermaster/core/interfaces/ICampaignContext';
 import { IPathResolver } from '../interfaces/IPathResolver';
 import { ObsidianConfigAdapter } from './ObsidianConfigAdapter';
-import { ConfigLoader } from './ConfigLoader';
 import { ObsidianSettingsAdapter } from './ObsidianSettingsAdapter';
 import { ObsidianCalendarStateAdapter } from './ObsidianCalendarStateAdapter';
 import { EventBus } from '@quartermaster/core/services/EventBus';
@@ -378,12 +377,17 @@ export class ObsidianDataAdapter implements IDataAdapter {
 		}
 
 		try {
-			const loader = new ConfigLoader(this.app, this.plugin);
-			this.currencyConfig = await loader.loadCurrencyConfig();
-			console.log(
-				'[ObsidianDataAdapter] Loaded currency config:',
-				this.currencyConfig.systems[this.currencyConfig.defaultSystem].name
-			);
+			const config = await this.configAdapter.loadCurrencyConfig();
+			if (config) {
+				this.currencyConfig = config;
+				console.log(
+					'[ObsidianDataAdapter] Loaded currency config:',
+					this.currencyConfig.systems[this.currencyConfig.defaultSystem].name
+				);
+			} else {
+				console.warn('[ObsidianDataAdapter] No currency config found, using D&D 5e default');
+				this.currencyConfig = getDefaultCurrencyConfig();
+			}
 		} catch (error) {
 			console.warn(
 				'[ObsidianDataAdapter] Failed to load currency config, using D&D 5e default:',

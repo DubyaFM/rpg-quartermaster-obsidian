@@ -192,6 +192,12 @@ export interface IConfigAdapter {
 	loadLifestyleCosts(): Promise<import('../models/types').UpkeepCostConfig | null>;
 
 	/**
+	 * Load currency configuration from currencies.yaml
+	 * @returns Parsed currency config with all currency systems and default system
+	 */
+	loadCurrencyConfig(): Promise<import('../models/currency-config').CurrencyConfig | null>;
+
+	/**
 	 * @deprecated Use saveNamedTemplate() instead
 	 * Save custom shop templates to YAML (old format)
 	 * @param templates Templates data to save
