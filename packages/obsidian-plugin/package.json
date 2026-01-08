@@ -10,7 +10,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:vitest": "vitest",
-    "deploy": "cmd /c deploy-to-test.bat",
+    "deploy": "node scripts/deploy.mjs",
     "release": "node scripts/release.mjs"
   },
   "keywords": [
@@ -44,5 +44,8 @@
     "@quartermaster/core": "file:../core",
     "js-yaml": "^4.1.0",
     "uuid": "^13.0.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.55.1"
   }
 }
