@@ -493,6 +493,9 @@ export interface Location {
 	// Hierarchy
 	parentLocation?: string;  // Link to parent location file ([[Parent Location]])
 
+	// Geography
+	region?: 'temperate' | 'polar' | 'tropical';  // Climate region for solar time calculations
+
 	// State
 	status?: string;  // e.g., "Prosperous", "Plagued", "War-torn"
 	description?: string;
@@ -672,11 +675,13 @@ export interface DiagnosticsInfo extends DiagnosticsTracker {
 
 /**
  * Calendar Month Definition
+ * Extended to support intercalary days (days outside normal month/week cycle)
  */
 export interface CalendarMonth {
 	name: string;
 	days: number;
 	order: number;
+	type?: 'standard' | 'intercalary';  // Intercalary days don't advance weekday cycle
 }
 
 /**
@@ -693,8 +698,45 @@ export interface CalendarHoliday {
 }
 
 /**
+ * Calendar Era Definition
+ * Defines historical periods with custom year formatting
+ */
+export interface Era {
+	name: string;  // Full name: "Dalereckoning", "Before Dalereckoning"
+	abbrev: string;  // Abbreviation: "DR", "BD"
+	startYear: number;  // Year this era begins (inclusive)
+	endYear?: number;  // Year this era ends (exclusive), undefined for current era
+	direction: 1 | -1;  // 1 = count forward, -1 = count backward
+}
+
+/**
+ * Calendar Leap Rule Definition
+ * Defines complex leap year calculations (e.g., Gregorian: every 4, not 100, yes 400)
+ */
+export interface LeapRule {
+	interval: number;  // Base interval (e.g., 4 for "every 4 years")
+	offset?: number;  // Year offset for calculation (default: 0)
+	targetMonth?: number;  // 0-indexed month to add leap day to (undefined = end of year)
+	exclude?: LeapRule[];  // Nested rules for exceptions (e.g., "not every 100 years")
+}
+
+/**
+ * Calendar Season Definition
+ * Defines seasonal periods with sunrise/sunset times
+ */
+export interface Season {
+	name: string;  // e.g., "Spring", "Summer", "Harvest Season"
+	startMonth: number;  // 0-indexed month when season begins
+	startDay: number;  // 1-indexed day of month when season begins
+	sunrise: number;  // Minutes from midnight (0-1439)
+	sunset: number;  // Minutes from midnight (0-1439)
+	region?: string;  // Optional region tag for latitude-specific times
+}
+
+/**
  * Calendar Definition
  * Defines a calendar system (e.g., Harptos, Gregorian, custom)
+ * Extended to support eras, complex leap rules, and seasons
  */
 export interface CalendarDefinition {
 	id: string;
@@ -704,7 +746,11 @@ export interface CalendarDefinition {
 	months: CalendarMonth[];
 	holidays: CalendarHoliday[];
 	startingYear?: number;
-	yearSuffix?: string;  // e.g., "DR", "AD"
+	yearSuffix?: string;  // e.g., "DR", "AD" (deprecated in favor of eras)
+	// Phase 1 Extensions
+	eras?: Era[];  // Era definitions for year display
+	leapRules?: LeapRule[];  // Complex leap year rules
+	seasons?: Season[];  // Seasonal definitions with solar times
 }
 
 /**
@@ -719,15 +765,73 @@ export interface CalendarOrigin {
 }
 
 /**
+ * Calendar Clock
+ * Hybrid time storage: absolute day counter + time-of-day offset
+ * Separates macro (day) from micro (time) for efficient simulation
+ */
+export interface CalendarClock {
+	currentDay: number;  // Absolute day counter (0-indexed) - macro anchor
+	timeOfDay: number;  // Minutes from midnight (0-1439) - micro offset
+}
+
+/**
  * Calendar State
  * Current calendar state persisted in settings
+ * Extended to support time-of-day tracking via CalendarClock
  */
 export interface CalendarState {
 	currentDay: number;  // Absolute day counter (0-indexed)
+	timeOfDay?: number;  // Minutes from midnight (0-1439) - optional for backward compatibility
 	activeCalendarId: string;  // Which calendar definition to use
 	originDate?: CalendarOrigin;  // Maps Day 0 to calendar date
 	lastAdvanced?: string;  // ISO timestamp of last advancement
 	totalAdvancementCount?: number;  // Total times advanced (for stats)
+}
+
+/**
+ * CalendarDate - Core date representation from CalendarDriver
+ *
+ * Represents the fundamental components of a calendar date:
+ * - Day, month, year position
+ * - Day of week (if weekdays defined)
+ * - Absolute day reference
+ *
+ * This is the primary output of CalendarDriver.getDate().
+ * For human-readable formatting, use FormattedDate.
+ */
+export interface CalendarDate {
+	/** The absolute day counter (0-indexed) */
+	absoluteDay: number;
+
+	/** Day of month (1-indexed, 1-31 typical) */
+	dayOfMonth: number;
+
+	/** Month index (0-indexed) */
+	monthIndex: number;
+
+	/** Month name from calendar definition */
+	monthName: string;
+
+	/** Year number (calculated from origin or startingYear) */
+	year: number;
+
+	/** Day of week name (empty string if no weekdays defined) */
+	dayOfWeek: string;
+
+	/** Day of week index (0-indexed, -1 if no weekdays) */
+	dayOfWeekIndex: number;
+
+	/** Day of year (0-indexed) */
+	dayOfYear: number;
+
+	/** Year suffix from calendar definition (e.g., "DR", "AD") */
+	yearSuffix: string;
+
+	/** Whether this day falls in a simple counter (no months) calendar */
+	isSimpleCounter: boolean;
+
+	/** Whether this day is an intercalary day (outside normal month/week cycle) */
+	isIntercalary: boolean;
 }
 
 /**
@@ -1157,3 +1261,48 @@ export interface ContainerTemplate {
 	description: string;
 	icon?: string;
 }
+
+// ============================================================================
+// Event System Types
+// ============================================================================
+
+// Re-export all event system types from eventTypes.ts
+export type {
+	EventContext,
+	EventDefinition,
+	FixedDateEvent,
+	IntervalEvent,
+	ChainEventState,
+	ChainEvent,
+	ConditionalEvent,
+	AnyEventDefinition,
+	ActiveEvent,
+	EffectRegistry
+} from './eventTypes';
+
+// Re-export all effect types from effectTypes.ts
+export type {
+	EconomicEffects,
+	EnvironmentalEffects,
+	UIEffects,
+	CombinedEffects,
+	ResolvedEffects,
+	EffectCategory
+} from './effectTypes';
+
+export {
+	EFFECT_KEY_REGISTRY,
+	EFFECT_CATEGORIES,
+	getAllEffectKeys,
+	isValidEffectKey,
+	getEffectCategory
+} from './effectTypes';
+
+// Re-export all world state persistence types from worldStateTypes.ts
+export type {
+	ChainStateVector,
+	GMOverride,
+	ModuleToggle,
+	WorldState
+} from './worldStateTypes';
+export { WorldStateStoragePaths } from './worldStateTypes';

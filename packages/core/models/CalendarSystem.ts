@@ -20,6 +20,8 @@ export interface CalendarMonth {
 	days: number;
 	/** Optional season designation (e.g., "Winter", "Summer") */
 	season?: string;
+	/** Month type: standard or intercalary (days outside normal week cycle) */
+	type?: 'standard' | 'intercalary';
 }
 
 /**
@@ -69,21 +71,21 @@ export const PRESET_CALENDAR_SYSTEMS: CalendarSystem[] = [
 		name: 'Calendar of Harptos (Forgotten Realms)',
 		months: [
 			{ name: 'Hammer', days: 30, season: 'Winter' },
-			{ name: 'Midwinter', days: 1, season: 'Winter' }, // Festival day
+			{ name: 'Midwinter', days: 1, season: 'Winter', type: 'intercalary' },
 			{ name: 'Alturiak', days: 30, season: 'Winter' },
 			{ name: 'Ches', days: 30, season: 'Spring' },
 			{ name: 'Tarsakh', days: 30, season: 'Spring' },
-			{ name: 'Greengrass', days: 1, season: 'Spring' }, // Festival day
+			{ name: 'Greengrass', days: 1, season: 'Spring', type: 'intercalary' },
 			{ name: 'Mirtul', days: 30, season: 'Spring' },
 			{ name: 'Kythorn', days: 30, season: 'Summer' },
 			{ name: 'Flamerule', days: 30, season: 'Summer' },
-			{ name: 'Midsummer', days: 1, season: 'Summer' }, // Festival day
+			{ name: 'Midsummer', days: 1, season: 'Summer', type: 'intercalary' },
 			{ name: 'Eleasis', days: 30, season: 'Summer' },
 			{ name: 'Eleint', days: 30, season: 'Fall' },
-			{ name: 'Highharvestide', days: 1, season: 'Fall' }, // Festival day
+			{ name: 'Highharvestide', days: 1, season: 'Fall', type: 'intercalary' },
 			{ name: 'Marpenoth', days: 30, season: 'Fall' },
 			{ name: 'Uktar', days: 30, season: 'Fall' },
-			{ name: 'Feast of the Moon', days: 1, season: 'Fall' }, // Festival day
+			{ name: 'Feast of the Moon', days: 1, season: 'Fall', type: 'intercalary' },
 			{ name: 'Nightal', days: 30, season: 'Winter' }
 		],
 		daysPerWeek: 10,

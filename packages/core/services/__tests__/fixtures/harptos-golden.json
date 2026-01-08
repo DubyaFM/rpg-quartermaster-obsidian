@@ -1,0 +1,581 @@
+{
+  "calendar": {
+    "id": "harptos-full",
+    "name": "Calendar of Harptos (Forgotten Realms)",
+    "description": "Golden master test fixtures - manually verified against Forgotten Realms canon"
+  },
+  "notes": [
+    "All test cases manually verified from Forgotten Realms Wiki",
+    "Source: https://forgottenrealms.fandom.com/wiki/Calendar_of_Harptos",
+    "Year structure: 12 months × 30 days = 360 days + 5 intercalary days = 365 days/year",
+    "Leap years: Year % 4 == 0 adds Shieldmeet after Midsummer (366 days)",
+    "Weekday cycle: 10-day 'tenday' - intercalary days do NOT advance weekday",
+    "Starting year: 1492 DR (default for 5e campaigns)"
+  ],
+  "testCases": {
+    "basicDates": {
+      "description": "Basic date calculations for Year 1493 DR (non-leap year)",
+      "year": 1493,
+      "cases": [
+        {
+          "name": "First day of the year",
+          "absoluteDay": 0,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 0,
+            "monthName": "Hammer",
+            "dayOfMonth": 1,
+            "dayOfYear": 0,
+            "dayOfWeek": "1st Day",
+            "dayOfWeekIndex": 0,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Last day of Hammer",
+          "absoluteDay": 29,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 0,
+            "monthName": "Hammer",
+            "dayOfMonth": 30,
+            "dayOfYear": 29,
+            "dayOfWeek": "10th Day",
+            "dayOfWeekIndex": 9,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Midwinter (first intercalary day)",
+          "absoluteDay": 30,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 1,
+            "monthName": "Midwinter",
+            "dayOfMonth": 1,
+            "dayOfYear": 30,
+            "dayOfWeek": "",
+            "dayOfWeekIndex": -1,
+            "yearSuffix": "DR",
+            "isIntercalary": true
+          }
+        },
+        {
+          "name": "First day of Alturiak (after Midwinter)",
+          "absoluteDay": 31,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 2,
+            "monthName": "Alturiak",
+            "dayOfMonth": 1,
+            "dayOfYear": 31,
+            "dayOfWeek": "1st Day",
+            "dayOfWeekIndex": 0,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Last day of Alturiak",
+          "absoluteDay": 60,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 2,
+            "monthName": "Alturiak",
+            "dayOfMonth": 30,
+            "dayOfYear": 60,
+            "dayOfWeek": "10th Day",
+            "dayOfWeekIndex": 9,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "First day of Ches",
+          "absoluteDay": 61,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 3,
+            "monthName": "Ches",
+            "dayOfMonth": 1,
+            "dayOfYear": 61,
+            "dayOfWeek": "1st Day",
+            "dayOfWeekIndex": 0,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Last day of Tarsakh (before Greengrass)",
+          "absoluteDay": 120,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 4,
+            "monthName": "Tarsakh",
+            "dayOfMonth": 30,
+            "dayOfYear": 120,
+            "dayOfWeek": "10th Day",
+            "dayOfWeekIndex": 9,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Greengrass (second intercalary day)",
+          "absoluteDay": 121,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 5,
+            "monthName": "Greengrass",
+            "dayOfMonth": 1,
+            "dayOfYear": 121,
+            "dayOfWeek": "",
+            "dayOfWeekIndex": -1,
+            "yearSuffix": "DR",
+            "isIntercalary": true
+          }
+        },
+        {
+          "name": "First day of Mirtul (after Greengrass)",
+          "absoluteDay": 122,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 6,
+            "monthName": "Mirtul",
+            "dayOfMonth": 1,
+            "dayOfYear": 122,
+            "dayOfWeek": "1st Day",
+            "dayOfWeekIndex": 0,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "First day of Flamerule",
+          "absoluteDay": 182,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 8,
+            "monthName": "Flamerule",
+            "dayOfMonth": 1,
+            "dayOfYear": 182,
+            "dayOfWeek": "1st Day",
+            "dayOfWeekIndex": 0,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Last day of Flamerule (before Midsummer)",
+          "absoluteDay": 211,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 8,
+            "monthName": "Flamerule",
+            "dayOfMonth": 30,
+            "dayOfYear": 211,
+            "dayOfWeek": "10th Day",
+            "dayOfWeekIndex": 9,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Midsummer (third intercalary day)",
+          "absoluteDay": 212,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 9,
+            "monthName": "Midsummer",
+            "dayOfMonth": 1,
+            "dayOfYear": 212,
+            "dayOfWeek": "",
+            "dayOfWeekIndex": -1,
+            "yearSuffix": "DR",
+            "isIntercalary": true
+          }
+        },
+        {
+          "name": "First day of Eleasis (after Midsummer)",
+          "absoluteDay": 213,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 10,
+            "monthName": "Eleasis",
+            "dayOfMonth": 1,
+            "dayOfYear": 213,
+            "dayOfWeek": "1st Day",
+            "dayOfWeekIndex": 0,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Last day of Eleint (before Highharvestide)",
+          "absoluteDay": 272,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 11,
+            "monthName": "Eleint",
+            "dayOfMonth": 30,
+            "dayOfYear": 272,
+            "dayOfWeek": "10th Day",
+            "dayOfWeekIndex": 9,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Highharvestide (fourth intercalary day)",
+          "absoluteDay": 273,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 12,
+            "monthName": "Highharvestide",
+            "dayOfMonth": 1,
+            "dayOfYear": 273,
+            "dayOfWeek": "",
+            "dayOfWeekIndex": -1,
+            "yearSuffix": "DR",
+            "isIntercalary": true
+          }
+        },
+        {
+          "name": "First day of Marpenoth (after Highharvestide)",
+          "absoluteDay": 274,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 13,
+            "monthName": "Marpenoth",
+            "dayOfMonth": 1,
+            "dayOfYear": 274,
+            "dayOfWeek": "1st Day",
+            "dayOfWeekIndex": 0,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Last day of Uktar (before Feast of the Moon)",
+          "absoluteDay": 333,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 14,
+            "monthName": "Uktar",
+            "dayOfMonth": 30,
+            "dayOfYear": 333,
+            "dayOfWeek": "10th Day",
+            "dayOfWeekIndex": 9,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Feast of the Moon (fifth intercalary day)",
+          "absoluteDay": 334,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 15,
+            "monthName": "Feast of the Moon",
+            "dayOfMonth": 1,
+            "dayOfYear": 334,
+            "dayOfWeek": "",
+            "dayOfWeekIndex": -1,
+            "yearSuffix": "DR",
+            "isIntercalary": true
+          }
+        },
+        {
+          "name": "First day of Nightal (after Feast)",
+          "absoluteDay": 335,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 16,
+            "monthName": "Nightal",
+            "dayOfMonth": 1,
+            "dayOfYear": 335,
+            "dayOfWeek": "1st Day",
+            "dayOfWeekIndex": 0,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "Last day of year",
+          "absoluteDay": 364,
+          "expected": {
+            "year": 1493,
+            "monthIndex": 16,
+            "monthName": "Nightal",
+            "dayOfMonth": 30,
+            "dayOfYear": 364,
+            "dayOfWeek": "10th Day",
+            "dayOfWeekIndex": 9,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        },
+        {
+          "name": "First day of next year (1494 DR)",
+          "absoluteDay": 365,
+          "expected": {
+            "year": 1494,
+            "monthIndex": 0,
+            "monthName": "Hammer",
+            "dayOfMonth": 1,
+            "dayOfYear": 0,
+            "dayOfWeek": "1st Day",
+            "dayOfWeekIndex": 0,
+            "yearSuffix": "DR",
+            "isIntercalary": false
+          }
+        }
+      ]
+    },
+    "intercalaryBoundaries": {
+      "description": "Test weekday continuity across all intercalary boundaries",
+      "cases": [
+        {
+          "name": "Hammer 30 → Midwinter → Alturiak 1",
+          "boundary": "Midwinter",
+          "beforeDay": 29,
+          "intercalaryDay": 30,
+          "afterDay": 31,
+          "expected": {
+            "beforeWeekday": "10th Day",
+            "intercalaryWeekday": "",
+            "afterWeekday": "1st Day"
+          }
+        },
+        {
+          "name": "Tarsakh 30 → Greengrass → Mirtul 1",
+          "boundary": "Greengrass",
+          "beforeDay": 120,
+          "intercalaryDay": 121,
+          "afterDay": 122,
+          "expected": {
+            "beforeWeekday": "10th Day",
+            "intercalaryWeekday": "",
+            "afterWeekday": "1st Day"
+          }
+        },
+        {
+          "name": "Flamerule 30 → Midsummer → Eleasis 1",
+          "boundary": "Midsummer",
+          "beforeDay": 211,
+          "intercalaryDay": 212,
+          "afterDay": 213,
+          "expected": {
+            "beforeWeekday": "10th Day",
+            "intercalaryWeekday": "",
+            "afterWeekday": "1st Day",
+            "note": "Day 213 falls on 1st Day due to intercalary pause"
+          }
+        },
+        {
+          "name": "Eleint 30 → Highharvestide → Marpenoth 1",
+          "boundary": "Highharvestide",
+          "beforeDay": 272,
+          "intercalaryDay": 273,
+          "afterDay": 274,
+          "expected": {
+            "beforeWeekday": "10th Day",
+            "intercalaryWeekday": "",
+            "afterWeekday": "1st Day"
+          }
+        },
+        {
+          "name": "Uktar 30 → Feast of the Moon → Nightal 1",
+          "boundary": "Feast of the Moon",
+          "beforeDay": 333,
+          "intercalaryDay": 334,
+          "afterDay": 335,
+          "expected": {
+            "beforeWeekday": "10th Day",
+            "intercalaryWeekday": "",
+            "afterWeekday": "1st Day"
+          }
+        }
+      ]
+    },
+    "leapYearTests": {
+      "description": "Shieldmeet tests (leap year = Year % 4 == 0)",
+      "notes": [
+        "1493 DR % 4 != 0, so 1493 is NOT a leap year",
+        "1492 DR % 4 == 0, so 1492 IS a leap year",
+        "Shieldmeet occurs after Midsummer in leap years, adding 1 day to the year (366 total)"
+      ],
+      "leapYear": 1492,
+      "nonLeapYear": 1493,
+      "cases": [
+        {
+          "name": "1492 DR is a leap year",
+          "year": 1492,
+          "expectedLeap": true
+        },
+        {
+          "name": "1493 DR is NOT a leap year",
+          "year": 1493,
+          "expectedLeap": false
+        },
+        {
+          "name": "1496 DR is a leap year",
+          "year": 1496,
+          "expectedLeap": true
+        },
+        {
+          "name": "1500 DR is a leap year",
+          "year": 1500,
+          "expectedLeap": true
+        },
+        {
+          "name": "Year 0 is a leap year",
+          "year": 0,
+          "expectedLeap": true
+        },
+        {
+          "name": "Year 4 is a leap year",
+          "year": 4,
+          "expectedLeap": true
+        }
+      ]
+    },
+    "eraTests": {
+      "description": "Era suffix tests (BD = Before Dalereckoning, DR = Dalereckoning)",
+      "cases": [
+        {
+          "name": "Year 0 uses BD era (Before Dalereckoning starts at endYear 1)",
+          "year": 0,
+          "expectedSuffix": "BD"
+        },
+        {
+          "name": "Year 1 DR",
+          "year": 1,
+          "expectedSuffix": "DR"
+        },
+        {
+          "name": "Year 1492 DR",
+          "year": 1492,
+          "expectedSuffix": "DR"
+        },
+        {
+          "name": "Year -1 uses BD era",
+          "year": -1,
+          "expectedSuffix": "BD"
+        },
+        {
+          "name": "Year -100 uses BD era",
+          "year": -100,
+          "expectedSuffix": "BD"
+        }
+      ]
+    },
+    "highIntegerTests": {
+      "description": "Stress tests with very large day counts",
+      "cases": [
+        {
+          "name": "Day 1,000,000",
+          "absoluteDay": 1000000,
+          "expected": {
+            "yearApprox": 4231,
+            "note": "1,000,000 days ÷ 365 days/year ≈ 2739 years from 1492 DR"
+          }
+        },
+        {
+          "name": "Day 100,000,000",
+          "absoluteDay": 100000000,
+          "expected": {
+            "note": "Should handle without overflow or precision loss"
+          }
+        }
+      ]
+    },
+    "monthTransitionTests": {
+      "description": "Standard month transitions (non-intercalary)",
+      "cases": [
+        {
+          "name": "Ches 30 → Tarsakh 1",
+          "beforeDay": 90,
+          "afterDay": 91,
+          "expected": {
+            "beforeMonth": "Ches",
+            "afterMonth": "Tarsakh",
+            "weekdayContinuity": true
+          }
+        },
+        {
+          "name": "Mirtul 30 → Kythorn 1",
+          "beforeDay": 151,
+          "afterDay": 152,
+          "expected": {
+            "beforeMonth": "Mirtul",
+            "afterMonth": "Kythorn",
+            "weekdayContinuity": true
+          }
+        },
+        {
+          "name": "Kythorn 30 → Flamerule 1",
+          "beforeDay": 181,
+          "afterDay": 182,
+          "expected": {
+            "beforeMonth": "Kythorn",
+            "afterMonth": "Flamerule",
+            "weekdayContinuity": true
+          }
+        },
+        {
+          "name": "Eleasis 30 → Eleint 1",
+          "beforeDay": 242,
+          "afterDay": 243,
+          "expected": {
+            "beforeMonth": "Eleasis",
+            "afterMonth": "Eleint",
+            "weekdayContinuity": true,
+            "note": "Eleasis ends at day 242, Eleint starts at day 243"
+          }
+        },
+        {
+          "name": "Marpenoth 30 → Uktar 1",
+          "beforeDay": 303,
+          "afterDay": 304,
+          "expected": {
+            "beforeMonth": "Marpenoth",
+            "afterMonth": "Uktar",
+            "weekdayContinuity": true
+          }
+        }
+      ]
+    },
+    "yearRolloverTests": {
+      "description": "Multi-year progression tests",
+      "cases": [
+        {
+          "name": "5 years from start (accounting for leap years)",
+          "absoluteDay": 1826,
+          "expected": {
+            "year": 1498,
+            "note": "1493-1497: 365 + 365 + 365 + 366 + 365 = 1826 days (one leap year: 1496)"
+          }
+        },
+        {
+          "name": "10 years from start (accounting for leap years)",
+          "absoluteDay": 3652,
+          "expected": {
+            "year": 1503,
+            "note": "1493-1502: 2 leap years (1496, 1500) = 10*365 + 2 = 3652 days"
+          }
+        },
+        {
+          "name": "100 years from start (accounting for leap years)",
+          "absoluteDay": 36525,
+          "expected": {
+            "year": 1593,
+            "note": "1493-1592: 25 leap years (every 4 years) = 100*365 + 25 = 36,525 days"
+          }
+        }
+      ]
+    }
+  }
+}

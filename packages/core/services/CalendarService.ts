@@ -11,11 +11,14 @@
  * - Allow manual date setting with validation
  *
  * Event Producer: Emits 'TimeAdvanced' events via EventBus
+ *
+ * Refactored (Phase 2): Uses CalendarDriver for all date calculations
  */
 
 import { EventBus } from './EventBus';
 import { CalendarDefinitionManager } from './CalendarDefinitionManager';
 import { DateFormatter } from './DateFormatter';
+import { CalendarDriver } from './CalendarDriver';
 import { ICalendarStateAdapter } from '../interfaces/ICalendarStateAdapter';
 import { CalendarState, FormattedDate, TimeAdvancedEvent, CalendarOrigin } from '../models/types';
 import { SYSTEM_EVENTS } from '../models/events';
@@ -23,6 +26,7 @@ import { SYSTEM_EVENTS } from '../models/events';
 export class CalendarService {
 	private state: CalendarState;
 	private initialized: boolean = false;
+	private driver: CalendarDriver | null = null;
 
 	constructor(
 		private eventBus: EventBus,
@@ -41,6 +45,7 @@ export class CalendarService {
 	/**
 	 * Initialize calendar service
 	 * Loads calendar definitions and state from persistence
+	 * Creates CalendarDriver instance for date calculations
 	 */
 	async initialize(): Promise<void> {
 		if (this.initialized) {
@@ -60,16 +65,35 @@ export class CalendarService {
 			await this.stateAdapter.saveState(this.state);
 		}
 
+		// Initialize CalendarDriver with active calendar
+		this.updateDriver();
+
 		this.initialized = true;
+	}
+
+	/**
+	 * Update CalendarDriver instance when calendar or origin changes
+	 * @private
+	 */
+	private updateDriver(): void {
+		const calendar = this.calendarDefinitionManager.getDefinition(this.state.activeCalendarId);
+		if (calendar) {
+			this.driver = new CalendarDriver(calendar, this.state.originDate);
+			// Sync time-of-day from state to driver
+			if (this.state.timeOfDay !== undefined) {
+				this.driver.setTimeOfDay(this.state.timeOfDay);
+			}
+		}
 	}
 
 	/**
 	 * Advance time by a number of days
 	 *
 	 * @param days Number of days to advance (must be positive)
+	 * @param minutes Optional minutes to advance (for time-of-day support)
 	 * @throws Error if days is negative or service not initialized
 	 */
-	async advanceTime(days: number): Promise<void> {
+	async advanceTime(days: number, minutes?: number): Promise<void> {
 		if (!this.initialized) {
 			throw new Error('[CalendarService] Service not initialized. Call initialize() first.');
 		}
@@ -78,12 +102,21 @@ export class CalendarService {
 			throw new Error('[CalendarService] Cannot advance time by negative days. Use setCurrentDay() to go backwards.');
 		}
 
-		if (days === 0) {
+		if (days === 0 && !minutes) {
 			return;  // No-op
 		}
 
 		const previousDay = this.state.currentDay;
-		const newDay = previousDay + days;
+		let totalDaysToAdvance = days;
+
+		// Handle time-of-day advancement if driver available
+		if (minutes && this.driver) {
+			const daysRolledOver = this.driver.advanceTime(minutes);
+			totalDaysToAdvance += daysRolledOver;
+			this.state.timeOfDay = this.driver.getTimeOfDay();
+		}
+
+		const newDay = previousDay + totalDaysToAdvance;
 
 		// Update state
 		this.state.currentDay = newDay;
@@ -97,7 +130,7 @@ export class CalendarService {
 		const event: TimeAdvancedEvent = {
 			previousDay,
 			newDay,
-			daysPassed: days,
+			daysPassed: totalDaysToAdvance,
 			formattedDate: this.getCurrentDate()
 		};
 
@@ -155,6 +188,7 @@ export class CalendarService {
 
 	/**
 	 * Get current formatted date
+	 * Uses CalendarDriver for calculation, delegates formatting to DateFormatter
 	 *
 	 * @returns Formatted date object
 	 */
@@ -175,6 +209,7 @@ export class CalendarService {
 			};
 		}
 
+		// Use DateFormatter which now delegates to CalendarDriver
 		return this.dateFormatter.format(
 			this.state.currentDay,
 			calendar,
@@ -184,6 +219,7 @@ export class CalendarService {
 
 	/**
 	 * Set active calendar definition
+	 * Recreates CalendarDriver with new calendar
 	 *
 	 * @param calendarId Calendar ID to activate
 	 * @throws Error if calendar not found
@@ -200,11 +236,13 @@ export class CalendarService {
 		}
 
 		this.state.activeCalendarId = calendarId;
+		this.updateDriver();  // Recreate driver with new calendar
 		await this.stateAdapter.saveState(this.state);
 	}
 
 	/**
 	 * Set origin date (maps Day 0 to a calendar date)
+	 * Recreates CalendarDriver with new origin
 	 *
 	 * @param origin Origin date or undefined to clear
 	 */
@@ -214,6 +252,7 @@ export class CalendarService {
 		}
 
 		this.state.originDate = origin;
+		this.updateDriver();  // Recreate driver with new origin
 		await this.stateAdapter.saveState(this.state);
 	}
 
