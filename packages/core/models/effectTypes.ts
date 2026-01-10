@@ -193,3 +193,23 @@ export function getEffectCategory(key: string): EffectCategory | null {
 	}
 	return null;
 }
+
+/**
+ * Effect Context - Filtering parameters for querying active effects
+ * Used by consumers (shops, UI, etc.) to request effects relevant to their context
+ *
+ * Design Notes:
+ * - Supports hierarchical location matching (e.g., "Waterdeep.North Ward" matches "Waterdeep")
+ * - Multiple filters can be combined (AND logic)
+ * - Undefined filters are ignored (no filtering applied for that dimension)
+ */
+export interface EffectContext {
+	/** Location identifier (supports hierarchy: "city.district.building") */
+	location?: string;
+	/** Faction identifier */
+	faction?: string;
+	/** NPC identifier (for NPC-specific effects) */
+	npc?: string;
+	/** Additional tags for custom filtering */
+	tags?: string[];
+}

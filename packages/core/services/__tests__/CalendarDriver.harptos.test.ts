@@ -339,9 +339,9 @@ describe('CalendarDriver - Harptos Golden Master Tests', () => {
 	describe('date math round-trip consistency', () => {
 		it('should round-trip getDate() and getAbsoluteDay() for all test cases', () => {
 			const allTestDays = [
-				...goldenFixtures.testCases.basicDates.cases.map(c => c.absoluteDay),
-				...goldenFixtures.testCases.intercalaryBoundaries.cases.flatMap(c => [c.beforeDay, c.intercalaryDay, c.afterDay]),
-				...goldenFixtures.testCases.monthTransitionTests.cases.flatMap(c => [c.beforeDay, c.afterDay])
+				...goldenFixtures.testCases.basicDates.cases.map((c: any) => c.absoluteDay),
+				...goldenFixtures.testCases.intercalaryBoundaries.cases.flatMap((c: any) => [c.beforeDay, c.intercalaryDay, c.afterDay]),
+				...goldenFixtures.testCases.monthTransitionTests.cases.flatMap((c: any) => [c.beforeDay, c.afterDay])
 			];
 
 			for (const day of allTestDays) {

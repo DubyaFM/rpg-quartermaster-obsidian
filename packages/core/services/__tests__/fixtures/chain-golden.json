@@ -1,0 +1,621 @@
+{
+  "$schema": "Golden Master Fixture for Chain Event Determinism Tests",
+  "description": "This fixture contains expected outputs for seed 12345 over days 0-50. DO NOT UPDATE THIS FILE unless you deliberately changed the RNG algorithm. If these tests fail, it means the RNG sequence has changed (butterfly effect).",
+  "seed": 12345,
+  "generatedWith": "Mulberry32 PRNG",
+  "calendar": "test-calendar (360 days/year)",
+  "event": {
+    "id": "golden-master-chain",
+    "name": "Golden Master Weather",
+    "type": "chain",
+    "seed": 12345,
+    "states": [
+      {
+        "name": "Clear",
+        "weight": 60,
+        "duration": "3 days",
+        "effects": {
+          "weather": "clear",
+          "visibility": "good"
+        }
+      },
+      {
+        "name": "Cloudy",
+        "weight": 25,
+        "duration": "2 days",
+        "effects": {
+          "weather": "cloudy",
+          "visibility": "moderate"
+        }
+      },
+      {
+        "name": "Rainy",
+        "weight": 15,
+        "duration": "2 days",
+        "effects": {
+          "weather": "rainy",
+          "visibility": "poor"
+        }
+      }
+    ]
+  },
+  "expectedSequence": [
+    {
+      "day": 0,
+      "state": "Rainy",
+      "startDay": 0,
+      "endDay": 1,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 1,
+      "state": "Rainy",
+      "startDay": 0,
+      "endDay": 1,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 2,
+      "state": "Clear",
+      "startDay": 2,
+      "endDay": 4,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 3,
+      "state": "Clear",
+      "startDay": 2,
+      "endDay": 4,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 4,
+      "state": "Clear",
+      "startDay": 2,
+      "endDay": 4,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 5,
+      "state": "Clear",
+      "startDay": 5,
+      "endDay": 7,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 6,
+      "state": "Clear",
+      "startDay": 5,
+      "endDay": 7,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 7,
+      "state": "Clear",
+      "startDay": 5,
+      "endDay": 7,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 8,
+      "state": "Cloudy",
+      "startDay": 8,
+      "endDay": 9,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 9,
+      "state": "Cloudy",
+      "startDay": 8,
+      "endDay": 9,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 10,
+      "state": "Clear",
+      "startDay": 10,
+      "endDay": 12,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 11,
+      "state": "Clear",
+      "startDay": 10,
+      "endDay": 12,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 12,
+      "state": "Clear",
+      "startDay": 10,
+      "endDay": 12,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 13,
+      "state": "Clear",
+      "startDay": 13,
+      "endDay": 15,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 14,
+      "state": "Clear",
+      "startDay": 13,
+      "endDay": 15,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 15,
+      "state": "Clear",
+      "startDay": 13,
+      "endDay": 15,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 16,
+      "state": "Clear",
+      "startDay": 16,
+      "endDay": 18,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 17,
+      "state": "Clear",
+      "startDay": 16,
+      "endDay": 18,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 18,
+      "state": "Clear",
+      "startDay": 16,
+      "endDay": 18,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 19,
+      "state": "Cloudy",
+      "startDay": 19,
+      "endDay": 20,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 20,
+      "state": "Cloudy",
+      "startDay": 19,
+      "endDay": 20,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 21,
+      "state": "Rainy",
+      "startDay": 21,
+      "endDay": 22,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 22,
+      "state": "Rainy",
+      "startDay": 21,
+      "endDay": 22,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 23,
+      "state": "Cloudy",
+      "startDay": 23,
+      "endDay": 24,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 24,
+      "state": "Cloudy",
+      "startDay": 23,
+      "endDay": 24,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 25,
+      "state": "Clear",
+      "startDay": 25,
+      "endDay": 27,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 26,
+      "state": "Clear",
+      "startDay": 25,
+      "endDay": 27,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 27,
+      "state": "Clear",
+      "startDay": 25,
+      "endDay": 27,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 28,
+      "state": "Rainy",
+      "startDay": 28,
+      "endDay": 29,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 29,
+      "state": "Rainy",
+      "startDay": 28,
+      "endDay": 29,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 30,
+      "state": "Rainy",
+      "startDay": 30,
+      "endDay": 31,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 31,
+      "state": "Rainy",
+      "startDay": 30,
+      "endDay": 31,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 32,
+      "state": "Rainy",
+      "startDay": 32,
+      "endDay": 33,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 33,
+      "state": "Rainy",
+      "startDay": 32,
+      "endDay": 33,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 34,
+      "state": "Cloudy",
+      "startDay": 34,
+      "endDay": 35,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 35,
+      "state": "Cloudy",
+      "startDay": 34,
+      "endDay": 35,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 36,
+      "state": "Clear",
+      "startDay": 36,
+      "endDay": 38,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 37,
+      "state": "Clear",
+      "startDay": 36,
+      "endDay": 38,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 38,
+      "state": "Clear",
+      "startDay": 36,
+      "endDay": 38,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 39,
+      "state": "Clear",
+      "startDay": 39,
+      "endDay": 41,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 40,
+      "state": "Clear",
+      "startDay": 39,
+      "endDay": 41,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 41,
+      "state": "Clear",
+      "startDay": 39,
+      "endDay": 41,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 42,
+      "state": "Clear",
+      "startDay": 42,
+      "endDay": 44,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 43,
+      "state": "Clear",
+      "startDay": 42,
+      "endDay": 44,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 44,
+      "state": "Clear",
+      "startDay": 42,
+      "endDay": 44,
+      "duration": 3,
+      "effects": {
+        "weather": "clear",
+        "visibility": "good"
+      }
+    },
+    {
+      "day": 45,
+      "state": "Cloudy",
+      "startDay": 45,
+      "endDay": 46,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 46,
+      "state": "Cloudy",
+      "startDay": 45,
+      "endDay": 46,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 47,
+      "state": "Rainy",
+      "startDay": 47,
+      "endDay": 48,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 48,
+      "state": "Rainy",
+      "startDay": 47,
+      "endDay": 48,
+      "duration": 2,
+      "effects": {
+        "weather": "rainy",
+        "visibility": "poor"
+      }
+    },
+    {
+      "day": 49,
+      "state": "Cloudy",
+      "startDay": 49,
+      "endDay": 50,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    },
+    {
+      "day": 50,
+      "state": "Cloudy",
+      "startDay": 49,
+      "endDay": 50,
+      "duration": 2,
+      "effects": {
+        "weather": "cloudy",
+        "visibility": "moderate"
+      }
+    }
+  ],
+  "mulberry32Values": {
+    "description": "First 10 raw Mulberry32 randomFloat() outputs for seed 12345",
+    "seed": 12345,
+    "values": [
+      0.9797282677609473,
+      0.3067522644996643,
+      0.484205421525985,
+      0.817934412509203,
+      0.5094283693470061,
+      0.34747186047025025,
+      0.07375754183158278,
+      0.7663964673411101,
+      0.9968264393974096,
+      0.8250224851071835
+    ]
+  }
+}

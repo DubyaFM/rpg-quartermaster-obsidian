@@ -13,6 +13,8 @@ import { SRD_ITEMS, SRDItemData } from '../data/srdItems';
 import { parseCostString } from '../calculators/currency';
 import { DEFAULT_CURRENCY_CONFIG } from '../data/defaultCurrencyConfig';
 import { getItemIdentifier } from '../utils/itemIdentifiers';
+import { ResolvedEffects } from '../models/effectTypes';
+import { calculateFinalPrice } from '../calculators/priceCalculator';
 
 /**
  * Determine stock quantity based on item rarity and type
@@ -43,13 +45,35 @@ function determineStockQuantity(randomizer: IRandomizer, item: Item): number {
  * @param item Item to convert to shop item
  * @param allItems Optional: all items for variant resolution
  * @param config Currency configuration for variant pricing calculations
+ * @param effectContext Optional: resolved effects from WorldEventService for price multipliers
  */
-export function createShopItem(randomizer: IRandomizer, item: Item, allItems?: Item[], config?: CurrencyConfig): ShopItem {
+export function createShopItem(
+	randomizer: IRandomizer,
+	item: Item,
+	allItems?: Item[],
+	config?: CurrencyConfig,
+	effectContext?: ResolvedEffects | null
+): ShopItem {
 	const shopItem: ShopItem = {
 		...item,
 		originalCost: { ...item.cost },
 		stock: determineStockQuantity(randomizer, item)
 	};
+
+	// Apply price effects if context provided
+	if (effectContext && config) {
+		const priceResult = calculateFinalPrice(item.cost, item, effectContext, config);
+		shopItem.basePrice = { ...item.cost };  // Store immutable base price
+		shopItem.finalPrice = priceResult.finalPrice;
+		shopItem.priceMultiplier = priceResult.effectiveMultiplier;
+		// Update the display cost to show final price
+		shopItem.cost = priceResult.finalPrice;
+	} else {
+		// No effects - base price equals final price
+		shopItem.basePrice = { ...item.cost };
+		shopItem.finalPrice = { ...item.cost };
+		shopItem.priceMultiplier = 1.0;
+	}
 
 	// If this IS a variant parent (not an expanded variant), resolve all variants and attach them
 	if (item.isVariant && item.variantAliases && item.variantAliases.length > 1 && allItems && config) {
@@ -71,6 +95,15 @@ export function createShopItem(randomizer: IRandomizer, item: Item, allItems?: I
 			shopItem.name = variants[0].name;
 			shopItem.cost = variants[0].cost;
 			shopItem.baseItemName = variants[0].baseItemName;
+
+			// Re-apply price effects to the selected variant
+			if (effectContext && config) {
+				const variantPriceResult = calculateFinalPrice(variants[0].cost, variants[0], effectContext, config);
+				shopItem.basePrice = { ...variants[0].cost };
+				shopItem.finalPrice = variantPriceResult.finalPrice;
+				shopItem.priceMultiplier = variantPriceResult.effectiveMultiplier;
+				shopItem.cost = variantPriceResult.finalPrice;
+			}
 		}
 	}
 
@@ -313,13 +346,15 @@ function convertSRDItemToItem(srdItem: SRDItemData): Item {
  * @param inventory Current inventory array to add items to
  * @param usedItemIds Set of already used item IDs to prevent duplicates
  * @param currencyConfig Currency configuration for variant pricing calculations
+ * @param effectContext Optional: resolved effects from WorldEventService for price multipliers
  */
 function addBaseStockItems(
 	randomizer: IRandomizer,
 	baseStockItems: BaseStockItem[],
 	inventory: ShopItem[],
 	usedItemIds: Set<string>,
-	currencyConfig: CurrencyConfig
+	currencyConfig: CurrencyConfig,
+	effectContext?: ResolvedEffects | null
 ): void {
 	if (!baseStockItems || baseStockItems.length === 0) {
 		return;
@@ -350,8 +385,8 @@ function addBaseStockItems(
 			continue;
 		}
 
-		// Create shop item with custom stock range
-		const shopItem = createShopItem(randomizer, item, undefined, currencyConfig);
+		// Create shop item with custom stock range (pass effectContext for price multipliers)
+		const shopItem = createShopItem(randomizer, item, undefined, currencyConfig, effectContext);
 		shopItem.stock = randomizer.randomInt(baseStock.minStock, baseStock.maxStock);
 
 		inventory.push(shopItem);
@@ -372,6 +407,7 @@ function addBaseStockItems(
  * @param currencyConfig Currency configuration for variant pricing calculations
  * @param shopType Shop type (optional, for special marketplace handling)
  * @param baseStockItems Optional base stock items (guaranteed items from baseStockConfig.yaml)
+ * @param effectContext Optional: resolved effects from WorldEventService for price multipliers (Phase 4)
  * @returns Object with baseStock and specialStock arrays (no duplicates within each)
  */
 export function generateRandomShopInventory(
@@ -380,7 +416,8 @@ export function generateRandomShopInventory(
 	config: ShopGenerationConfig,
 	currencyConfig: CurrencyConfig,
 	shopType?: string,
-	baseStockItems?: BaseStockItem[]
+	baseStockItems?: BaseStockItem[],
+	effectContext?: ResolvedEffects | null
 ): { baseStock: ShopItem[], specialStock: ShopItem[] } {
 	const baseStock: ShopItem[] = [];
 	const specialStock: ShopItem[] = [];
@@ -400,7 +437,7 @@ export function generateRandomShopInventory(
 	// STEP 0: Add base stock items (guaranteed items from baseStockConfig.yaml)
 	// These are SRD-only items added before any random generation
 	if (baseStockItems && baseStockItems.length > 0) {
-		addBaseStockItems(randomizer, baseStockItems, baseStock, usedItemIds, currencyConfig);
+		addBaseStockItems(randomizer, baseStockItems, baseStock, usedItemIds, currencyConfig, effectContext);
 	}
 
 	// Check if using new config format (basicItemTypes + magicItemCountWeights)
@@ -434,7 +471,7 @@ export function generateRandomShopInventory(
 		for (const item of basicItems) {
 			const itemId = getItemIdentifier(item);
 		if (!usedItemIds.has(itemId)) {
-				specialStock.push(createShopItem(randomizer, item, allItems, currencyConfig));
+				specialStock.push(createShopItem(randomizer, item, allItems, currencyConfig, effectContext));
 				usedItemIds.add(itemId);
 			}
 		}
@@ -484,7 +521,7 @@ export function generateRandomShopInventory(
 
 				if (magicItems.length > 0) {
 					const selected = randomizer.randomChoice(magicItems);
-					specialStock.push(createShopItem(randomizer, selected, allItems, currencyConfig));
+					specialStock.push(createShopItem(randomizer, selected, allItems, currencyConfig, effectContext));
 					usedItemIds.add(getItemIdentifier(selected));
 				}
 			}
@@ -501,7 +538,7 @@ export function generateRandomShopInventory(
 					if (item) {
 						const itemId = getItemIdentifier(item);
 						if (!usedItemIds.has(itemId)) {
-							const shopItem = createShopItem(randomizer, item, allItems, currencyConfig);
+							const shopItem = createShopItem(randomizer, item, allItems, currencyConfig, effectContext);
 							// Override stock with custom range
 							shopItem.stock = randomizer.randomInt(specificItem.stockRange.min, specificItem.stockRange.max);
 							specialStock.push(shopItem);
@@ -527,7 +564,7 @@ export function generateRandomShopInventory(
 					// Find the item by name
 					const item = allItems.find(i => i.name.toLowerCase() === specificItem.itemName.toLowerCase());
 					if (item) {
-						const shopItem = createShopItem(randomizer, item, allItems, currencyConfig);
+						const shopItem = createShopItem(randomizer, item, allItems, currencyConfig, effectContext);
 						// Override stock with custom range
 						shopItem.stock = randomizer.randomInt(specificItem.stockRange.min, specificItem.stockRange.max);
 						specialStock.push(shopItem);
@@ -554,7 +591,7 @@ export function generateRandomShopInventory(
 			// Add ALL common items with higher stock quantities
 			rarityGroups.common.forEach(item => {
 				if (passesTypeRarityFilter(randomizer, item, config)) {
-					const shopItem = createShopItem(randomizer, item, allItems, currencyConfig);
+					const shopItem = createShopItem(randomizer, item, allItems, currencyConfig, effectContext);
 					shopItem.stock = randomizer.randomInt(20, 50);
 					specialStock.push(shopItem);
 				}
@@ -563,7 +600,7 @@ export function generateRandomShopInventory(
 			// Add ALL uncommon items with higher stock quantities
 			rarityGroups.uncommon.forEach(item => {
 				if (passesTypeRarityFilter(randomizer, item, config)) {
-					const shopItem = createShopItem(randomizer, item, allItems, currencyConfig);
+					const shopItem = createShopItem(randomizer, item, allItems, currencyConfig, effectContext);
 					shopItem.stock = randomizer.randomInt(15, 30);
 					specialStock.push(shopItem);
 				}
@@ -591,7 +628,7 @@ export function generateRandomShopInventory(
 						if (randomizer.chance(chanceForRarity)) {
 							const randomItem = randomizer.randomChoice(itemPool);
 							if (!specialStock.find(item => item.name === randomItem.name)) {
-								specialStock.push(createShopItem(randomizer, randomItem, allItems, currencyConfig));
+								specialStock.push(createShopItem(randomizer, randomItem, allItems, currencyConfig, effectContext));
 							}
 						}
 					}
@@ -605,7 +642,7 @@ export function generateRandomShopInventory(
 			}
 			const commonCount = Math.min((config.maxItems ?? {}).common ?? 0, commonPool.length);
 			const shuffledCommon = shuffleArray(randomizer, commonPool);
-			specialStock.push(...shuffledCommon.slice(0, commonCount).map(item => createShopItem(randomizer, item, allItems, currencyConfig)));
+			specialStock.push(...shuffledCommon.slice(0, commonCount).map(item => createShopItem(randomizer, item, allItems, currencyConfig, effectContext)));
 
 			// Roll for each higher rarity
 			const rarities: string[] = ['uncommon', 'rare', 'veryRare', 'legendary'];
@@ -630,7 +667,7 @@ export function generateRandomShopInventory(
 						if (randomizer.chance(chanceForRarity)) {
 							const randomItem = randomizer.randomChoice(itemPool);
 							if (!specialStock.find(item => item.name === randomItem.name)) {
-								specialStock.push(createShopItem(randomizer, randomItem, allItems, currencyConfig));
+								specialStock.push(createShopItem(randomizer, randomItem, allItems, currencyConfig, effectContext));
 							}
 						}
 					}

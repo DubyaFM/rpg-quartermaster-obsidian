@@ -34,10 +34,18 @@ import {
 	ChainEvent,
 	ConditionalEvent,
 	ActiveEvent,
-	EffectRegistry,
+	EffectRegistry as EffectRegistryType,
 	ChainEventState
 } from '../models/eventTypes';
-import { ChainStateVector, WorldState, ModuleToggle } from '../models/worldStateTypes';
+import { ChainStateVector, WorldState, ModuleToggle, GMOverride } from '../models/worldStateTypes';
+import { parseDuration as parseDurationUtil, DurationUnitConfig } from '../utils/DurationParser';
+import {
+	evaluateCondition as evaluateConditionUtil,
+	extractEventReferences,
+	validateCondition,
+	EventStateMap
+} from '../utils/ConditionParser';
+import { EffectRegistry } from './EffectRegistry';
 
 /**
  * Cached event data for a specific day
@@ -68,6 +76,29 @@ export interface WorldEventServiceConfig {
 	bufferSize?: number;
 	/** Maximum simulation threshold in days for time jumps (default: 365) */
 	maxSimulationDays?: number;
+	/** Callback for permanent event definition updates */
+	onEventDefinitionUpdate?: (eventId: string, newDefinition: AnyEventDefinition) => Promise<void>;
+	/** Progress callback for time jump operations (reports 0-1 progress) */
+	onTimeJumpProgress?: (progress: number, mode: 'simulation' | 'anchor_reset') => void;
+}
+
+/**
+ * Time Jump Result
+ * Metadata returned from advanceToDay indicating what happened
+ */
+export interface TimeJumpResult {
+	/** Mode used for the jump */
+	mode: 'simulation' | 'anchor_reset';
+	/** Starting day */
+	fromDay: number;
+	/** Ending day */
+	toDay: number;
+	/** Total days advanced */
+	daysAdvanced: number;
+	/** Whether a history gap was created (Anchor Reset mode) */
+	hasHistoryGap: boolean;
+	/** Performance metrics */
+	elapsedMs: number;
 }
 
 /**
@@ -102,14 +133,20 @@ export class WorldEventService {
 	/** Module toggles (keyed by module ID) */
 	private moduleToggles: Map<string, boolean> = new Map();
 
+	/** Active GM overrides (keyed by override ID) */
+	private overrides: Map<string, GMOverride> = new Map();
+
 	/** Configuration */
-	private config: Required<WorldEventServiceConfig>;
+	private config: WorldEventServiceConfig & { bufferSize: number; maxSimulationDays: number };
 
 	/** Initialization state */
 	private initialized: boolean = false;
 
 	/** Current day for tracking (used for cache management) */
 	private currentDay: number = 0;
+
+	/** Effect registry for effect aggregation */
+	private effectRegistry: EffectRegistry = new EffectRegistry();
 
 	constructor(
 		driver: CalendarDriver,
@@ -120,7 +157,8 @@ export class WorldEventService {
 		this.rngFactory = rngFactory;
 		this.config = {
 			bufferSize: config?.bufferSize ?? 30,
-			maxSimulationDays: config?.maxSimulationDays ?? 365
+			maxSimulationDays: config?.maxSimulationDays ?? 365,
+			onEventDefinitionUpdate: config?.onEventDefinitionUpdate
 		};
 	}
 
@@ -220,43 +258,99 @@ export class WorldEventService {
 	 * Get the effect registry for a specific day and context
 	 *
 	 * Aggregates all effects from active events and returns a resolved registry.
+	 * Uses EffectRegistry for sophisticated conflict resolution and source tracking.
+	 *
+	 * Solar Baseline Integration:
+	 * - Calculates solar light level from CalendarDriver (Layer 0)
+	 * - Merges with event light_level effects (Layer 1+)
+	 * - Darkest wins strategy applies across all layers
 	 *
 	 * @param day Absolute day counter
 	 * @param context Optional event context for filtering
 	 * @returns Effect registry with resolved effects
 	 */
-	getEffectRegistry(day: number, context?: EventContext): EffectRegistry {
+	getEffectRegistry(day: number, context?: EventContext): EffectRegistryType {
 		const activeEvents = this.getActiveEvents(day, context);
+		const timeOfDay = this.driver.getTimeOfDay();
 
-		// Aggregate effects from all active events
-		const effects: Record<string, any> = {};
+		// Calculate solar baseline light level (Layer 0)
+		const solarLightLevel = this.driver.getLightLevel(day, timeOfDay);
 
-		for (const event of activeEvents) {
-			// Merge effects based on priority and resolution rules
-			for (const [key, value] of Object.entries(event.effects)) {
-				if (effects[key] === undefined) {
-					effects[key] = value;
-				} else {
-					// Basic conflict resolution (can be enhanced later)
-					// Higher priority event's effect wins
-					const existingEvent = activeEvents.find(e =>
-						Object.keys(e.effects).includes(key) && e !== event
-					);
-					if (!existingEvent || event.priority > existingEvent.priority) {
-						effects[key] = value;
-					}
-				}
+		// Use EffectRegistry for sophisticated effect aggregation
+		const resolvedEffects = this.effectRegistry.getResolvedEffects(
+			day,
+			activeEvents,
+			context,
+			timeOfDay,
+			solarLightLevel
+		);
+
+		// Extract the effect values from ResolvedEffects (which includes metadata fields)
+		// and create a plain object for the effects field
+		const effectsOnly: Record<string, any> = {};
+		const metadataKeys = ['resolvedDay', 'resolvedTimeOfDay', 'resolvedContext', 'competingEffects', 'resolutionStrategies'];
+
+		for (const [key, value] of Object.entries(resolvedEffects)) {
+			if (!metadataKeys.includes(key)) {
+				effectsOnly[key] = value;
 			}
 		}
 
+		// Convert ResolvedEffects to EffectRegistry type for compatibility
 		return {
 			day,
-			timeOfDay: this.driver.getTimeOfDay(),
+			timeOfDay,
 			context: context || {},
 			activeEvents,
-			effects,
+			effects: effectsOnly,
 			computedAt: Date.now()
 		};
+	}
+
+	/**
+	 * Get effect context for a specific day with filters
+	 *
+	 * This is the primary method for consumers (shops, UI, etc.) to query active effects.
+	 * It creates an EffectContext from the provided filters and returns the resolved effects.
+	 *
+	 * Design Flow:
+	 * 1. Consumer calls getEffectContext with filters (location, faction, npc, tags)
+	 * 2. Service converts filters to EventContext
+	 * 3. Service queries active events with context
+	 * 4. Service resolves effects with conflict resolution
+	 * 5. Consumer receives resolved effects for their specific context
+	 *
+	 * Hierarchical Location Matching:
+	 * - Supports dot-separated location paths (e.g., "Waterdeep.North Ward")
+	 * - Events at parent locations apply to child locations
+	 * - Example: Event tagged "Waterdeep" affects "Waterdeep.North Ward.Shop"
+	 *
+	 * @param filters Effect context filters (location, faction, npc, tags)
+	 * @param day Optional day counter (defaults to current day from driver)
+	 * @returns Effect registry with resolved effects for the given context
+	 */
+	getEffectContext(
+		filters: {
+			location?: string;
+			faction?: string;
+			npc?: string;
+			tags?: string[];
+		},
+		day?: number
+	): EffectRegistryType {
+		const effectiveDay = day ?? this.currentDay;
+
+		// Convert EffectContext filters to EventContext
+		// EventContext uses location, faction, season, region, tags
+		// EffectContext uses location, faction, npc, tags
+		const eventContext: EventContext = {
+			location: filters.location,
+			faction: filters.faction,
+			tags: filters.tags
+		};
+
+		// Get the effect registry with the constructed context
+		return this.getEffectRegistry(effectiveDay, eventContext);
 	}
 
 	/**
@@ -295,6 +389,28 @@ export class WorldEventService {
 			toggles[id] = enabled;
 		}
 		return toggles;
+	}
+
+	/**
+	 * Get list of all available modules from loaded events
+	 *
+	 * Scans all event definitions and extracts unique tags that can be used
+	 * as module identifiers for the settings UI.
+	 *
+	 * @returns Array of module IDs (event tags)
+	 */
+	getAvailableModules(): string[] {
+		const modules = new Set<string>();
+
+		for (const [_id, event] of this.eventRegistry) {
+			if (event.tags && event.tags.length > 0) {
+				for (const tag of event.tags) {
+					modules.add(tag);
+				}
+			}
+		}
+
+		return Array.from(modules).sort();
 	}
 
 	/**
@@ -419,15 +535,43 @@ export class WorldEventService {
 	/**
 	 * Advance the current day and update buffer window
 	 *
+	 * Supports two modes:
+	 * - **Simulation Mode** (< maxSimulationDays): Day-by-day iteration with full state tracking
+	 * - **Anchor Reset Mode** (>= maxSimulationDays): O(1) jump to target state, intermediate history gap
+	 *
 	 * @param newDay New current day
+	 * @returns Metadata about the time jump
 	 */
-	advanceToDay(newDay: number): void {
+	advanceToDay(newDay: number): TimeJumpResult {
+		const startTime = performance.now();
 		const previousDay = this.currentDay;
-		this.currentDay = newDay;
+		const daysAdvanced = newDay - previousDay;
 
-		// Process chain events for each day in the range
-		for (let day = previousDay + 1; day <= newDay; day++) {
-			this.advanceChainEvents(day);
+		// Handle edge case: no advancement
+		if (daysAdvanced === 0) {
+			return {
+				mode: 'simulation',
+				fromDay: previousDay,
+				toDay: newDay,
+				daysAdvanced: 0,
+				hasHistoryGap: false,
+				elapsedMs: 0
+			};
+		}
+
+		// Determine mode based on jump distance
+		const useAnchorReset = daysAdvanced > this.config.maxSimulationDays;
+		const mode: 'simulation' | 'anchor_reset' = useAnchorReset ? 'anchor_reset' : 'simulation';
+
+		// Clean expired overrides
+		this.cleanExpiredOverrides(newDay);
+
+		if (useAnchorReset) {
+			// Anchor Reset Mode: O(1) jump to target state
+			this.performAnchorReset(previousDay, newDay);
+		} else {
+			// Simulation Mode: Day-by-day iteration
+			this.performDayByDaySimulation(previousDay, newDay);
 		}
 
 		// Trim old cache entries outside buffer window
@@ -435,6 +579,17 @@ export class WorldEventService {
 
 		// Pre-populate buffer for new window
 		this.precomputeBuffer(newDay);
+
+		const endTime = performance.now();
+
+		return {
+			mode,
+			fromDay: previousDay,
+			toDay: newDay,
+			daysAdvanced,
+			hasHistoryGap: useAnchorReset,
+			elapsedMs: endTime - startTime
+		};
 	}
 
 	/**
@@ -442,6 +597,234 @@ export class WorldEventService {
 	 */
 	getCalendarDriver(): CalendarDriver {
 		return this.driver;
+	}
+
+	/**
+	 * Get notable events for a time period
+	 *
+	 * Collects significant events that should be surfaced to the UI during time advancement.
+	 * "Notable" events are defined as:
+	 * - Fixed date events (holidays, special occasions)
+	 * - Chain events that just transitioned to a new state
+	 * - Conditional events that just became active
+	 *
+	 * @param fromDay Starting day (exclusive)
+	 * @param toDay Ending day (inclusive)
+	 * @returns Array of notable event summaries
+	 */
+	getNotableEvents(fromDay: number, toDay: number): Array<{
+		eventId: string;
+		name: string;
+		type: 'fixed' | 'interval' | 'chain' | 'conditional';
+		day: number;
+		state?: string;
+		description?: string;
+	}> {
+		const notableEvents: Array<{
+			eventId: string;
+			name: string;
+			type: 'fixed' | 'interval' | 'chain' | 'conditional';
+			day: number;
+			state?: string;
+			description?: string;
+		}> = [];
+
+		// Check each day in the range
+		for (let day = fromDay + 1; day <= toDay; day++) {
+			const activeEvents = this.getActiveEvents(day);
+
+			for (const event of activeEvents) {
+				// Only include fixed date events (holidays, etc.)
+				// Chain events are too frequent to be "notable"
+				// Conditional events might be notable if they just started
+				if (event.type === 'fixed') {
+					// Check if this is the first day of the event
+					if (event.startDay === day) {
+						notableEvents.push({
+							eventId: event.eventId,
+							name: event.name,
+							type: event.type,
+							day,
+							description: event.definition.description
+						});
+					}
+				}
+			}
+		}
+
+		return notableEvents;
+	}
+
+	/**
+	 * Set event state with GM override
+	 *
+	 * Allows GMs to manually override event states for narrative control.
+	 *
+	 * @param eventId Event identifier to override
+	 * @param stateName State to force the event into (for chain events)
+	 * @param permanent If true, updates the event definition; if false, creates temporary override
+	 * @param notes Optional GM notes explaining the override
+	 * @returns Override ID for tracking, or undefined if permanent
+	 */
+	async setEventState(
+		eventId: string,
+		stateName: string,
+		permanent: boolean,
+		notes?: string
+	): Promise<string | undefined> {
+		const eventDef = this.eventRegistry.get(eventId);
+		if (!eventDef) {
+			throw new Error(`Event '${eventId}' not found`);
+		}
+
+		// Only chain events support state changes
+		if (eventDef.type !== 'chain') {
+			throw new Error(`Event '${eventId}' is not a chain event and does not support state changes`);
+		}
+
+		const chainDef = eventDef as ChainEvent;
+		const targetState = chainDef.states.find(s => s.name === stateName);
+		if (!targetState) {
+			throw new Error(`State '${stateName}' not found in event '${eventId}'`);
+		}
+
+		if (permanent) {
+			// Permanent: Update the event definition via callback
+			if (!this.config.onEventDefinitionUpdate) {
+				throw new Error('Cannot apply permanent override: no definition update callback configured');
+			}
+
+			// Update the initial state in the definition
+			const updatedDef: ChainEvent = {
+				...chainDef,
+				initialState: stateName
+			};
+
+			// Call the adapter to persist the change
+			await this.config.onEventDefinitionUpdate(eventId, updatedDef);
+
+			// Update in-memory registry
+			this.eventRegistry.set(eventId, updatedDef);
+
+			// Reset the chain runtime to use the new initial state
+			const runtime = this.chainRuntimes.get(eventId);
+			if (runtime) {
+				// Create new RNG with same seed
+				const newRng = this.rngFactory.create(chainDef.seed);
+				runtime.rng = newRng;
+				runtime.currentStateName = stateName;
+				runtime.stateEnteredDay = this.currentDay;
+
+				// Calculate new duration
+				const duration = this.parseDuration(targetState.duration, newRng);
+				runtime.stateDurationDays = duration;
+				runtime.stateEndDay = this.currentDay + duration - 1;
+			}
+
+			// Invalidate cache for the affected event
+			this.invalidateCacheForEvent(eventId);
+
+			return undefined; // No override ID for permanent changes
+		} else {
+			// One-off: Create temporary override
+			const runtime = this.chainRuntimes.get(eventId);
+			if (!runtime) {
+				throw new Error(`Chain runtime not found for event '${eventId}'`);
+			}
+
+			// Calculate duration for the forced state
+			const duration = this.parseDuration(targetState.duration, runtime.rng);
+			const expiresDay = this.currentDay + duration;
+
+			// Create override record
+			const overrideId = `override-${eventId}-${Date.now()}`;
+			const override: GMOverride = {
+				id: overrideId,
+				eventId,
+				scope: 'one_off',
+				forcedStateName: stateName,
+				forcedDuration: duration,
+				appliedDay: this.currentDay,
+				expiresDay,
+				notes,
+				createdAt: new Date().toISOString()
+			};
+
+			this.overrides.set(overrideId, override);
+
+			// Update runtime immediately
+			runtime.currentStateName = stateName;
+			runtime.stateEnteredDay = this.currentDay;
+			runtime.stateDurationDays = duration;
+			runtime.stateEndDay = expiresDay - 1;
+
+			// Invalidate cache for the affected event
+			this.invalidateCacheForEvent(eventId);
+
+			return overrideId;
+		}
+	}
+
+	/**
+	 * Get all active GM overrides
+	 *
+	 * @returns Array of all active overrides
+	 */
+	getOverrides(): GMOverride[] {
+		return Array.from(this.overrides.values());
+	}
+
+	/**
+	 * Get overrides for a specific event
+	 *
+	 * @param eventId Event identifier
+	 * @returns Array of overrides for this event
+	 */
+	getEventOverrides(eventId: string): GMOverride[] {
+		return Array.from(this.overrides.values()).filter(o => o.eventId === eventId);
+	}
+
+	/**
+	 * Remove a specific GM override
+	 *
+	 * @param overrideId Override identifier to remove
+	 * @returns true if override was found and removed
+	 */
+	removeOverride(overrideId: string): boolean {
+		const override = this.overrides.get(overrideId);
+		if (!override) {
+			return false;
+		}
+
+		this.overrides.delete(overrideId);
+
+		// Invalidate cache for the affected event
+		this.invalidateCacheForEvent(override.eventId);
+
+		return true;
+	}
+
+	/**
+	 * Clear all GM overrides
+	 */
+	clearAllOverrides(): void {
+		this.overrides.clear();
+		this.dayCache.clear();
+	}
+
+	/**
+	 * Restore GM overrides from saved state
+	 *
+	 * @param overrides Array of override records to restore
+	 */
+	restoreOverrides(overrides: GMOverride[]): void {
+		this.overrides.clear();
+		for (const override of overrides) {
+			this.overrides.set(override.id, override);
+		}
+
+		// Invalidate cache after restoring overrides
+		this.dayCache.clear();
 	}
 
 	// =========================================================================
@@ -471,6 +854,9 @@ export class WorldEventService {
 		this.intervalEvents = [];
 		this.conditionalEvents = [];
 
+		// Build set of valid event IDs for reference validation
+		const validEventIds = new Set<string>(this.eventRegistry.keys());
+
 		for (const [id, def] of this.eventRegistry) {
 			switch (def.type) {
 				case 'fixed':
@@ -483,13 +869,64 @@ export class WorldEventService {
 					// Chain events are handled by runtime, no index needed
 					break;
 				case 'conditional':
-					this.conditionalEvents.push(def as ConditionalEvent);
+					// Validate condition at load time
+					this.validateAndAddConditionalEvent(def as ConditionalEvent, validEventIds);
 					break;
 			}
 		}
 
 		// Sort conditional events by tier for proper phase ordering
 		this.conditionalEvents.sort((a, b) => a.tier - b.tier);
+	}
+
+	/**
+	 * Validate and add a conditional event to the index
+	 *
+	 * Validates that:
+	 * - The condition can be parsed
+	 * - All referenced events exist in the registry
+	 * - Referenced events are from earlier phases (enforced by tier)
+	 *
+	 * Logs warnings for invalid conditions but still adds the event
+	 * (graceful degradation - condition will return false at runtime)
+	 */
+	private validateAndAddConditionalEvent(
+		event: ConditionalEvent,
+		validEventIds: Set<string>
+	): void {
+		// Validate the condition syntax and references
+		const validation = validateCondition(event.condition, validEventIds);
+
+		if (!validation.isValid) {
+			for (const error of validation.errors) {
+				console.warn(
+					`Conditional event '${event.id}' has invalid condition: ${error}`
+				);
+			}
+		}
+
+		// Check for forward references (conditionals can only reference earlier phases)
+		// Tier 1 can reference: fixed, interval, chain events
+		// Tier 2 can reference: fixed, interval, chain, and tier 1 conditional events
+		const refs = extractEventReferences(event.condition);
+		if (refs) {
+			for (const refId of refs) {
+				const refDef = this.eventRegistry.get(refId);
+				if (refDef?.type === 'conditional') {
+					const refTier = (refDef as ConditionalEvent).tier;
+					if (refTier >= event.tier) {
+						console.warn(
+							`Conditional event '${event.id}' (tier ${event.tier}) references ` +
+							`conditional event '${refId}' (tier ${refTier}). ` +
+							`Conditionals can only reference events from earlier phases.`
+						);
+					}
+				}
+			}
+		}
+
+		// Add to list (even if invalid - will gracefully fail at runtime)
+		this.conditionalEvents.push(event);
 	}
 
 	/**
@@ -655,14 +1092,20 @@ export class WorldEventService {
 
 			if (!this.isEventModuleEnabled(def)) continue;
 
-			// Check if we need to transition to a new state
-			if (day > runtime.stateEndDay) {
+			// Check for active override
+			const override = this.getActiveOverride(eventId, day);
+
+			// Check if we need to transition to a new state (only if not overridden)
+			if (!override && day > runtime.stateEndDay) {
 				this.transitionChainState(runtime, def, day);
 			}
 
 			// Get current state
 			const currentState = def.states.find(s => s.name === runtime.currentStateName);
 			if (!currentState) continue;
+
+			// Determine source attribution
+			const source: 'definition' | 'override' | 'gm_forced' = override ? 'gm_forced' : 'definition';
 
 			// Create active event with current state's effects
 			activeEvents.push({
@@ -675,7 +1118,7 @@ export class WorldEventService {
 				startDay: runtime.stateEnteredDay,
 				endDay: runtime.stateEndDay,
 				remainingDays: Math.max(0, runtime.stateEndDay - day),
-				source: 'definition',
+				source,
 				definition: def
 			});
 		}
@@ -709,55 +1152,45 @@ export class WorldEventService {
 
 	/**
 	 * Evaluate a condition expression against active events
+	 *
+	 * Uses the secure ConditionParser utility which:
+	 * - Parses conditions into an AST (no eval())
+	 * - Supports logical operators: &&, ||, !
+	 * - Supports comparisons: ==, !=, <, >, <=, >=
+	 * - Gracefully handles missing event references
+	 *
+	 * @param condition - Condition expression string
+	 * @param activeEvents - Currently active events from earlier phases
+	 * @returns true if condition is satisfied, false otherwise
 	 */
 	private evaluateCondition(condition: string, activeEvents: ActiveEvent[]): boolean {
-		// Build event lookup map
-		const eventsMap: Record<string, { active: boolean; state: string }> = {};
+		// Build event state map for ConditionParser
+		const eventsMap: EventStateMap = {};
 
 		for (const event of activeEvents) {
 			eventsMap[event.eventId] = {
 				active: true,
-				state: event.state
+				state: event.state,
+				effects: event.effects
 			};
 		}
 
-		// Simple condition parsing
-		// Supports: events['id'].active, events['id'].state == 'State'
-		try {
-			// Replace events['id'] references with actual values
-			let evalCondition = condition;
+		// Use secure parser to evaluate condition
+		const result = evaluateConditionUtil(condition, eventsMap);
 
-			// Pattern: events['eventId'].active
-			const activePattern = /events\['([^']+)'\]\.active/g;
-			evalCondition = evalCondition.replace(activePattern, (_, eventId) => {
-				return eventsMap[eventId]?.active ? 'true' : 'false';
-			});
-
-			// Pattern: events['eventId'].state == 'StateName'
-			const statePattern = /events\['([^']+)'\]\.state\s*==\s*'([^']+)'/g;
-			evalCondition = evalCondition.replace(statePattern, (_, eventId, stateName) => {
-				return eventsMap[eventId]?.state === stateName ? 'true' : 'false';
-			});
-
-			// Pattern: events['eventId'].state != 'StateName'
-			const stateNotPattern = /events\['([^']+)'\]\.state\s*!=\s*'([^']+)'/g;
-			evalCondition = evalCondition.replace(stateNotPattern, (_, eventId, stateName) => {
-				return eventsMap[eventId]?.state !== stateName ? 'true' : 'false';
-			});
-
-			// Replace logical operators
-			evalCondition = evalCondition.replace(/&&/g, ' && ');
-			evalCondition = evalCondition.replace(/\|\|/g, ' || ');
-			evalCondition = evalCondition.replace(/!/g, '!');
-
-			// Evaluate the boolean expression
-			// Using Function constructor for safe evaluation (no access to scope)
-			const fn = new Function(`return ${evalCondition};`);
-			return fn();
-		} catch (error) {
-			console.warn(`Failed to evaluate condition: ${condition}`, error);
+		if (!result.success) {
+			console.warn(`Failed to evaluate condition: ${condition}`, result.error);
 			return false;
 		}
+
+		// Log warning for missing event references (graceful degradation)
+		if (result.missingEventIds && result.missingEventIds.length > 0) {
+			console.warn(
+				`Condition "${condition}" references missing events: ${result.missingEventIds.join(', ')}`
+			);
+		}
+
+		return result.value;
 	}
 
 	// =========================================================================
@@ -787,12 +1220,114 @@ export class WorldEventService {
 	}
 
 	/**
+	 * Perform day-by-day simulation for moderate time jumps
+	 *
+	 * Iterates through each day, advancing chain states and reporting progress.
+	 * Used when jump distance is below maxSimulationDays threshold.
+	 *
+	 * @param fromDay Starting day (exclusive)
+	 * @param toDay Ending day (inclusive)
+	 */
+	private performDayByDaySimulation(fromDay: number, toDay: number): void {
+		const totalDays = toDay - fromDay;
+		let lastReportedProgress = 0;
+
+		for (let day = fromDay + 1; day <= toDay; day++) {
+			// Advance chain states for this day
+			this.advanceChainEvents(day);
+
+			// Report progress callback (throttled to avoid excessive UI updates)
+			if (this.config.onTimeJumpProgress) {
+				const progress = (day - fromDay) / totalDays;
+				// Report every 5% or on final day
+				if (progress >= lastReportedProgress + 0.05 || day === toDay) {
+					this.config.onTimeJumpProgress(progress, 'simulation');
+					lastReportedProgress = progress;
+				}
+			}
+		}
+
+		// Update current day
+		this.currentDay = toDay;
+	}
+
+	/**
+	 * Perform Anchor Reset for extreme time jumps
+	 *
+	 * Calculates target state directly without intermediate simulation.
+	 * Used when jump distance exceeds maxSimulationDays threshold.
+	 *
+	 * Trade-off: O(1) performance vs. lost intermediate history.
+	 *
+	 * Algorithm:
+	 * 1. Calculate how many full state cycles would occur
+	 * 2. Fast-forward RNG state by running dummy transitions
+	 * 3. Select final state for target day
+	 * 4. Update chain runtimes with final state
+	 *
+	 * @param fromDay Starting day
+	 * @param toDay Ending day
+	 */
+	private performAnchorReset(fromDay: number, toDay: number): void {
+		const daysAdvanced = toDay - fromDay;
+
+		// Report initial progress
+		if (this.config.onTimeJumpProgress) {
+			this.config.onTimeJumpProgress(0.1, 'anchor_reset');
+		}
+
+		// For each chain event, calculate target state
+		for (const [eventId, runtime] of this.chainRuntimes) {
+			const def = this.eventRegistry.get(eventId) as ChainEvent;
+			if (!def) continue;
+
+			// Fast-forward through state transitions
+			let currentDay = fromDay;
+			while (currentDay < toDay) {
+				// Check if we need to transition (currentDay > runtime.stateEndDay)
+				if (currentDay > runtime.stateEndDay) {
+					// Select next state using weighted random
+					const nextState = this.selectWeightedState(def.states, runtime.rng);
+					if (!nextState) break;
+
+					// Calculate duration for new state
+					const duration = this.parseDuration(nextState.duration, runtime.rng);
+
+					// Update runtime (but don't track intermediate history)
+					runtime.currentStateName = nextState.name;
+					runtime.stateEnteredDay = currentDay;
+					runtime.stateDurationDays = duration;
+					runtime.stateEndDay = currentDay + duration - 1;
+				}
+
+				// Jump to next transition point or target day
+				const nextTransitionDay = runtime.stateEndDay + 1;
+				currentDay = Math.min(nextTransitionDay, toDay);
+			}
+		}
+
+		// Update current day
+		this.currentDay = toDay;
+
+		// Report completion
+		if (this.config.onTimeJumpProgress) {
+			this.config.onTimeJumpProgress(1.0, 'anchor_reset');
+		}
+	}
+
+	/**
 	 * Advance chain events when time progresses
 	 */
 	private advanceChainEvents(day: number): void {
 		for (const [eventId, runtime] of this.chainRuntimes) {
 			const def = this.eventRegistry.get(eventId) as ChainEvent;
 			if (!def) continue;
+
+			// Check for active override - don't transition if overridden
+			const override = this.getActiveOverride(eventId, day);
+			if (override) {
+				continue; // Skip transition, let override control state
+			}
 
 			// Check if we need to transition
 			if (day > runtime.stateEndDay) {
@@ -829,66 +1364,44 @@ export class WorldEventService {
 	/**
 	 * Parse a duration string to days
 	 *
-	 * Supports:
-	 * - Fixed: "5 days", "3 weeks"
-	 * - Dice: "2d6 days", "1d4 weeks"
+	 * Uses the full DurationParser utility which supports:
+	 * - Fixed: "5 days", "3 weeks", "2 months"
+	 * - Dice: "2d6 days", "1d4 weeks", "1d3+2 days"
+	 * - Compound: "1 week + 2d4 days", "2d6 days - 4 hours"
+	 * - All units: minutes, hours, days, weeks, months, years
+	 *
+	 * Returns the duration in days (converted from minutes).
+	 *
+	 * @param durationStr - Duration notation string
+	 * @param rng - Seeded randomizer for dice rolls
+	 * @returns Duration in days (rounded)
 	 */
 	private parseDuration(durationStr: string, rng: ISeededRandomizer): number {
-		const normalized = durationStr.toLowerCase().trim();
+		// Build calendar-aware configuration
+		const totalDaysInYear = this.driver.getTotalDaysInYear();
+		const avgMonthDays = totalDaysInYear / 12 || 30;
 
-		// Pattern: "Nd[M] [unit]" or "N [unit]"
-		const dicePattern = /^(\d+)d(\d+)\s*(days?|weeks?|months?)?$/i;
-		const fixedPattern = /^(\d+)\s*(days?|weeks?|months?)?$/i;
+		const config: DurationUnitConfig = {
+			minutesPerHour: 60,
+			hoursPerDay: 24,
+			daysPerWeek: 7,
+			daysPerMonth: avgMonthDays,
+			daysPerYear: totalDaysInYear || 365
+		};
 
-		let baseDays = 1;
+		try {
+			// Parse duration to minutes using DurationParser
+			const totalMinutes = parseDurationUtil(durationStr, rng, config);
 
-		const diceMatch = normalized.match(dicePattern);
-		if (diceMatch) {
-			const count = parseInt(diceMatch[1], 10);
-			const sides = parseInt(diceMatch[2], 10);
-			const unit = diceMatch[3] || 'days';
+			// Convert minutes to days (1440 minutes per day with 24-hour days)
+			const minutesPerDay = config.hoursPerDay * config.minutesPerHour;
+			const days = Math.max(1, Math.round(totalMinutes / minutesPerDay));
 
-			// Roll dice
-			let total = 0;
-			for (let i = 0; i < count; i++) {
-				total += Math.floor(rng.randomFloat() * sides) + 1;
-			}
-
-			baseDays = this.convertTodays(total, unit);
-			return baseDays;
-		}
-
-		const fixedMatch = normalized.match(fixedPattern);
-		if (fixedMatch) {
-			const value = parseInt(fixedMatch[1], 10);
-			const unit = fixedMatch[2] || 'days';
-
-			baseDays = this.convertTodays(value, unit);
-			return baseDays;
-		}
-
-		// Default to 1 day if pattern not recognized
-		return 1;
-	}
-
-	/**
-	 * Convert a value in various units to days
-	 */
-	private convertTodays(value: number, unit: string): number {
-		switch (unit.toLowerCase()) {
-			case 'day':
-			case 'days':
-				return value;
-			case 'week':
-			case 'weeks':
-				return value * 7;
-			case 'month':
-			case 'months':
-				// Use average month length from calendar or default to 30
-				const avgMonthDays = this.driver.getTotalDaysInYear() / 12 || 30;
-				return Math.round(value * avgMonthDays);
-			default:
-				return value;
+			return days;
+		} catch (error) {
+			// Fallback to 1 day if parsing fails
+			console.warn(`Failed to parse duration "${durationStr}": ${error}`);
+			return 1;
 		}
 	}
 
@@ -937,6 +1450,16 @@ export class WorldEventService {
 
 	/**
 	 * Filter active events by context
+	 *
+	 * Supports hierarchical location matching:
+	 * - Location paths use dot notation (e.g., "Waterdeep.North Ward.Shop")
+	 * - Events tagged with parent locations apply to child locations
+	 * - Example: Event at "Waterdeep" matches context "Waterdeep.North Ward"
+	 *
+	 * Filter Logic:
+	 * - If context has a filter and event has that filter defined, they must match
+	 * - If event doesn't define a filter (undefined/empty), it matches any context (global event)
+	 * - Empty string filters are treated as "no filter" to avoid edge cases
 	 */
 	private filterByContext(events: ActiveEvent[], context?: EventContext): ActiveEvent[] {
 		if (!context) return events;
@@ -944,30 +1467,66 @@ export class WorldEventService {
 		return events.filter(event => {
 			const def = event.definition;
 
-			// Location filter
-			if (context.location && def.locations && def.locations.length > 0) {
-				if (!def.locations.includes(context.location)) {
+			// Location filter with hierarchical matching
+			if (context.location !== undefined && context.location !== null) {
+				// Empty location string matches nothing (special case)
+				if (context.location === '') {
+					return false;
+				}
+
+				// If context specifies a location, only match events that have locations
+				if (!def.locations || def.locations.length === 0) {
+					// Event has no location filter, exclude it when context specifies a location
+					return false;
+				}
+
+				// Check if any event location matches the context location
+				// Supports hierarchical matching:
+				// - Exact match: "Waterdeep" === "Waterdeep"
+				// - Parent match: "Waterdeep" applies to "Waterdeep.North Ward"
+				// - Child match: "Waterdeep.North Ward" does NOT apply to "Waterdeep"
+				const hasMatch = def.locations.some(eventLocation => {
+					// Exact match
+					if (eventLocation === context.location) {
+						return true;
+					}
+
+					// Check if event location is a parent of context location
+					// "Waterdeep" should match "Waterdeep.North Ward"
+					// But NOT "Waterdeep." (trailing dot with no child)
+					const parentPrefix = eventLocation + '.';
+					if (context.location?.startsWith(parentPrefix) && context.location.length > parentPrefix.length) {
+						return true;
+					}
+
+					return false;
+				});
+
+				if (!hasMatch) {
 					return false;
 				}
 			}
 
 			// Faction filter
-			if (context.faction && def.factions && def.factions.length > 0) {
-				if (!def.factions.includes(context.faction)) {
+			if (context.faction !== undefined && context.faction !== null && context.faction !== '') {
+				// If context specifies a faction, only match events that have that faction
+				if (!def.factions || def.factions.length === 0 || !def.factions.includes(context.faction)) {
 					return false;
 				}
 			}
 
 			// Season filter
-			if (context.season && def.seasons && def.seasons.length > 0) {
-				if (!def.seasons.includes(context.season)) {
+			if (context.season !== undefined && context.season !== null && context.season !== '') {
+				// If context specifies a season, only match events that have that season
+				if (!def.seasons || def.seasons.length === 0 || !def.seasons.includes(context.season)) {
 					return false;
 				}
 			}
 
 			// Region filter
-			if (context.region && def.regions && def.regions.length > 0) {
-				if (!def.regions.includes(context.region)) {
+			if (context.region !== undefined && context.region !== null && context.region !== '') {
+				// If context specifies a region, only match events that have that region
+				if (!def.regions || def.regions.length === 0 || !def.regions.includes(context.region)) {
 					return false;
 				}
 			}
@@ -1002,5 +1561,69 @@ export class WorldEventService {
 				this.dayCache.delete(day);
 			}
 		}
+	}
+
+	/**
+	 * Invalidate cache entries that include a specific event
+	 *
+	 * Used when overrides are applied or removed to ensure affected days are recalculated
+	 */
+	private invalidateCacheForEvent(eventId: string): void {
+		// Simple approach: Clear entire cache
+		// Could be optimized to only clear days that include this event
+		this.dayCache.clear();
+	}
+
+	/**
+	 * Clean up expired one-off overrides
+	 *
+	 * Should be called during time progression to remove overrides that have expired
+	 */
+	private cleanExpiredOverrides(currentDay: number): void {
+		const expiredOverrides: string[] = [];
+
+		for (const [id, override] of this.overrides) {
+			if (override.scope === 'one_off' && override.expiresDay !== undefined) {
+				if (currentDay > override.expiresDay) {
+					expiredOverrides.push(id);
+				}
+			}
+		}
+
+		// Remove expired overrides
+		for (const id of expiredOverrides) {
+			this.overrides.delete(id);
+		}
+
+		// Invalidate cache if any overrides were removed
+		if (expiredOverrides.length > 0) {
+			this.dayCache.clear();
+		}
+	}
+
+	/**
+	 * Check if an event has an active override for the current day
+	 *
+	 * @param eventId Event identifier
+	 * @param currentDay Current day to check
+	 * @returns Active override or undefined
+	 */
+	private getActiveOverride(eventId: string, currentDay: number): GMOverride | undefined {
+		for (const override of this.overrides.values()) {
+			if (override.eventId !== eventId) continue;
+
+			// Check if override is active on this day
+			if (override.scope === 'one_off') {
+				// One-off overrides are active until expiration
+				if (override.expiresDay === undefined || currentDay <= override.expiresDay) {
+					return override;
+				}
+			} else if (override.scope === 'permanent') {
+				// Permanent overrides are always active (but shouldn't be in the map)
+				return override;
+			}
+		}
+
+		return undefined;
 	}
 }

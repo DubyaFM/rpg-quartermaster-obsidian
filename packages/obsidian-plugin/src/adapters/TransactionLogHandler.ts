@@ -281,10 +281,38 @@ export class TransactionLogHandler {
 			entry += `**Calendar Day:** ${context.calendarDay}\n`;
 		}
 
+		// Display active effects and price modifiers if present
+		if (context?.effectiveMultiplier !== undefined && context.effectiveMultiplier !== 1.0) {
+			const percentChange = Math.round((context.effectiveMultiplier - 1.0) * 100);
+			const sign = percentChange > 0 ? '+' : '';
+			entry += `**Price Modifier:** ${sign}${percentChange}% (${context.effectiveMultiplier}x)\n`;
+		}
+
+		if (context?.modifierSource) {
+			entry += `**Modifier Source:** ${context.modifierSource}\n`;
+		}
+
+		if (context?.activeEffects && context.activeEffects.length > 0) {
+			entry += `**Active Effects:** ${context.activeEffects.join(', ')}\n`;
+		}
+
 		entry += '**Items:**\n';
 		for (const item of items) {
 			const prefix = item.isSale ? 'Sold' : 'Bought';
-			entry += `- ${prefix}: ${item.name} (${item.quantity}x) - ${formatCurrency(item.totalCost, this.currencyConfig)}\n`;
+			let itemLine = `- ${prefix}: ${item.name} (${item.quantity}x) - ${formatCurrency(item.totalCost, this.currencyConfig)}`;
+
+			// Show base price vs final price if they differ (indicating effects were applied)
+			if (item.basePrice && item.finalPrice) {
+				const basePriceStr = formatCurrency(item.basePrice, this.currencyConfig);
+				const finalPriceStr = formatCurrency(item.finalPrice, this.currencyConfig);
+
+				// Only show breakdown if prices actually differ
+				if (basePriceStr !== finalPriceStr) {
+					itemLine += ` (base: ${basePriceStr}, final: ${finalPriceStr})`;
+				}
+			}
+
+			entry += itemLine + '\n';
 		}
 
 		entry += '\n---\n';

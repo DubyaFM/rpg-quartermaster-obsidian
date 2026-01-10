@@ -20,13 +20,20 @@ import { CalendarDefinitionManager } from './CalendarDefinitionManager';
 import { DateFormatter } from './DateFormatter';
 import { CalendarDriver } from './CalendarDriver';
 import { ICalendarStateAdapter } from '../interfaces/ICalendarStateAdapter';
-import { CalendarState, FormattedDate, TimeAdvancedEvent, CalendarOrigin } from '../models/types';
+import { CalendarState, FormattedDate, TimeAdvancedEvent, CalendarOrigin, NotableEventSummary } from '../models/types';
 import { SYSTEM_EVENTS } from '../models/events';
+
+/**
+ * Callback for collecting notable events during time advancement
+ * Used by integration layers to inject event information
+ */
+export type NotableEventsCollector = (fromDay: number, toDay: number) => NotableEventSummary[];
 
 export class CalendarService {
 	private state: CalendarState;
 	private initialized: boolean = false;
 	private driver: CalendarDriver | null = null;
+	private notableEventsCollector: NotableEventsCollector | null = null;
 
 	constructor(
 		private eventBus: EventBus,
@@ -126,12 +133,29 @@ export class CalendarService {
 		// Persist state
 		await this.stateAdapter.saveState(this.state);
 
-		// Emit TimeAdvanced event
+		// Collect notable events if collector is registered
+		let notableEvents: NotableEventSummary[] | undefined;
+		if (this.notableEventsCollector) {
+			try {
+				const events = this.notableEventsCollector(previousDay, newDay);
+				// Only include if there are actual events
+				if (events && events.length > 0) {
+					notableEvents = events;
+				}
+			} catch (error) {
+				console.error('[CalendarService] Error collecting notable events:', error);
+				// Continue without notable events
+			}
+		}
+
+		// Emit TimeAdvanced event with time-of-day and notable events
 		const event: TimeAdvancedEvent = {
 			previousDay,
 			newDay,
 			daysPassed: totalDaysToAdvance,
-			formattedDate: this.getCurrentDate()
+			formattedDate: this.getCurrentDate(),
+			timeOfDay: this.state.timeOfDay,
+			notableEvents
 		};
 
 		this.eventBus.emit(SYSTEM_EVENTS.TIME_ADVANCED, event);
@@ -166,11 +190,28 @@ export class CalendarService {
 
 		// Emit event if day changed
 		if (day !== previousDay) {
+			// Collect notable events if collector is registered
+			let notableEvents: NotableEventSummary[] | undefined;
+			if (this.notableEventsCollector) {
+				try {
+					const events = this.notableEventsCollector(previousDay, day);
+					// Only include if there are actual events
+					if (events && events.length > 0) {
+						notableEvents = events;
+					}
+				} catch (error) {
+					console.error('[CalendarService] Error collecting notable events:', error);
+					// Continue without notable events
+				}
+			}
+
 			const event: TimeAdvancedEvent = {
 				previousDay,
 				newDay: day,
 				daysPassed: day - previousDay,
-				formattedDate: this.getCurrentDate()
+				formattedDate: this.getCurrentDate(),
+				timeOfDay: this.state.timeOfDay,
+				notableEvents
 			};
 
 			this.eventBus.emit(SYSTEM_EVENTS.TIME_ADVANCED, event);
@@ -288,5 +329,17 @@ export class CalendarService {
 	 */
 	isInitialized(): boolean {
 		return this.initialized;
+	}
+
+	/**
+	 * Set notable events collector callback
+	 *
+	 * This allows integration layers (e.g., CalendarWorldEventIntegration) to inject
+	 * event information into TimeAdvanced events without creating circular dependencies.
+	 *
+	 * @param collector Callback that returns notable events for a time range
+	 */
+	setNotableEventsCollector(collector: NotableEventsCollector | null): void {
+		this.notableEventsCollector = collector;
 	}
 }

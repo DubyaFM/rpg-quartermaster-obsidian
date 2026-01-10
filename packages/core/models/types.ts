@@ -303,6 +303,10 @@ export interface ShopItem extends Item {
 	// Variant dropdown support
 	availableVariants?: Item[];  // Pre-resolved variants with calculated costs
 	selectedVariantIndex?: number;  // Index of currently selected variant (defaults to 0)
+	// Price Effects Support (Phase 4 - Calendar & World Events)
+	basePrice?: ItemCost;  // Immutable base price (never modified by effects)
+	finalPrice?: ItemCost;  // Calculated price with effect multipliers applied
+	priceMultiplier?: number;  // Effective multiplier from active events (for UI display)
 }
 
 export interface PurchasedItem extends Item {
@@ -310,6 +314,10 @@ export interface PurchasedItem extends Item {
 	totalCost: ItemCost;
 	purchasedBy?: string;
 	isSale?: boolean;  // true if this is a sale (player selling to shop), false/undefined for purchase
+	// World Event Effect Context (Phase 4 - Calendar & World Events)
+	// IMPORTANT: Immutable price snapshot at transaction time
+	basePrice?: ItemCost;  // Original unmodified price per unit (before effects)
+	finalPrice?: ItemCost;  // Final price per unit after effects applied (may equal basePrice if no effects)
 }
 
 export interface Shopkeep {
@@ -591,6 +599,12 @@ export interface TransactionContext {
 	// Calendar system fields (added when calendar is available)
 	calendarDay?: number;  // Absolute day counter when transaction occurred
 	formattedDate?: string;  // Human-readable formatted date
+	// World Event Effect Context (Phase 4 - Calendar & World Events)
+	// IMPORTANT: These fields are immutable snapshots captured at transaction time
+	// They represent the state of active effects when the transaction occurred
+	activeEffects?: string[];  // Array of event IDs that were active at transaction time
+	effectiveMultiplier?: number;  // Combined price multiplier applied (e.g., 1.5 = +50%, 0.8 = -20%)
+	modifierSource?: string;  // Human-readable description of modifier source (e.g., "Market Day (-20%), Siege (+50%)")
 }
 
 /**
@@ -850,6 +864,25 @@ export interface FormattedDate {
 }
 
 /**
+ * Notable Event Summary
+ * Describes a significant event that occurred during time advancement
+ */
+export interface NotableEventSummary {
+	/** Event identifier */
+	eventId: string;
+	/** Event display name */
+	name: string;
+	/** Event type */
+	type: 'fixed' | 'interval' | 'chain' | 'conditional';
+	/** Day the event occurred or started */
+	day: number;
+	/** Optional state name (for chain events) */
+	state?: string;
+	/** Optional description or banner message */
+	description?: string;
+}
+
+/**
  * Time Advanced Event
  * Payload emitted when time is advanced
  */
@@ -858,6 +891,10 @@ export interface TimeAdvancedEvent {
 	newDay: number;
 	daysPassed: number;
 	formattedDate?: FormattedDate;
+	/** Current time of day in minutes (0-1439) */
+	timeOfDay?: number;
+	/** Notable events that occurred during this advancement */
+	notableEvents?: NotableEventSummary[];
 }
 
 /**
@@ -1287,7 +1324,8 @@ export type {
 	UIEffects,
 	CombinedEffects,
 	ResolvedEffects,
-	EffectCategory
+	EffectCategory,
+	EffectContext
 } from './effectTypes';
 
 export {

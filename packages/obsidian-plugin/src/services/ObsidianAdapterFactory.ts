@@ -15,6 +15,8 @@ import { ObsidianPathResolver } from '../adapters/ObsidianPathResolver';
 import { ObsidianDataAdapter } from '../adapters/ObsidianDataAdapter';
 import { ObsidianSettingsAdapter } from '../adapters/ObsidianSettingsAdapter';
 import { ObsidianConfigAdapter } from '../adapters/ObsidianConfigAdapter';
+import { ObsidianWorldStateAdapter } from '../adapters/ObsidianWorldStateAdapter';
+import { ObsidianEventDefinitionAdapter } from '../adapters/ObsidianEventDefinitionAdapter';
 import { CampaignManager } from '@quartermaster/core/services/CampaignManager';
 import { ObsidianCampaignPersistence } from './ObsidianCampaignPersistence';
 import type QuartermasterPlugin from '../main';
@@ -36,6 +38,7 @@ export class ObsidianAdapterFactory implements IAdapterFactory {
 	private campaignManager: CampaignManager;
 	private persistence: ObsidianCampaignPersistence;
 	private initialized: boolean = false;
+	private activeBundle: AdapterBundle | null = null;
 
 	constructor(
 		private app: App,
@@ -163,13 +166,22 @@ export class ObsidianAdapterFactory implements IAdapterFactory {
 			this.plugin
 		);
 
+		// Create calendar and event system adapters
+		const worldStateAdapter = new ObsidianWorldStateAdapter(this.app);
+		const eventDefinitionAdapter = new ObsidianEventDefinitionAdapter(this.app, this.plugin.manifest.dir);
+
 		const bundle: AdapterBundle = {
 			campaignContext,
 			pathResolver,
 			dataAdapter,
 			configAdapter,
 			settingsAdapter,
+			worldStateAdapter,
+			eventDefinitionAdapter,
 		};
+
+		// Cache the active bundle for getter methods
+		this.activeBundle = bundle;
 
 		console.log(`[ObsidianAdapterFactory] Adapters created successfully for: ${profile.name}`);
 
@@ -198,6 +210,13 @@ export class ObsidianAdapterFactory implements IAdapterFactory {
 		(bundle as any).settingsAdapter = null;
 		(bundle as any).campaignContext = null;
 		(bundle as any).pathResolver = null;
+		(bundle as any).worldStateAdapter = null;
+		(bundle as any).eventDefinitionAdapter = null;
+
+		// Clear active bundle cache if this is the active bundle
+		if (this.activeBundle === bundle) {
+			this.activeBundle = null;
+		}
 
 		console.log('[ObsidianAdapterFactory] Adapters disposed successfully');
 	}
@@ -391,5 +410,31 @@ export class ObsidianAdapterFactory implements IAdapterFactory {
 	 */
 	getPersistence(): ObsidianCampaignPersistence {
 		return this.persistence;
+	}
+
+	/**
+	 * Get world state adapter for the active campaign
+	 *
+	 * @returns World state adapter for active campaign
+	 * @throws Error if no active campaign or adapters not initialized
+	 */
+	getWorldStateAdapter() {
+		if (!this.activeBundle) {
+			throw new Error('No active campaign bundle. Call createAdapters() first.');
+		}
+		return this.activeBundle.worldStateAdapter;
+	}
+
+	/**
+	 * Get event definition adapter for the active campaign
+	 *
+	 * @returns Event definition adapter for active campaign
+	 * @throws Error if no active campaign or adapters not initialized
+	 */
+	getEventDefinitionAdapter() {
+		if (!this.activeBundle) {
+			throw new Error('No active campaign bundle. Call createAdapters() first.');
+		}
+		return this.activeBundle.eventDefinitionAdapter;
 	}
 }

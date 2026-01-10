@@ -9,6 +9,8 @@ import { IDataAdapter } from './IDataAdapter';
 import { IConfigAdapter } from './IConfigAdapter';
 import { ISettingsAdapter } from './ISettingsAdapter';
 import { ICampaignContext } from './ICampaignContext';
+import { IWorldStateAdapter } from './IWorldStateAdapter';
+import { IEventDefinitionAdapter } from './IEventDefinitionAdapter';
 
 /**
  * Abstract factory for creating campaign-scoped adapters
@@ -61,6 +63,26 @@ export interface IAdapterFactory {
 	 * @returns ID of active campaign, or null if none selected
 	 */
 	getActiveCampaignId(): Promise<string | null>;
+
+	/**
+	 * Get world state adapter for the active campaign
+	 *
+	 * Used by CalendarService and WorldEventService to load/save world state.
+	 *
+	 * @returns World state adapter for active campaign
+	 * @throws Error if no active campaign or adapters not initialized
+	 */
+	getWorldStateAdapter(): IWorldStateAdapter;
+
+	/**
+	 * Get event definition adapter for the active campaign
+	 *
+	 * Used by WorldEventService to load event definitions.
+	 *
+	 * @returns Event definition adapter for active campaign
+	 * @throws Error if no active campaign or adapters not initialized
+	 */
+	getEventDefinitionAdapter(): IEventDefinitionAdapter;
 }
 
 /**
@@ -95,6 +117,18 @@ export interface AdapterBundle {
 	 * Provides campaign ID, active libraries, world ID, etc.
 	 */
 	campaignContext: ICampaignContext;
+
+	/**
+	 * World state adapter for calendar and event system state persistence
+	 * Campaign-scoped: manages world state (time, active events, chain states) for this campaign
+	 */
+	worldStateAdapter: IWorldStateAdapter;
+
+	/**
+	 * Event definition adapter for loading event definitions
+	 * Campaign-scoped: loads event definitions from platform-specific storage (YAML files, database)
+	 */
+	eventDefinitionAdapter: IEventDefinitionAdapter;
 
 	// ==================== PLATFORM-SPECIFIC ADAPTERS (Optional) ====================
 

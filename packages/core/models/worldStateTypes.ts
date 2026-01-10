@@ -23,33 +23,34 @@ export interface ChainStateVector {
 /**
  * GM Override Type - Manual event state changes by the Game Master
  * Allows GMs to force specific event states for narrative purposes
+ *
+ * Override Types:
+ * - 'force_state': Force a chain event to a specific state
+ * - 'one_off': Temporary override that expires on next natural transition
+ * - 'permanent': Updates the event definition itself (via callback)
  */
 export interface GMOverride {
 	/** Unique identifier for this override */
 	id: string;
 	/** Event ID this override applies to */
 	eventId: string;
-	/** Override type */
-	type: 'force_state' | 'disable_event' | 'extend_duration' | 'trigger_now';
+	/** Override scope: one-off (temporary) or permanent (definition edit) */
+	scope: 'one_off' | 'permanent';
 
-	// For 'force_state' overrides
+	// For chain event state overrides
 	/** Force event to specific state (for chain events) */
 	forcedStateName?: string;
 	/** Duration in days to maintain forced state */
 	forcedDuration?: number;
 
-	// For 'extend_duration' overrides
-	/** Days to add to current event duration */
-	durationExtension?: number;
-
-	// For 'trigger_now' overrides
-	/** Force event to trigger immediately regardless of conditions */
-	triggerImmediately?: boolean;
-
-	// Temporal scope
+	// Temporal tracking
 	/** Day when override was applied */
 	appliedDay: number;
-	/** Day when override expires (undefined = permanent until removed) */
+	/**
+	 * Day when override expires (for one-off overrides)
+	 * - one_off: Set to next natural transition day (calculated at apply time)
+	 * - permanent: undefined (never expires)
+	 */
 	expiresDay?: number;
 
 	// Metadata

@@ -6,6 +6,7 @@ import { Shop, ShopItem, Item } from '../models/types';
 import type { CurrencyConfig } from '../models/currency-config';
 import { createShopItem, rerollItem } from '../generators/inventory';
 import { IRandomizer } from '../interfaces/IRandomizer';
+import { ResolvedEffects } from '../models/effectTypes';
 
 /**
  * Configuration for restock retention chances
@@ -88,14 +89,33 @@ function isRareOrHigher(rarity: string): boolean {
  * @param shop Current shop state
  * @param allItems Complete pool of items to choose from
  * @param config Currency configuration for variant pricing calculations
- * @returns Updated shop with restocked inventory and statistics
+ * @param effectContext Optional: resolved effects from WorldEventService for restock blocking
+ * @returns Updated shop with restocked inventory and statistics, or error if blocked
  */
 export function restockShopInventory(
 	randomizer: IRandomizer,
 	shop: Shop,
 	allItems: Item[],
-	config: CurrencyConfig
-): { shop: Shop; stats: RestockStats } {
+	config: CurrencyConfig,
+	effectContext?: ResolvedEffects | null
+): { shop: Shop; stats: RestockStats; blocked?: boolean; blockingEvents?: string[] } {
+	// Check if restocking is blocked by active effects
+	if (effectContext?.restock_block === true) {
+		// Return early with blocked status
+		return {
+			shop,
+			stats: {
+				commonRefilled: 0,
+				uncommonRefilled: 0,
+				rareKept: 0,
+				rareReplaced: 0,
+				totalItems: 0
+			},
+			blocked: true,
+			blockingEvents: effectContext.competingEffects?.restock_block || []
+		};
+	}
+
 	const stats: RestockStats = {
 		commonRefilled: 0,
 		uncommonRefilled: 0,
@@ -177,7 +197,8 @@ export function restockShopInventory(
 			...shop,
 			inventory: newInventory
 		},
-		stats
+		stats,
+		blocked: false
 	};
 }
 
