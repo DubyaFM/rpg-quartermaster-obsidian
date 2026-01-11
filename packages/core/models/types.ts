@@ -157,6 +157,10 @@ export interface RPGShopkeepSettings {
 	shopRestockConfig?: ShopRestockConfig;  // Auto-restock settings
 	showCalendarInUI?: boolean;  // Show calendar widget in modals
 	dateFormat?: 'full' | 'compact' | 'both';  // How to display dates
+	showCalendarHUD?: boolean;  // Show calendar in status bar (Obsidian only)
+	timeAdvancementPresets?: TimeAdvancementPreset[];  // Custom time advancement buttons
+	worldEventModules?: Record<string, boolean>;  // Event module toggles (weather, economy, moons, etc.)
+	worldStatePath?: string;  // Path to world-state.json file
 	// NPC Settings
 	npcsFolder: string;  // Folder for NPC files
 	hirelingsFolder: string;  // Folder for hireling tracking files
@@ -240,6 +244,8 @@ export const DEFAULT_SETTINGS: RPGShopkeepSettings = {
 		temple: 'default',
 		travel: 'default'
 	},
+	// Calendar Settings (Phase 7)
+	showCalendarHUD: true,  // Show calendar in status bar (Obsidian only)
 	// NPC Settings
 	npcsFolder: 'NPCs',
 	hirelingsFolder: 'Hirelings',
@@ -895,6 +901,17 @@ export interface TimeAdvancedEvent {
 	timeOfDay?: number;
 	/** Notable events that occurred during this advancement */
 	notableEvents?: NotableEventSummary[];
+}
+
+/**
+ * Time Advancement Preset
+ * Configurable quick-action buttons for time advancement UI
+ */
+export interface TimeAdvancementPreset {
+	label: string;
+	minutes?: number;
+	hours?: number;
+	days?: number;
 }
 
 /**

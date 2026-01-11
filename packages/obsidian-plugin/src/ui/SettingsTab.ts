@@ -393,6 +393,9 @@ export class RPGShopkeepSettingTab extends PluginSettingTab {
 	 * Render global settings sections (shown in both modes)
 	 */
 	private renderGlobalSections(containerEl: HTMLElement): void {
+		// UI Settings Section
+		this.renderUISettings(containerEl);
+
 		// Source Filtering Section
 		this.renderSourceFiltering(containerEl);
 
@@ -404,6 +407,42 @@ export class RPGShopkeepSettingTab extends PluginSettingTab {
 
 		// Vault Health Check Section
 		this.renderVaultHealthCheck(containerEl);
+	}
+
+	/**
+	 * Render UI Settings section
+	 */
+	private renderUISettings(containerEl: HTMLElement): void {
+		const uiSection = this.createCollapsibleSection(containerEl, 'User Interface (Global)', true);
+
+		uiSection.createEl('p', {
+			text: 'Customize the plugin interface and display options.',
+			cls: 'setting-item-description'
+		});
+
+		new Setting(uiSection)
+			.setName('Show Calendar HUD')
+			.setDesc('Display calendar information in the status bar. Click to open detailed view.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showCalendarHUD !== false)
+				.onChange(async (value) => {
+					this.plugin.settings.showCalendarHUD = value;
+					await this.plugin.saveSettings();
+
+					// Recreate or destroy calendar HUD
+					if (value) {
+						if (!this.plugin.calendarHUD) {
+							const { CalendarHUD } = await import('./CalendarHUD');
+							this.plugin.calendarHUD = new CalendarHUD(this.app, this.plugin);
+						}
+					} else {
+						if (this.plugin.calendarHUD) {
+							this.plugin.calendarHUD.destroy();
+							this.plugin.calendarHUD = null;
+						}
+					}
+				})
+			);
 	}
 
 	/**
@@ -864,6 +903,191 @@ export class RPGShopkeepSettingTab extends PluginSettingTab {
 					this.display();
 				}));
 
+		// World Event System section
+		calendarSection.createEl('h4', { text: 'World Event Modules' });
+		calendarSection.createEl('p', {
+			text: 'Enable or disable specific event modules (e.g., weather, economy, moons). Requires world events to be configured.',
+			cls: 'setting-item-description'
+		});
+
+		// Initialize module toggles if not present
+		if (!this.plugin.settings.worldEventModules) {
+			this.plugin.settings.worldEventModules = {
+				weather: true,
+				economy: true,
+				moons: true,
+				politics: false,
+				custom: true
+			};
+			await this.plugin.saveSettings();
+		}
+
+		const eventModules = [
+			{ id: 'weather', name: 'Weather Events', desc: 'Weather patterns, storms, and seasonal changes' },
+			{ id: 'economy', name: 'Economic Events', desc: 'Market fluctuations, trade routes, price modifiers' },
+			{ id: 'moons', name: 'Lunar Cycles', desc: 'Moon phases and lunar events' },
+			{ id: 'politics', name: 'Political Events', desc: 'Faction activities, political changes' },
+			{ id: 'custom', name: 'Custom Events', desc: 'User-defined custom events' }
+		];
+
+		for (const module of eventModules) {
+			new Setting(calendarSection)
+				.setName(module.name)
+				.setDesc(module.desc)
+				.addToggle(toggle => toggle
+					.setValue(this.plugin.settings.worldEventModules?.[module.id] !== false)
+					.onChange(async (value) => {
+						if (!this.plugin.settings.worldEventModules) {
+							this.plugin.settings.worldEventModules = {};
+						}
+						this.plugin.settings.worldEventModules[module.id] = value;
+						await this.plugin.saveSettings();
+						// World event service integration will be implemented in a future phase
+						// When available, this will call: worldEventService.toggleModule(module.id, value)
+					})
+				);
+		}
+
+		// Time Advancement Presets
+		calendarSection.createEl('h4', { text: 'Time Advancement Presets' });
+		calendarSection.createEl('p', {
+			text: 'Configure quick-access buttons for advancing time. Enter values in minutes, hours, or days.',
+			cls: 'setting-item-description'
+		});
+
+		// Initialize time presets if not present
+		if (!this.plugin.settings.timeAdvancementPresets) {
+			this.plugin.settings.timeAdvancementPresets = [
+				{ label: '1 Hour', hours: 1 },
+				{ label: '8 Hours', hours: 8 },
+				{ label: '1 Day', days: 1 },
+				{ label: '1 Week', days: 7 }
+			];
+			await this.plugin.saveSettings();
+		}
+
+		// Display existing presets
+		if (this.plugin.settings.timeAdvancementPresets && this.plugin.settings.timeAdvancementPresets.length > 0) {
+			const presetsDiv = calendarSection.createDiv('time-presets-list');
+			presetsDiv.style.marginBottom = '12px';
+
+			for (let i = 0; i < this.plugin.settings.timeAdvancementPresets.length; i++) {
+				const preset = this.plugin.settings.timeAdvancementPresets[i];
+				const presetRow = presetsDiv.createDiv('preset-row');
+				presetRow.style.display = 'flex';
+				presetRow.style.alignItems = 'center';
+				presetRow.style.gap = '10px';
+				presetRow.style.marginTop = '8px';
+				presetRow.style.padding = '8px';
+				presetRow.style.backgroundColor = 'var(--background-modifier-border)';
+				presetRow.style.borderRadius = '4px';
+
+				// Label input
+				const labelInput = presetRow.createEl('input', { type: 'text' });
+				labelInput.value = preset.label;
+				labelInput.style.flex = '1';
+				labelInput.placeholder = 'Label (e.g., "1 Hour")';
+				labelInput.addEventListener('change', async () => {
+					this.plugin.settings.timeAdvancementPresets[i].label = labelInput.value;
+					await this.plugin.saveSettings();
+				});
+
+				// Unit selector
+				const unitSelect = presetRow.createEl('select');
+				unitSelect.style.width = '100px';
+				unitSelect.innerHTML = `
+					<option value="minutes" ${preset.minutes ? 'selected' : ''}>Minutes</option>
+					<option value="hours" ${preset.hours ? 'selected' : ''}>Hours</option>
+					<option value="days" ${preset.days ? 'selected' : ''}>Days</option>
+				`;
+
+				// Value input
+				const valueInput = presetRow.createEl('input', { type: 'number' });
+				valueInput.value = String(preset.minutes || preset.hours || preset.days || 1);
+				valueInput.style.width = '80px';
+				valueInput.min = '1';
+
+				// Update handler
+				const updatePreset = async () => {
+					const unit = unitSelect.value;
+					const value = parseInt(valueInput.value) || 1;
+
+					// Clear all units
+					delete this.plugin.settings.timeAdvancementPresets[i].minutes;
+					delete this.plugin.settings.timeAdvancementPresets[i].hours;
+					delete this.plugin.settings.timeAdvancementPresets[i].days;
+
+					// Set the selected unit
+					if (unit === 'minutes') {
+						this.plugin.settings.timeAdvancementPresets[i].minutes = value;
+					} else if (unit === 'hours') {
+						this.plugin.settings.timeAdvancementPresets[i].hours = value;
+					} else if (unit === 'days') {
+						this.plugin.settings.timeAdvancementPresets[i].days = value;
+					}
+
+					await this.plugin.saveSettings();
+				};
+
+				unitSelect.addEventListener('change', updatePreset);
+				valueInput.addEventListener('change', updatePreset);
+
+				// Remove button
+				const removeBtn = presetRow.createEl('button', { text: '×' });
+				removeBtn.style.border = 'none';
+				removeBtn.style.background = 'transparent';
+				removeBtn.style.cursor = 'pointer';
+				removeBtn.style.fontSize = '20px';
+				removeBtn.style.lineHeight = '1';
+				removeBtn.style.padding = '0 4px';
+				removeBtn.style.color = 'var(--text-error)';
+				removeBtn.addEventListener('click', async () => {
+					this.plugin.settings.timeAdvancementPresets.splice(i, 1);
+					await this.plugin.saveSettings();
+					this.display();
+				});
+			}
+		}
+
+		// Add preset button
+		new Setting(calendarSection)
+			.setName('Add Time Preset')
+			.setDesc('Add a new quick-access time advancement button')
+			.addButton(button => button
+				.setButtonText('Add Preset')
+				.onClick(async () => {
+					if (!this.plugin.settings.timeAdvancementPresets) {
+						this.plugin.settings.timeAdvancementPresets = [];
+					}
+					this.plugin.settings.timeAdvancementPresets.push({
+						label: 'New Preset',
+						days: 1
+					});
+					await this.plugin.saveSettings();
+					this.display();
+				})
+			);
+
+		// World State Storage Path
+		calendarSection.createEl('h4', { text: 'World State Storage' });
+		calendarSection.createEl('p', {
+			text: 'Path to the world state file that stores calendar time, event states, and GM overrides.',
+			cls: 'setting-item-description'
+		});
+
+		new Setting(calendarSection)
+			.setName('World State Path')
+			.setDesc('File path for world-state.json (default: .quartermaster/world-state.json)')
+			.addText(text => {
+				new FileSuggest(this.app, text.inputEl);
+				text.setPlaceholder('.quartermaster/world-state.json')
+					.setValue(this.plugin.settings.worldStatePath || '')
+					.onChange(async (value) => {
+						this.plugin.settings.worldStatePath = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
 		// Upkeep settings
 		calendarSection.createEl('h4', { text: 'Default Upkeep Settings' });
 		calendarSection.createEl('p', {
@@ -923,6 +1147,67 @@ export class RPGShopkeepSettingTab extends PluginSettingTab {
 						this.plugin.settings.upkeepConfig.partyWideSettings.lifestyleLevel = value;
 						await this.plugin.saveSettings();
 					}
+				}));
+
+		// Time Advancement Presets (Phase 7 - TKT-CAL-054)
+		calendarSection.createEl('h4', { text: 'Time Advancement Quick Buttons' });
+		calendarSection.createEl('p', {
+			text: 'Configure the quick action buttons shown in the "Advance Time by..." modal. Leave empty to use defaults.',
+			cls: 'setting-item-description'
+		});
+
+		new Setting(calendarSection)
+			.setName('Custom Time Buttons')
+			.setDesc('Configure custom time advancement buttons (format: "Label|minutes|hours|days" per line, e.g., "Short Rest|0|1|0")')
+			.addTextArea(text => {
+				// Serialize presets to text
+				const presets = this.plugin.settings.timeAdvancementPresets || [];
+				const value = presets.map(p =>
+					`${p.label}|${p.minutes || 0}|${p.hours || 0}|${p.days || 0}`
+				).join('\n');
+
+				text.setPlaceholder('10 minutes|10|0|0\n1 hour|0|1|0\n8 hours|0|8|0\n1 day|0|0|1')
+					.setValue(value)
+					.onChange(async (value) => {
+						try {
+							const lines = value.split('\n').filter(l => l.trim());
+							const presets = lines.map(line => {
+								const parts = line.split('|');
+								if (parts.length < 4) return null;
+
+								const label = parts[0].trim();
+								const minutes = parseInt(parts[1]) || 0;
+								const hours = parseInt(parts[2]) || 0;
+								const days = parseInt(parts[3]) || 0;
+
+								if (!label || (minutes === 0 && hours === 0 && days === 0)) {
+									return null;
+								}
+
+								return { label, minutes, hours, days };
+							}).filter(p => p !== null);
+
+							this.plugin.settings.timeAdvancementPresets = presets as any;
+							await this.plugin.saveSettings();
+						} catch (error) {
+							console.error('[Settings] Failed to parse time advancement presets:', error);
+						}
+					});
+
+				text.inputEl.rows = 8;
+				text.inputEl.style.width = '100%';
+			});
+
+		new Setting(calendarSection)
+			.setName('Reset to Defaults')
+			.setDesc('Clear custom presets and use the default time buttons')
+			.addButton(button => button
+				.setButtonText('Reset')
+				.onClick(async () => {
+					this.plugin.settings.timeAdvancementPresets = [];
+					await this.plugin.saveSettings();
+					new Notice('Time advancement presets reset to defaults');
+					this.display(); // Refresh settings display
 				}));
 	}
 

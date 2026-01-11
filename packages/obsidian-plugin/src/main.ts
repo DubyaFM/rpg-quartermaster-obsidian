@@ -37,6 +37,10 @@ import { NewProjectModal } from './ui/NewProjectModal';
 import { ActivityLogModal } from './ui/ActivityLogModal';
 import { ManagePartyMembersModal } from './ui/ManagePartyMembersModal';
 import { CampaignSelector } from './ui/CampaignSelector';
+import { CalendarHUD } from './ui/CalendarHUD';
+import { TimeAdvancementModal } from './ui/TimeAdvancementModal';
+import { addEventCommand } from './commands/addEventCommand';
+import { registerAdvanceTimeCommand } from './commands/advanceTimeCommand';
 
 export default class QuartermasterPlugin extends Plugin {
 	settings: RPGShopkeepSettings;
@@ -49,6 +53,9 @@ export default class QuartermasterPlugin extends Plugin {
 
 	// Campaign UI
 	campaignSelector: CampaignSelector | null = null;
+
+	// Calendar HUD
+	calendarHUD: CalendarHUD | null = null;
 
 	// Job Board components
 	jobFileHandler: JobFileHandler;
@@ -152,6 +159,12 @@ export default class QuartermasterPlugin extends Plugin {
 		// Initialize campaign selector UI (Phase 3)
 		this.campaignSelector = new CampaignSelector(this.app, this);
 		console.log('[Quartermaster] Campaign selector initialized');
+
+		// Initialize calendar HUD (Phase 7 - TKT-CAL-052)
+		if (this.settings.showCalendarHUD !== false) {
+			this.calendarHUD = new CalendarHUD(this.app, this);
+			console.log('[Quartermaster] Calendar HUD initialized');
+		}
 
 		// Initialize currency manager and inventory system
 		try {
@@ -271,12 +284,23 @@ export default class QuartermasterPlugin extends Plugin {
 			}
 		});
 
-		// Add calendar command
+		// Add calendar commands
 		this.addCommand({
 			id: 'advance-time',
 			name: 'Advance Time',
 			callback: () => {
 				new AdvanceTimeModal(this.app, this).open();
+			}
+		});
+
+		// New time advancement UI with quick buttons
+		registerAdvanceTimeCommand(this);
+
+		this.addCommand({
+			id: 'add-calendar-event',
+			name: 'Add Calendar Event',
+			callback: () => {
+				addEventCommand(this.app, this);
 			}
 		});
 
@@ -479,6 +503,15 @@ export default class QuartermasterPlugin extends Plugin {
 			}
 		});
 
+		this.addCommand({
+			id: 'import-fantasy-calendar',
+			name: 'Import Fantasy-Calendar.com Calendar',
+			callback: async () => {
+				const { importCalendarCommand } = await import('./commands/importCalendarCommand');
+				await importCalendarCommand(this.app, this);
+			}
+		});
+
 		// Add settings tab
 		this.addSettingTab(new RPGShopkeepSettingTab(this.app, this));
 	}
@@ -603,6 +636,12 @@ export default class QuartermasterPlugin extends Plugin {
 		if (this.campaignSelector) {
 			this.campaignSelector.destroy();
 			this.campaignSelector = null;
+		}
+
+		// Clean up calendar HUD
+		if (this.calendarHUD) {
+			this.calendarHUD.destroy();
+			this.calendarHUD = null;
 		}
 
 		// Clean up adapter resources
