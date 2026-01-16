@@ -11,6 +11,8 @@
     "test:coverage": "jest --coverage",
     "test:vitest": "vitest",
     "deploy": "node scripts/deploy.mjs",
+    "deploy:win": "node scripts/deploy.mjs",
+    "deploy:wsl": "node scripts/deploy.mjs",
     "release": "node scripts/release.mjs"
   },
   "keywords": [
