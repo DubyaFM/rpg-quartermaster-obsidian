@@ -1058,6 +1058,7 @@ export class WorldEventService {
 			const useMinutes = event.useMinutes || false;
 
 			let matches = false;
+			const duration = event.duration || 1;
 
 			if (useMinutes) {
 				// Sub-day interval: use total minutes from epoch
@@ -1065,15 +1066,22 @@ export class WorldEventService {
 				const timeOfDay = this.driver.getTimeOfDay();
 				const totalMinutes = day * 1440 + timeOfDay;
 
-				matches = (totalMinutes + offset) % interval === 0;
+				// Check if we're within any active period
+				const positionInInterval = ((totalMinutes - offset) % interval + interval) % interval;
+				matches = positionInInterval < duration;
 			} else {
-				// Day-based interval: standard modulo math
-				matches = (day + offset) % interval === 0;
+				// Day-based interval: check if day falls within any active period
+				// For an event with offset O and duration D, active periods are:
+				// [O, O+D-1], [O+I, O+I+D-1], [O+2I, O+2I+D-1], ...
+				const positionInInterval = ((day - offset) % interval + interval) % interval;
+				matches = positionInInterval < duration;
 			}
 
 			if (matches) {
-				const duration = event.duration || 1;
-				activeEvents.push(this.createActiveEvent(event, day, duration));
+				// Calculate correct start day for this occurrence
+				const positionInInterval = ((day - offset) % interval + interval) % interval;
+				const startDay = day - positionInInterval;
+				activeEvents.push(this.createActiveEvent(event, startDay, duration));
 			}
 		}
 

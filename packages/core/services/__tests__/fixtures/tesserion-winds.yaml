@@ -1,0 +1,303 @@
+# Tesserion Five Winds Season System
+# Test fixture for complex "Layer Cake" chain event validation
+#
+# Architecture: Two separate Chain events stacked with Event Priority System
+# - Layer A (Climate, Priority 10): Season-bringing rotation, slow predictable
+# - Layer B (Gusts, Priority 100): Interrupting winds, high frequency short duration
+#
+# Key Principle: 100% YAML-driven, NO hardcoded "Wind Logic"
+# Reference: QUESTIONS-Calendar-and-World-Events.md Section 2.7
+#
+# Duration Notation: "2 months + 1d3 weeks - 2 weeks" approximates "2 months +/- 1-3 weeks"
+#   This gives range of approximately 2 months +/- 1-3 weeks
+
+events:
+  # ===========================================================================
+  # LAYER A: Climate (Season-Bringing Rotation)
+  # Priority: 10 (baseline)
+  # ===========================================================================
+  #
+  # The slow rotation of major seasonal winds.
+  # Each season-bringing wind lasts approximately 2 months (72 days in Tesserion),
+  # with variation of +/- 1-3 weeks using compound dice expression.
+  #
+  # The expression "2 months - 2 weeks + 1d3 weeks" gives:
+  # - Base: 2 months (~60 days with 30-day months, ~72 days with Tesserion)
+  # - Range: +/- up to 3 weeks of variation
+  #
+  - id: tesserion_climate_cycle
+    name: Tesserion Climate Cycle
+    type: chain
+    priority: 10
+    effects: {}  # State-specific effects applied from states
+    seed: 58291  # Arbitrary seed for deterministic climate
+    tags:
+      - tesserion
+      - weather
+      - seasons
+    states:
+      - name: Mistral
+        weight: 20
+        duration: "2 months - 2 weeks + 1d3 weeks"
+        effects:
+          season_set: mistral
+          ui_banner: "The Mistral blows - Season of Rebirth"
+        description: "The Wet Wind. Warm, humid air from the tropics brings the Green Haze."
+
+      - name: Zephyr
+        weight: 20
+        duration: "2 months - 2 weeks + 1d3 weeks"
+        effects:
+          season_set: zephyr
+          ui_banner: "The Zephyr flows - Season of Peace"
+        description: "The Fair Wind. Dry, cool breezes. The Golden Era of the year."
+
+      - name: Sirocco
+        weight: 20
+        duration: "2 months - 2 weeks + 1d3 weeks"
+        effects:
+          season_set: sirocco
+          ui_banner: "The Sirocco burns - Season of Power"
+        description: "The Hot Wind. Hot, dry air from the equatorial deserts. Magic is volatile."
+
+      - name: Gale
+        weight: 20
+        duration: "2 months - 2 weeks + 1d3 weeks"
+        effects:
+          season_set: gale
+          ui_banner: "The Gale howls - Season of Change"
+        description: "The Wild Wind. Clashing pressure fronts. Storms are frequent but short."
+
+      - name: Boreas
+        weight: 20
+        duration: "2 months - 2 weeks + 1d3 weeks"
+        effects:
+          season_set: boreas
+          ui_banner: "The Boreas descends - Season of Rest"
+        description: "The Sleeping Wind. Cold, still air from the poles. The year ends in dark and ice."
+
+  # ===========================================================================
+  # LAYER B: Gusts (Interrupting Winds)
+  # Priority: 100 (overrides Layer A while active)
+  # ===========================================================================
+  #
+  # High-frequency, short-duration interruptions.
+  # Duration: 2d6 days (2-12 days)
+  # Can occur during any climate state, temporarily overriding the season.
+  #
+  # The "no wind" state has highest weight to prevent constant interruptions.
+  # When a gust occurs, it overrides the season_set from Layer A because
+  # Layer B has higher priority (100 > 10).
+  #
+  - id: tesserion_gust_layer
+    name: Tesserion Wind Gusts
+    type: chain
+    priority: 100
+    effects: {}  # State-specific effects from states
+    seed: 77432  # Different seed from climate for independent randomness
+    tags:
+      - tesserion
+      - weather
+    states:
+      # "Calm" state represents no interruption - falls through to Layer A
+      - name: Calm
+        weight: 60  # Most of the time, no interruption (lets Layer A show through)
+        duration: "1d6 days + 3 days"  # 4-9 days of calm between gusts
+        effects: {}  # Empty effects means Layer A's season_set wins
+        description: "No interrupting wind. The seasonal wind blows unimpeded."
+
+      # Mistral Gust - interruption with Mistral characteristics
+      - name: Mistral Gust
+        weight: 8
+        duration: "2d6 days"
+        effects:
+          season_set: mistral_gust
+          light_level: dim
+          ui_banner: "A sudden Mistral gust! Rain sweeps across the land."
+        description: "A burst of warm, wet wind. Unexpected rain and fog."
+
+      # Zephyr Gust - interruption with Zephyr characteristics
+      - name: Zephyr Gust
+        weight: 8
+        duration: "2d6 days"
+        effects:
+          season_set: zephyr_gust
+          ui_banner: "A Zephyr gust brings fair skies!"
+        description: "A burst of clear, pleasant wind. Unexpectedly good weather."
+
+      # Sirocco Gust - interruption with Sirocco characteristics
+      - name: Sirocco Gust
+        weight: 8
+        duration: "2d6 days"
+        effects:
+          season_set: sirocco_gust
+          ui_banner: "A scorching Sirocco gust! The heat intensifies."
+        description: "A burst of hot, dry wind. Sudden heat wave."
+
+      # Gale Force - interruption with Gale characteristics
+      - name: Gale Force
+        weight: 8
+        duration: "2d6 days"
+        effects:
+          season_set: gale_force
+          light_level: dim
+          restock_block: true  # Storms block travel/commerce
+          ui_banner: "Gale force winds! Storms sweep the region."
+        description: "Powerful, chaotic winds. Ships stay in port."
+
+      # Boreas Chill - interruption with Boreas characteristics
+      - name: Boreas Chill
+        weight: 8
+        duration: "2d6 days"
+        effects:
+          season_set: boreas_chill
+          light_level: dim
+          ui_banner: "A Boreas chill descends! Unexpected cold grips the land."
+        description: "A burst of cold, still air. Sudden frost or snow."
+
+  # ===========================================================================
+  # LAYER C: Adjacency-Weighted Gust Pools (Type D Conditionals)
+  # Tier: 1 (processed after Chain events)
+  # ===========================================================================
+  #
+  # These conditional events modify the probability of which gusts can occur
+  # based on the current climate state. They use Type D conditionals to check
+  # the state of the climate cycle and apply weighted modifiers.
+  #
+  # Implementation: Each pool represents a conditional trigger that checks
+  # if we're in a specific climate AND a gust just started. It then applies
+  # an effect that UI can use to show "favored" status.
+  #
+  # Note: True adjacency weighting would require modifying chain weights at runtime,
+  # which is complex. Instead, we model this as cosmetic/narrative indicators.
+  # The actual "flavor" comes from the gust state descriptions.
+  #
+
+  # Mistral Climate - favors Mistral, Zephyr (next), and Boreas (prev) gusts
+  - id: tesserion_mistral_adjacency
+    name: Mistral Season Wind Affinity
+    type: conditional
+    priority: 5
+    tier: 1
+    condition: "events['tesserion_climate_cycle'].state == 'Mistral'"
+    effects:
+      wind_affinity: "wet"  # Custom effect for narrative
+    description: "During Mistral season, winds tend toward wet and transitional patterns."
+
+  # Zephyr Climate - favors Zephyr, Sirocco (next), and Mistral (prev) gusts
+  - id: tesserion_zephyr_adjacency
+    name: Zephyr Season Wind Affinity
+    type: conditional
+    priority: 5
+    tier: 1
+    condition: "events['tesserion_climate_cycle'].state == 'Zephyr'"
+    effects:
+      wind_affinity: "fair"
+    description: "During Zephyr season, winds tend toward fair and warm patterns."
+
+  # Sirocco Climate - favors Sirocco, Gale (next), and Zephyr (prev) gusts
+  - id: tesserion_sirocco_adjacency
+    name: Sirocco Season Wind Affinity
+    type: conditional
+    priority: 5
+    tier: 1
+    condition: "events['tesserion_climate_cycle'].state == 'Sirocco'"
+    effects:
+      wind_affinity: "hot"
+    description: "During Sirocco season, winds tend toward hot and energetic patterns."
+
+  # Gale Climate - favors Gale, Boreas (next), and Sirocco (prev) gusts
+  - id: tesserion_gale_adjacency
+    name: Gale Season Wind Affinity
+    type: conditional
+    priority: 5
+    tier: 1
+    condition: "events['tesserion_climate_cycle'].state == 'Gale'"
+    effects:
+      wind_affinity: "wild"
+    description: "During Gale season, winds tend toward wild and cold patterns."
+
+  # Boreas Climate - favors Boreas, Mistral (next), and Gale (prev) gusts
+  - id: tesserion_boreas_adjacency
+    name: Boreas Season Wind Affinity
+    type: conditional
+    priority: 5
+    tier: 1
+    condition: "events['tesserion_climate_cycle'].state == 'Boreas'"
+    effects:
+      wind_affinity: "cold"
+    description: "During Boreas season, winds tend toward cold and wet patterns."
+
+  # ===========================================================================
+  # LAYER D: Seasonal Effect Modifiers (Tier 2 Conditionals)
+  # ===========================================================================
+  #
+  # These apply additional game effects based on the current season.
+  # They check the season_set effect from either Layer A or Layer B.
+  #
+
+  # Sirocco Season - High Magic volatility
+  - id: tesserion_sirocco_magic
+    name: Sirocco Magic Volatility
+    type: conditional
+    priority: 50
+    tier: 2
+    condition: "events['tesserion_climate_cycle'].state == 'Sirocco' && events['tesserion_gust_layer'].state == 'Calm'"
+    effects:
+      magic_volatility: "high"
+      price_mult_tag:
+        water: 1.5  # Water is precious during Sirocco
+        ice: 2.0
+    description: "During stable Sirocco, magic is volatile and water scarce."
+
+  # Gale Season - Good for wind-powered machinery, dangerous for ships
+  - id: tesserion_gale_effects
+    name: Gale Trade Effects
+    type: conditional
+    priority: 50
+    tier: 2
+    condition: "events['tesserion_gust_layer'].state == 'Gale Force'"
+    effects:
+      price_mult_global: 1.15  # Shipping disruptions raise prices
+      shop_closed: false  # Shops stay open, but prices up
+    description: "Gale force winds disrupt shipping and raise prices."
+
+  # Boreas Season - Ground hardens, construction halts
+  - id: tesserion_boreas_effects
+    name: Boreas Winter Effects
+    type: conditional
+    priority: 50
+    tier: 2
+    condition: "events['tesserion_climate_cycle'].state == 'Boreas'"
+    effects:
+      construction_modifier: -0.5  # Hard to build in frozen ground
+      price_mult_tag:
+        food: 1.25  # Preserved food more expensive
+        fuel: 1.5   # Heating materials in demand
+    description: "During Boreas, construction halts and winter supplies are dear."
+
+# ===========================================================================
+# METADATA
+# ===========================================================================
+metadata:
+  name: Tesserion Five Winds
+  description: |
+    The Five Winds season system for Tesserion calendar.
+    Implements the "Layer Cake" architecture with:
+    - Layer A (Climate): Priority 10, season-bringing rotation
+    - Layer B (Gusts): Priority 100, interrupting winds
+    - Layer C (Adjacency): Type D conditionals for wind affinity
+    - Layer D (Effects): Tier 2 conditionals for seasonal effects
+  version: "1.0.0"
+  scope: tesserion
+  author: Quartermaster
+  calendar_id: tesserion
+  notes: |
+    This is a test fixture, not shipped with the app.
+    Validates that complex seasonal systems can be 100% config-driven.
+
+    Key validations:
+    - Duration notation: "2 months - 2 weeks + 1d3 weeks"
+    - Layer cake priority system (100 > 10)
+    - Type D conditional adjacency weighting
+    - season_set effect updates CalendarDriver season

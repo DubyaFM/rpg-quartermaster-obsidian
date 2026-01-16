@@ -1,0 +1,422 @@
+# Tesserion Moon Events Configuration
+# Test fixture for complex moon/conditional system validation (not shipped with app)
+#
+# This file demonstrates all event trigger patterns (Type B, C, D) working together
+# to model a complex fantasy lunar system.
+#
+# Reference: UX-Calendar-and-World-Events.md Section 10 - The Three Moons
+# Calendar: Tesserion (360 days, 10 months x 36 days, 6-day week)
+#
+# Moon Overview:
+# - The Shield (Axeos): Large, predictable, tidally locked to calendar (Type B)
+# - The Changeling (Taelis): Erratic, burning ember, random visibility dips (Type C)
+# - The Watcher (Verilius): Dark moon, rare flash events (Type C)
+# - Void Nights: When all three moons are dark simultaneously (Type D)
+
+# =============================================================================
+# Source Information
+# =============================================================================
+source_info:
+  name: "Tesserion Lunar System"
+  version: "1.0.0"
+  description: "The Three Moons of Tesserion - validates complex event patterns"
+  group: ["Lunar", "Celestial"]
+  scope: "setting"
+
+# =============================================================================
+# Event Definitions
+# =============================================================================
+events:
+
+  # ===========================================================================
+  # THE SHIELD (Axeos) - Type B Interval Event
+  # ===========================================================================
+  # The Anchor of Reality - a massive, iron-grey sphere 4x Earth's moon size.
+  # Tidally locked to the 36-day month with a perfect 6-week cycle.
+  #
+  # Cycle (6-day weeks within 36-day month):
+  # - Week 1 (Days 1-6): Waxing Crescent (The Kindle)
+  # - Week 2 (Days 7-12): Waxing Gibbous (The Climb)
+  # - Week 3 (Days 13-18): Full Moon (The Crown) - "Silver Days"
+  # - Week 4 (Days 19-24): Waning Gibbous (The Fade)
+  # - Week 5 (Days 25-30): Waning Crescent (The Ebb)
+  # - Week 6 (Days 31-36): New Moon (The Blind) - Dark disc blocking stars
+  #
+  # Implementation: Since the Shield is perfectly synchronized to the calendar,
+  # we model each phase as a separate interval event. The interval is 36 (month length)
+  # with offsets aligning to each week.
+
+  # Phase 1: The Kindle (Waxing Crescent) - Days 1-6 of each month
+  - id: "shield-kindle"
+    name: "The Shield: Kindle"
+    description: "Waxing Crescent - The moon reappears as a thin silver line, widening nightly"
+    type: "interval"
+    priority: 10
+    interval: 36
+    offset: 0
+    duration: 6
+    effects:
+      moon_shield_phase: "kindle"
+      moon_shield_visible: true
+      moon_shield_illumination: 0.17
+      light_bonus: 0
+    tags: ["lunar", "shield"]
+
+  # Phase 2: The Climb (Waxing Gibbous) - Days 7-12 of each month
+  - id: "shield-climb"
+    name: "The Shield: Climb"
+    description: "Waxing Gibbous - The moon swells, dominating the eastern sky"
+    type: "interval"
+    priority: 10
+    interval: 36
+    offset: 6
+    duration: 6
+    effects:
+      moon_shield_phase: "climb"
+      moon_shield_visible: true
+      moon_shield_illumination: 0.50
+      light_bonus: 1
+      travel_safe_night: true
+    tags: ["lunar", "shield"]
+
+  # Phase 3: The Crown (Full Shield) - Days 13-18 of each month
+  - id: "shield-crown"
+    name: "The Shield: Crown"
+    description: "Full Shield - The Silver Days, perfect blinding white circle overhead"
+    type: "interval"
+    priority: 10
+    interval: 36
+    offset: 12
+    duration: 6
+    effects:
+      moon_shield_phase: "crown"
+      moon_shield_visible: true
+      moon_shield_illumination: 1.0
+      light_bonus: 3
+      light_level: "bright"
+      travel_safe_night: true
+      shadow_sharpness: "razor"
+    tags: ["lunar", "shield", "silver-days"]
+
+  # Phase 4: The Fade (Waning Gibbous) - Days 19-24 of each month
+  - id: "shield-fade"
+    name: "The Shield: Fade"
+    description: "Waning Gibbous - The perfect circle breaks, shadow appears on right edge"
+    type: "interval"
+    priority: 10
+    interval: 36
+    offset: 18
+    duration: 6
+    effects:
+      moon_shield_phase: "fade"
+      moon_shield_visible: true
+      moon_shield_illumination: 0.50
+      light_bonus: 1
+      travel_safe_night: true
+    tags: ["lunar", "shield"]
+
+  # Phase 5: The Ebb (Waning Crescent) - Days 25-30 of each month
+  - id: "shield-ebb"
+    name: "The Shield: Ebb"
+    description: "Waning Crescent - The moon shrinks rapidly to a sliver"
+    type: "interval"
+    priority: 10
+    interval: 36
+    offset: 24
+    duration: 6
+    effects:
+      moon_shield_phase: "ebb"
+      moon_shield_visible: true
+      moon_shield_illumination: 0.17
+      light_bonus: 0
+    tags: ["lunar", "shield"]
+
+  # Phase 6: The Blind (New Moon) - Days 31-36 of each month
+  - id: "shield-blind"
+    name: "The Shield: Blind"
+    description: "New Moon (The Void) - Dark side faces world, massive black disc blocking stars"
+    type: "interval"
+    priority: 10
+    interval: 36
+    offset: 30
+    duration: 6
+    effects:
+      moon_shield_phase: "blind"
+      moon_shield_visible: false
+      moon_shield_illumination: 0.0
+      light_bonus: -1
+      light_level: "dark"
+      star_visibility: "blocked"
+    tags: ["lunar", "shield", "blind-week"]
+
+  # ===========================================================================
+  # THE CHANGELING (Taelis) - Type C Chain Event
+  # ===========================================================================
+  # The Fire in the Sky - a thumb-sized burning ember trailing colored tail.
+  # Burns with its own friction in the Dust Torus ring.
+  #
+  # Visibility: ~83% (30 days/month visible, but erratic)
+  # States:
+  # - The Burn (Visible): Inside friction ring, burns with color
+  #   - Green: Oxygen-rich, fair weather
+  #   - Red: Storms or high pressure approaching
+  #   - Gold: Calm winds, high humidity
+  # - The Dip (Invisible): Orbit wobbles outside ring, fire goes out
+  #
+  # ~60 invisible days per year = ~17% invisible = 83% visible
+  # Average dip: 1-3 days at random intervals
+
+  - id: "changeling"
+    name: "The Changeling"
+    description: "Taelis - The Fire in the Sky, an erratic burning ember"
+    type: "chain"
+    priority: 8
+    seed: 83421  # Seed for deterministic replay
+    initialState: "Burn-Green"  # Start visible
+    states:
+      # Burn states (visible) - total weight 83
+      - name: "Burn-Green"
+        weight: 45
+        duration: "2d6 days"
+        description: "Green flame - oxygen-rich atmosphere, fair weather ahead"
+        effects:
+          moon_changeling_visible: true
+          moon_changeling_color: "green"
+          weather_omen: "fair"
+          light_level: "dim"
+
+      - name: "Burn-Red"
+        weight: 20
+        duration: "1d4 days"
+        description: "Red flame - storms or high pressure approaching"
+        effects:
+          moon_changeling_visible: true
+          moon_changeling_color: "red"
+          weather_omen: "storm"
+          light_level: "dim"
+
+      - name: "Burn-Gold"
+        weight: 18
+        duration: "1d6 days"
+        description: "Gold flame - calm winds, high humidity"
+        effects:
+          moon_changeling_visible: true
+          moon_changeling_color: "gold"
+          weather_omen: "humid"
+          light_level: "dim"
+
+      # Dip state (invisible) - weight 17 (~17% of time)
+      - name: "Dip"
+        weight: 17
+        duration: "1d3 days"
+        description: "The Dip - orbit wobbles outside dust ring, fire extinguishes"
+        effects:
+          moon_changeling_visible: false
+          moon_changeling_color: null
+          weather_omen: null
+
+    tags: ["lunar", "changeling", "celestial"]
+
+  # ===========================================================================
+  # THE WATCHER (Verilius) - Type C Chain Event
+  # ===========================================================================
+  # The Invisible Giant - Earth-moon sized sphere of light-absorbing black rock.
+  # Normally invisible (albedo ~0.04), detectable only by blocking stars.
+  # Has one feature: massive impact basin filled with reflective water-ice.
+  #
+  # Visibility: ~10% (~36 nights/year visible)
+  # States:
+  # - The Sleep (Invisible, 90%): Ice Eye facing away
+  # - The Flash (Visible, 10%): Ice Eye rotates to catch sun
+  #   - Does NOT wax/wane, turns on like a spotlight
+  #   - Cold, piercing blue light
+  #   - Lasts 1-3 nights before rotating back
+  #   - Time of high magic and revelation
+
+  - id: "watcher"
+    name: "The Watcher"
+    description: "Verilius - The Invisible Giant with the Ice Eye"
+    type: "chain"
+    priority: 9
+    seed: 10293  # Seed for deterministic replay
+    initialState: "Sleep"  # Start invisible (most common state)
+    states:
+      # Sleep state (invisible) - 90% of time
+      - name: "Sleep"
+        weight: 90
+        duration: "2d6 days + 4 days"
+        description: "The Sleep - Ice Eye facing away, moon is dark ghost"
+        effects:
+          moon_watcher_visible: false
+          moon_watcher_state: "sleep"
+          star_visibility: "hole"  # Can see 'hole in stars' where it blocks light
+
+      # Flash state (visible) - 10% of time, dramatic event
+      - name: "Flash"
+        weight: 10
+        duration: "1d3 days"
+        description: "The Flash - Ice Eye catches sun, piercing blue spotlight"
+        effects:
+          moon_watcher_visible: true
+          moon_watcher_state: "flash"
+          light_level: "bright"
+          light_color: "blue"
+          magic_level: "high"
+          revelation_bonus: true
+          ui_banner: "The Watcher's Eye opens! A time of magic and revelation."
+
+    tags: ["lunar", "watcher", "celestial", "magic"]
+
+  # ===========================================================================
+  # VOID NIGHTS - Type D Conditional Event (Tier 1)
+  # ===========================================================================
+  # "Fear the Thirtieth" - when all three moons align against mortals
+  #
+  # Conditions (ALL must be true):
+  # 1. The Shield is Blind (Days 31-36 of month)
+  # 2. The Changeling Dips (fire goes out)
+  # 3. The Watcher is Asleep (eye is closed)
+  #
+  # Frequency: ~2.5% of year (~9 nights per year statistically)
+  # Effect: Total, oppressive blackness - sky is empty, moons are invisible hulks
+  #
+  # Calculation:
+  # - Shield Blind: 6/36 = 16.7% of nights
+  # - Changeling Dip: ~17% of nights
+  # - Watcher Sleep: ~90% of nights
+  # - Combined: 0.167 * 0.17 * 0.90 = ~2.5%
+
+  - id: "void-night"
+    name: "Void Night"
+    description: "The alignment of darkness - all three moons invisible simultaneously"
+    type: "conditional"
+    priority: 100  # High priority - overrides other effects
+    tier: 1
+    condition: "events['shield-blind'].active && events['changeling'].state == 'Dip' && events['watcher'].state == 'Sleep'"
+    effects:
+      void_night: true
+      light_level: "dark"
+      light_color: "void"
+      darkvision_required: true
+      void_creatures_emboldened: true
+      stealth_bonus: 0.5
+      danger_level: "extreme"
+      shop_closed: true
+      travel_pace_mult: 0.25
+      ui_banner: "VOID NIGHT - Total darkness engulfs the world. The creatures of the Void stir."
+      ui_theme: "void-night"
+
+    tags: ["lunar", "void", "dangerous", "event"]
+
+  # ===========================================================================
+  # BIRTH CASTE CONDITIONALS - Type D Events (Tier 1)
+  # ===========================================================================
+  # People believe moon combinations at birth shape your soul
+  # These conditionals identify when each caste condition is active
+
+  # The Forged (62.5%): Shield + Changeling visible (most common)
+  - id: "caste-forged"
+    name: "Caste Condition: The Forged"
+    description: "Shield and Changeling both visible - birth time of The Forged caste"
+    type: "conditional"
+    priority: 5
+    tier: 1
+    condition: "!events['shield-blind'].active && events['changeling'].state != 'Dip'"
+    effects:
+      birth_caste: "forged"
+      caste_frequency: 0.625
+    tags: ["lunar", "caste"]
+
+  # The Steward (12.5%): Shield only (Changeling dipped)
+  - id: "caste-steward"
+    name: "Caste Condition: The Steward"
+    description: "Shield visible, Changeling dipped - birth time of The Steward caste"
+    type: "conditional"
+    priority: 5
+    tier: 1
+    condition: "!events['shield-blind'].active && events['changeling'].state == 'Dip'"
+    effects:
+      birth_caste: "steward"
+      caste_frequency: 0.125
+    tags: ["lunar", "caste"]
+
+  # The Rogue (12.5%): Changeling only (Shield blind)
+  - id: "caste-rogue"
+    name: "Caste Condition: The Rogue"
+    description: "Shield blind, Changeling burning - birth time of The Rogue caste"
+    type: "conditional"
+    priority: 5
+    tier: 1
+    condition: "events['shield-blind'].active && events['changeling'].state != 'Dip'"
+    effects:
+      birth_caste: "rogue"
+      caste_frequency: 0.125
+    tags: ["lunar", "caste"]
+
+  # The Ascendant (6.9%): All three visible (rare and elite)
+  - id: "caste-ascendant"
+    name: "Caste Condition: The Ascendant"
+    description: "All three moons visible - birth time of The Ascendant caste"
+    type: "conditional"
+    priority: 6
+    tier: 1
+    condition: "!events['shield-blind'].active && events['changeling'].state != 'Dip' && events['watcher'].state == 'Flash'"
+    effects:
+      birth_caste: "ascendant"
+      caste_frequency: 0.069
+      ui_banner: "The Perfect Sky - All moons align for The Ascendant"
+    tags: ["lunar", "caste", "rare"]
+
+  # The Hollow (2.5%): None visible (Void Night)
+  # Note: Uses the void-night conditional as dependency
+  - id: "caste-hollow"
+    name: "Caste Condition: The Hollow"
+    description: "All moons dark (Void Night) - birth time of The Hollow caste"
+    type: "conditional"
+    priority: 5
+    tier: 2  # Depends on void-night (Tier 1)
+    condition: "events['void-night'].active"
+    effects:
+      birth_caste: "hollow"
+      caste_frequency: 0.025
+    tags: ["lunar", "caste", "cursed"]
+
+  # The Scholar (1.4%): Shield + Watcher (Changeling dipped during Flash)
+  - id: "caste-scholar"
+    name: "Caste Condition: The Scholar"
+    description: "Shield and Watcher visible, Changeling dipped - birth time of The Scholar"
+    type: "conditional"
+    priority: 5
+    tier: 1
+    condition: "!events['shield-blind'].active && events['changeling'].state == 'Dip' && events['watcher'].state == 'Flash'"
+    effects:
+      birth_caste: "scholar"
+      caste_frequency: 0.014
+    tags: ["lunar", "caste", "rare"]
+
+  # The Catalyst (1.4%): Changeling + Watcher (Shield blind during Flash)
+  - id: "caste-catalyst"
+    name: "Caste Condition: The Catalyst"
+    description: "Shield blind, Changeling and Watcher visible - birth time of The Catalyst"
+    type: "conditional"
+    priority: 5
+    tier: 1
+    condition: "events['shield-blind'].active && events['changeling'].state != 'Dip' && events['watcher'].state == 'Flash'"
+    effects:
+      birth_caste: "catalyst"
+      caste_frequency: 0.014
+    tags: ["lunar", "caste", "rare", "dangerous"]
+
+  # The Solipsist (0.3%): Watcher only (Shield blind + Changeling dipped during Flash)
+  - id: "caste-solipsist"
+    name: "Caste Condition: The Solipsist"
+    description: "Only The Watcher visible - birth time of The Solipsist (statistical miracle)"
+    type: "conditional"
+    priority: 7  # Higher priority for this rare event
+    tier: 1
+    condition: "events['shield-blind'].active && events['changeling'].state == 'Dip' && events['watcher'].state == 'Flash'"
+    effects:
+      birth_caste: "solipsist"
+      caste_frequency: 0.003
+      ui_banner: "A Prophet is born! Only The Watcher's Eye illuminates this night."
+    tags: ["lunar", "caste", "miracle", "prophet"]

@@ -1,0 +1,76 @@
+# Tesserion Calendar Definition
+# Test fixture for complex calendar validation (not shipped with app)
+#
+# Structure: 360 days total, 10 months × 36 days, 6-day week (Hexad)
+# No leap years, no intercalary days
+#
+# Reference: UX-Calendar-and-World-Events.md Section 10
+# This is a homebrew fantasy calendar used for developer testing
+
+calendars:
+  - id: tesserion
+    name: Calendar of Tesserion
+    description: The perfect circle calendar - 360 days, 10 months, no leap years
+    weekdays:
+      - Verilda   # Mind - Planning, contracts, and study
+      - Fabrida   # Hand - Hard labor and crafting
+      - Taelda    # Flux - Travel, shipping, and gambling
+      - Merceda   # Coin - Market day and debt collection
+      - Vigilda   # Watch - Cleaning, prep, and home defense
+      - Axenda    # Anchor - Rest, worship, and family (Courts closed)
+    months:
+      - name: Toral
+        days: 36
+        order: 0
+        # St. Toralia - Benevolence
+        # Ideal Wind: Mistral (the thaw begins)
+      - name: Vitus
+        days: 36
+        order: 1
+        # St. Vitalis - Vigor
+        # Ideal Wind: Mistral (planting season)
+      - name: Thea
+        days: 36
+        order: 2
+        # St. Anthea - Beauty
+        # Ideal Wind: Zephyr (the great bloom)
+      - name: Lucis
+        days: 36
+        order: 3
+        # St. Lucius - Truth
+        # Ideal Wind: Zephyr (clear skies/sailing)
+      - name: Kai
+        days: 36
+        order: 4
+        # St. Kaizen - Ambition
+        # Ideal Wind: Sirocco (The Longest Day on Day 18)
+      - name: Oray
+        days: 36
+        order: 5
+        # St. Aurelius - Majesty
+        # Ideal Wind: Sirocco (heat lingers; fruit ripens)
+      - name: Mercia
+        days: 36
+        order: 6
+        # St. Mercator - Industry
+        # Ideal Wind: Gale (harvest and trade)
+      - name: Vane
+        days: 36
+        order: 7
+        # St. Vanus - Humility
+        # Ideal Wind: Gale (trees strip; nature bows)
+      - name: Dura
+        days: 36
+        order: 8
+        # St. Durus - Fortitude
+        # Ideal Wind: Boreas (the ground hardens)
+      - name: Termin
+        days: 36
+        order: 9
+        # St. Terminus - Vigilance
+        # Ideal Wind: Boreas (year ends in dark and ice)
+    holidays: []  # No fixed holidays defined yet
+    startingYear: 1
+    yearSuffix: TS
+    # Note: Tesserion uses no leap year rules
+    # Year length is always exactly 360 days
